@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>책갈피 마을</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap">
+<style>
+/* ───────── 토큰 ───────── */
+:root{
+  --paper:#F3F6EE;      /* 연한 풀빛 종이 */
+  --paper-2:#E6EDDD;
+  --card:#FFFFFF;
+  --ink:#22303A;
+  --ink-2:#5A6A73;
+  --ink-3:#95A3AA;
+  --line:#D5DECF;
+  --leaf:#4F8F5C;       /* 나뭇잎 */
+  --leaf-2:#DCEBD8;
+  --honey:#F2B84B;      /* 별점·강조 */
+  --honey-2:#FBEFD2;
+  --berry:#D8566B;      /* 반응·하트 */
+  --berry-2:#FBE3E7;
+  --sky:#5B8FD6;
+  --sky-2:#DEE9FA;
+  --shadow:0 6px 18px rgba(34,48,58,.08);
+  --r:16px;
+  --font-body:'Gowun Dodum','Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+  --font-disp:'Jua','Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:var(--font-body);font-size:16px;line-height:1.6;
+  -webkit-tap-highlight-color:transparent;
+  min-height:100vh;
+}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+h1,h2,h3{font-family:var(--font-disp);font-weight:400;margin:0;line-height:1.25;text-wrap:balance}
+[hidden]{display:none!important}
+:focus-visible{outline:3px solid var(--sky);outline-offset:2px;border-radius:8px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ───────── 뼈대 ───────── */
+.app{display:none;min-height:100vh;flex-direction:column}
+.app.on{display:flex}
+.topbar{
+  position:sticky;top:0;z-index:20;background:var(--paper);
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:12px;padding:10px 16px;
+}
+.brand{display:flex;align-items:center;gap:10px;white-space:nowrap;font-family:var(--font-disp);font-size:22px;color:var(--ink)}
+.brand svg{width:34px;height:34px}
+.brand small{font-family:var(--font-body);font-size:13px;color:var(--ink-2);margin-left:2px}
+.spacer{flex:1}
+.me{display:flex;align-items:center;gap:8px;white-space:nowrap;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 12px 4px 4px}
+.me .av{width:32px;height:32px;border-radius:50%;background:var(--leaf-2);display:grid;place-items:center;font-size:18px}
+.me b{font-weight:400;font-family:var(--font-disp)}
+.me .lv{font-size:12px;color:var(--leaf);background:var(--leaf-2);padding:1px 8px;border-radius:999px}
+.mode-pill{white-space:nowrap;font-size:12px;padding:3px 10px;border-radius:999px;background:var(--honey-2);color:#8A6210;border:1px solid #EAD39A}
+.mode-pill.live{background:var(--leaf-2);color:var(--leaf);border-color:#BFD9BC}
+
+.tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px}
+.tabs button{white-space:nowrap;padding:8px 16px;border-radius:999px;font-family:var(--font-disp);font-size:16px;color:var(--ink-2);display:flex;gap:6px;align-items:center}
+.tabs button.on{background:var(--leaf);color:#fff}
+.tabs svg{width:18px;height:18px}
+.tabbar{display:none}
+@media (max-width:760px){
+  .topbar .tabs{display:none}
+  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--card);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:var(--ink-2);padding:6px 0;border-radius:12px;font-family:var(--font-disp)}
+  .tabbar button.on{color:var(--leaf);background:var(--leaf-2)}
+  .tabbar svg{width:22px;height:22px}
+  main{padding-bottom:84px!important}
+  .brand small{display:none}
+}
+main{flex:1;width:100%;max-width:1080px;margin:0 auto;padding:18px 16px 40px}
+.view{display:none}.view.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ───────── 공통 요소 ───────── */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border-radius:999px;font-family:var(--font-disp);font-size:17px;background:var(--leaf);color:#fff;transition:transform .1s}
+.btn:active{transform:scale(.97)}
+.btn.honey{background:var(--honey);color:#4a3606}
+.btn.ghost{background:var(--card);color:var(--ink-2);border:1px solid var(--line)}
+.btn.berry{background:var(--berry)}
+.btn.sm{padding:6px 12px;font-size:14px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:13px;background:var(--paper-2);color:var(--ink-2)}
+.chip.genre{background:var(--sky-2);color:#2f5da3}
+input[type=text],input[type=password],input[type=number],textarea,select{
+  width:100%;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;
+}
+input:focus,textarea:focus,select:focus{border-color:var(--leaf);outline:none}
+textarea{min-height:110px;resize:vertical;line-height:1.7}
+label.f{display:block;font-family:var(--font-disp);font-size:17px;margin-bottom:6px}
+label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);margin-left:6px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.stars{display:inline-flex;gap:2px}
+.stars svg{width:20px;height:20px}
+.stars.big svg{width:38px;height:38px;cursor:pointer}
+.star-on{fill:var(--honey)}.star-off{fill:#E3E6DF}
+.empty{text-align:center;color:var(--ink-2);padding:50px 20px}
+.empty .big{font-size:52px}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;opacity:0;transition:.25s;z-index:99;font-family:var(--font-disp);pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%)}
+
+/* ───────── 입장 화면 ───────── */
+.gate{min-height:100vh;display:grid;place-items:center;padding:24px;background:
+  radial-gradient(circle at 15% 20%,var(--leaf-2) 0 8%,transparent 8.5%),
+  radial-gradient(circle at 85% 80%,var(--honey-2) 0 10%,transparent 10.5%),
+  radial-gradient(circle at 80% 15%,var(--sky-2) 0 6%,transparent 6.5%),
+  var(--paper)}
+.gate .card{width:100%;max-width:560px;padding:28px 24px}
+.gate h1{font-size:40px;text-align:center;color:var(--leaf)}
+.gate h1 small{display:block;font-size:16px;color:var(--ink-2);font-family:var(--font-body);margin-top:4px}
+.gate .hero{display:flex;justify-content:center;margin-bottom:8px}
+.names{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin:16px 0}
+.names button{padding:12px 6px;border-radius:14px;background:var(--paper);border:1.5px solid var(--line);font-family:var(--font-disp);font-size:17px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.names button .av{font-size:24px}
+.names button.pick{background:var(--leaf-2);border-color:var(--leaf)}
+.names button small{font-size:11px;color:var(--ink-3);font-family:var(--font-body)}
+.pinpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:280px;margin:12px auto}
+.pinpad button{padding:14px;border-radius:14px;background:var(--paper);border:1.5px solid var(--line);font-family:var(--font-disp);font-size:22px}
+.pinpad button:active{background:var(--leaf-2)}
+.dots{display:flex;justify-content:center;gap:12px;margin:8px 0}
+.dots i{width:16px;height:16px;border-radius:50%;background:var(--line);display:block}
+.dots i.on{background:var(--leaf)}
+.shake{animation:shake .4s}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.gate .foot{text-align:center;margin-top:14px;font-size:13px;color:var(--ink-3)}
+.gate .foot button{color:var(--ink-2);text-decoration:underline}
+
+/* ───────── 책방(피드) ───────── */
+.feedhead{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.feedhead h2{font-size:26px;margin-right:auto}
+.search{position:relative;flex:1;min-width:180px;max-width:320px}
+.search input{padding-left:36px}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:18px;height:18px;fill:var(--ink-3)}
+.filters{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.filters button{white-space:nowrap;padding:6px 14px;border-radius:999px;background:var(--card);border:1.5px solid var(--line);font-size:14px;color:var(--ink-2)}
+.filters button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.book{padding:16px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:transform .15s;position:relative;overflow:hidden}
+.book:hover{transform:translateY(-3px)}
+.book .spine{position:absolute;left:0;top:0;bottom:0;width:7px;background:var(--leaf)}
+.book .ttl{font-family:var(--font-disp);font-size:20px;line-height:1.3;padding-left:6px}
+.book .auth{font-size:13px;color:var(--ink-2);padding-left:6px}
+.book .one{font-size:15px;color:var(--ink);background:var(--paper);border-radius:10px;padding:8px 10px;margin-left:6px;position:relative;padding-left:24px}
+.book .one::before{content:"“";position:absolute;left:9px;top:2px;font-family:var(--font-disp);font-size:22px;color:var(--honey)}
+.book .who{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-2);padding-left:6px;margin-top:auto}
+.book .who .av{width:26px;height:26px;border-radius:50%;background:var(--leaf-2);display:grid;place-items:center;font-size:15px}
+.book .rx{display:flex;gap:6px;padding-left:6px;flex-wrap:wrap}
+.book .rx span{font-size:12px;background:var(--paper-2);border-radius:999px;padding:1px 8px;color:var(--ink-2)}
+.book .hid{position:absolute;right:10px;top:10px;font-size:11px;background:var(--berry-2);color:var(--berry);border-radius:999px;padding:2px 8px}
+.book .new{position:absolute;right:10px;top:10px;font-size:11px;background:var(--honey);color:#4a3606;border-radius:999px;padding:2px 8px;font-family:var(--font-disp)}
+.rank{padding:16px 18px;margin-bottom:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.rank h3{font-size:16px;color:var(--ink-2);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.rank ol{margin:0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:4px}
+.rank li{display:flex;gap:8px;align-items:center;font-size:15px}
+.rank li i{font-style:normal;width:22px;height:22px;border-radius:50%;background:var(--paper-2);display:grid;place-items:center;font-size:12px;font-family:var(--font-disp);flex:none}
+.rank li:first-child i{background:var(--honey)}
+.rank li .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank li .v{margin-left:auto;color:var(--ink-3);font-size:13px;flex:none}
+
+/* ───────── 쓰기 ───────── */
+.write{max-width:720px;margin:0 auto}
+.write h2{font-size:26px;margin-bottom:4px}
+.write .sub{color:var(--ink-2);margin-bottom:16px}
+.step{padding:18px 18px 14px;margin-bottom:14px;position:relative}
+.step .no{position:absolute;left:-1px;top:-1px;background:var(--leaf);color:#fff;font-family:var(--font-disp);padding:4px 14px;border-radius:15px 0 14px 0;font-size:14px}
+.step h3{font-size:20px;margin:14px 0 4px}
+.step .why{font-size:13px;color:var(--ink-2);margin-bottom:10px}
+.hints{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 4px}
+.hints button{font-size:13px;padding:5px 10px;border-radius:999px;background:var(--honey-2);color:#6b4d0c;border:1px dashed #E2C57C}
+.hints .lbl{font-size:12px;color:var(--ink-3);align-self:center}
+.cnt{text-align:right;font-size:12px;color:var(--ink-3);margin-top:4px}
+.cnt.ok{color:var(--leaf)}
+.quote-box{background:var(--paper);border-left:4px solid var(--honey);border-radius:0 12px 12px 0;padding:10px 12px}
+.quote-box textarea{background:transparent;border:0;padding:0;min-height:60px;font-style:italic}
+.tog{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--ink-2);cursor:pointer}
+.tog input{width:auto}
+.xpbar{height:10px;background:var(--paper-2);border-radius:999px;overflow:hidden}
+.xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--leaf),#8ac496);border-radius:999px;transition:width .5s}
+
+/* ───────── 나무 ───────── */
+.treewrap{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;align-items:start}
+@media (max-width:760px){.treewrap{grid-template-columns:1fr}}
+.tree{padding:18px;text-align:center}
+.tree svg{width:100%;max-width:420px;height:auto}
+.tree h2{font-size:26px}
+.tree .goal{color:var(--ink-2);font-size:14px;margin-top:4px}
+.hall{padding:18px}
+.hall h3{font-size:20px;margin-bottom:10px}
+.hall .lb{display:flex;flex-direction:column;gap:6px}
+.hall .lb div{display:flex;align-items:center;gap:10px;background:var(--paper);border-radius:12px;padding:8px 12px}
+.hall .lb .av{font-size:22px}
+.hall .lb .nm{font-family:var(--font-disp);font-size:17px}
+.hall .lb .bar{flex:1;height:8px;background:var(--paper-2);border-radius:999px;overflow:hidden}
+.hall .lb .bar i{display:block;height:100%;background:var(--leaf)}
+.hall .lb .xp{font-size:12px;color:var(--ink-3);min-width:60px;text-align:right}
+.fruit-pop{animation:pop .5s}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.3)}100%{transform:scale(1)}}
+
+/* ───────── 내 서재 ───────── */
+.prof{display:grid;grid-template-columns:280px 1fr;gap:16px}
+@media (max-width:760px){.prof{grid-template-columns:1fr}}
+.prof .card{padding:18px}
+.prof .bigav{font-size:72px;text-align:center;line-height:1}
+.prof .lvname{text-align:center;font-family:var(--font-disp);font-size:22px;color:var(--leaf)}
+.prof .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:12px 0}
+.prof .stats div{text-align:center;background:var(--paper);border-radius:12px;padding:8px 4px}
+.prof .stats b{display:block;font-family:var(--font-disp);font-size:22px;font-weight:400}
+.prof .stats span{font-size:12px;color:var(--ink-2)}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.badge{text-align:center;padding:10px 6px;border-radius:14px;background:var(--paper);border:1px solid var(--line)}
+.badge .ic{font-size:28px;filter:grayscale(1);opacity:.35}
+.badge.got .ic{filter:none;opacity:1}
+.badge b{display:block;font-family:var(--font-disp);font-weight:400;font-size:14px}
+.badge small{font-size:11px;color:var(--ink-3)}
+.badge.got{background:var(--honey-2);border-color:#EAD39A}
+
+/* ───────── 모달 ───────── */
+.modal{position:fixed;inset:0;background:rgba(34,48,58,.45);display:none;align-items:flex-end;justify-content:center;z-index:50;padding:0}
+.modal.on{display:flex}
+.sheet{background:var(--card);width:100%;max-width:760px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:20px 20px 30px;animation:up .25s ease}
+@media (min-width:761px){.modal{align-items:center;padding:20px}.sheet{border-radius:22px;max-height:88vh}}
+@keyframes up{from{transform:translateY(30px);opacity:.5}to{transform:none;opacity:1}}
+.sheet .close{position:sticky;top:0;float:right;width:36px;height:36px;border-radius:50%;background:var(--paper-2);font-size:18px;display:grid;place-items:center;z-index:2}
+.rv h2{font-size:28px;margin-top:6px}
+.rv .meta{color:var(--ink-2);font-size:14px;margin:4px 0 12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.rv section{margin:16px 0}
+.rv section h4{font-family:var(--font-disp);font-weight:400;font-size:17px;margin:0 0 6px;color:var(--leaf);display:flex;align-items:center;gap:6px}
+.rv section h4::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--leaf);display:inline-block}
+.rv p{margin:0;white-space:pre-wrap;line-height:1.75}
+.rv .quote{background:var(--paper);border-left:4px solid var(--honey);padding:10px 14px;border-radius:0 12px 12px 0;font-style:italic;white-space:pre-wrap;margin-bottom:8px}
+.spoiler{position:relative}
+.spoiler.hid p{filter:blur(6px);user-select:none}
+.spoiler .sp-btn{position:absolute;inset:0;display:grid;place-items:center}
+.spoiler.hid .sp-btn button{background:var(--ink);color:#fff}
+.spoiler:not(.hid) .sp-btn{display:none}
+.rxbar{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.rxbar button{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:var(--paper);border:1.5px solid var(--line);font-size:15px;transition:transform .1s}
+.rxbar button.on{background:var(--berry-2);border-color:var(--berry);color:var(--berry)}
+.rxbar button:active{transform:scale(1.1)}
+.cmts{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+.cmt{display:flex;gap:10px;align-items:flex-start;background:var(--paper);border-radius:12px;padding:8px 12px}
+.cmt .av{font-size:20px}
+.cmt b{font-family:var(--font-disp);font-weight:400;font-size:14px}
+.cmt p{margin:0;font-size:15px}
+.cmt small{color:var(--ink-3);font-size:11px;margin-left:6px}
+.cmt .del{margin-left:auto;color:var(--ink-3);font-size:12px}
+.cmtform{display:flex;gap:8px}
+.cmtform input{flex:1}
+.own{display:flex;gap:8px;margin-top:14px;justify-content:flex-end}
+
+/* ───────── 교사 ───────── */
+.teach{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:760px){.teach{grid-template-columns:1fr}}
+.teach .card{padding:18px}
+.teach h3{font-size:20px;margin-bottom:10px}
+.stulist{display:flex;flex-direction:column;gap:6px;max-height:380px;overflow:auto}
+.stulist div{display:flex;align-items:center;gap:8px;background:var(--paper);border-radius:10px;padding:6px 10px;font-size:14px}
+.stulist .nm{font-family:var(--font-disp);font-size:16px;flex:1}
+.stulist code{background:var(--card);padding:1px 6px;border-radius:6px;font-size:13px}
+.stulist button{font-size:12px;color:var(--ink-2);padding:3px 8px;border:1px solid var(--line);border-radius:999px;background:var(--card)}
+.setup-note{background:var(--honey-2);border:1px solid #EAD39A;border-radius:12px;padding:10px 14px;font-size:14px;margin-bottom:12px}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:98}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ 입장 ═══════════════ -->
+<div class="gate" id="gate">
+  <div class="card">
+    <div class="hero" id="heroLogo"></div>
+    <h1 id="gateTitle">책갈피 마을<small id="gateSub">우리 반 책 이야기가 모이는 곳</small></h1>
+    <div id="gateSetup" hidden>
+      <div class="setup-note">처음 오셨군요! 선생님 비밀번호(4자리)를 먼저 정해 주세요. 학생 명단은 들어가서 등록합니다.</div>
+      <div class="row"><input type="password" id="setupPin" inputmode="numeric" maxlength="4" placeholder="선생님 비밀번호 4자리" style="flex:1"><button class="btn" id="setupBtn">시작하기</button></div>
+    </div>
+    <div id="gateStudents">
+      <div id="gateStep1">
+        <p style="text-align:center;color:var(--ink-2);margin:6px 0 0">내 이름을 골라 주세요</p>
+        <div class="names" id="nameGrid"></div>
+      </div>
+      <div id="gateStep2" hidden>
+        <p style="text-align:center;margin:6px 0 0"><span id="pickName" style="font-family:var(--font-disp);font-size:22px;color:var(--leaf)"></span> 맞나요? 비밀번호 4자리를 눌러 주세요</p>
+        <div class="dots" id="dots"><i></i><i></i><i></i><i></i></div>
+        <div class="pinpad" id="pinpad"></div>
+        <p style="text-align:center"><button class="btn ghost sm" id="backNames">다른 이름 고르기</button></p>
+      </div>
+    </div>
+    <div class="foot">선생님이신가요? <button id="teacherGateBtn">선생님 입장</button></div>
+    <div id="teacherGate" hidden style="margin-top:10px">
+      <div class="row"><input type="password" id="tPin" inputmode="numeric" maxlength="4" placeholder="선생님 비밀번호" style="flex:1"><button class="btn honey" id="tGo">들어가기</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ 앱 ═══════════════ -->
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand" id="brandLogo"><span id="brandName">책갈피 마을</span><small id="brandClass"></small></div>
+    <nav class="tabs" id="tabsTop"></nav>
+    <div class="spacer"></div>
+    <span class="mode-pill" id="modePill">미리보기(내 기기 저장)</span>
+    <button class="me" id="meBtn"><span class="av" id="meAv">🥚</span><b id="meName"></b><span class="lv" id="meLv"></span></button>
+  </header>
+  <main>
+    <!-- 책방 -->
+    <section class="view" id="v-feed">
+      <div class="rank card" id="rankBox"></div>
+      <div class="feedhead">
+        <h2>책방 둘러보기</h2>
+        <div class="search"><svg viewBox="0 0 24 24"><path d="M10 2a8 8 0 1 0 4.9 14.3l5.4 5.4 1.4-1.4-5.4-5.4A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12z"/></svg><input type="text" id="q" placeholder="책 제목, 작가, 친구 이름"></div>
+        <select id="sort" style="width:auto"><option value="new">최신순</option><option value="star">별점순</option><option value="hot">인기순</option></select>
+      </div>
+      <div class="filters" id="genreFilters"></div>
+      <div class="grid" id="feed"></div>
+    </section>
+
+    <!-- 쓰기 -->
+    <section class="view" id="v-write">
+      <div class="write">
+        <h2 id="writeTitle">서평 쓰기</h2>
+        <p class="sub">네 칸만 채우면 멋진 서평이 완성돼요. 다 쓰면 나무에 열매가 하나 열려요 🍎</p>
+
+        <div class="card step">
+          <span class="no">책 정보</span>
+          <h3>어떤 책인가요?</h3>
+          <div class="row" style="align-items:flex-start">
+            <div style="flex:2;min-width:200px"><label class="f">책 제목 <span>필수</span></label><input type="text" id="f-title" placeholder="예) 마당을 나온 암탉" maxlength="60"></div>
+            <div style="flex:1;min-width:140px"><label class="f">지은이</label><input type="text" id="f-author" placeholder="예) 황선미" maxlength="40"></div>
+            <div style="flex:1;min-width:140px"><label class="f">장르</label><select id="f-genre"></select></div>
+          </div>
+        </div>
+
+        <div class="card step">
+          <span class="no">1</span>
+          <h3>책 소개</h3>
+          <div class="why">이 책은 어떤 책이고, 왜 읽게 되었나요? 아직 안 읽은 친구에게 소개하듯이.</div>
+          <div class="hints" data-for="f-intro"><span class="lbl">이렇게 시작해 봐 →</span><button>이 책은 ~에 대한 이야기예요.</button><button>내가 이 책을 고른 이유는</button><button>표지를 보고</button><button>친구가 추천해 줘서</button></div>
+          <textarea id="f-intro" placeholder="책 소개를 써 주세요"></textarea><div class="cnt" data-for="f-intro"></div>
+        </div>
+
+        <div class="card step">
+          <span class="no">2</span>
+          <h3>줄거리</h3>
+          <div class="why">누가, 어디서, 무슨 일을 겪나요? 처음 → 중간 → 끝 순서로.</div>
+          <div class="hints" data-for="f-plot"><span class="lbl">이렇게 시작해 봐 →</span><button>주인공 ~은(는)</button><button>어느 날</button><button>그런데 문제가 생겼어요.</button><button>결국</button></div>
+          <textarea id="f-plot" placeholder="줄거리를 써 주세요"></textarea><div class="cnt" data-for="f-plot"></div>
+          <label class="tog"><input type="checkbox" id="f-spoiler"> 결말이 들어 있어요 (스포일러 가리기)</label>
+        </div>
+
+        <div class="card step">
+          <span class="no">3</span>
+          <h3>인상적인 부분</h3>
+          <div class="why">가장 기억에 남는 장면이나 문장은? 왜 마음에 남았나요?</div>
+          <label class="f" style="font-size:15px">기억에 남는 문장 <span>책에서 그대로 옮겨 적기 (선택)</span></label>
+          <div class="quote-box"><textarea id="f-quote" placeholder="“ 여기에 문장을 옮겨 적어 보세요 ”"></textarea></div>
+          <div class="hints" data-for="f-impress"><span class="lbl">이렇게 시작해 봐 →</span><button>가장 기억에 남는 장면은</button><button>이 부분에서 나는</button><button>만약 나였다면</button><button>주인공의 마음이</button></div>
+          <textarea id="f-impress" placeholder="인상적인 부분과 그 이유를 써 주세요" style="margin-top:8px"></textarea><div class="cnt" data-for="f-impress"></div>
+        </div>
+
+        <div class="card step">
+          <span class="no">4</span>
+          <h3>나의 평가</h3>
+          <div class="why">별점을 주고, 이 책을 한 문장으로 평가해 봐요. 누구에게 추천하고 싶나요?</div>
+          <div class="row" style="margin-bottom:10px"><span style="font-family:var(--font-disp);font-size:17px">별점</span><div class="stars big" id="f-stars"></div><span id="starWord" style="color:var(--ink-2);font-size:14px"></span></div>
+          <label class="f">한줄평 <span>필수 · 카드에 크게 보여요</span></label>
+          <input type="text" id="f-one" placeholder="예) 웃다가 울다가 마지막엔 박수 친 책!" maxlength="60">
+          <div class="hints" data-for="f-reco" style="margin-top:12px"><span class="lbl">추천 대상 →</span><button>모험을 좋아하는 친구</button><button>동물을 좋아하는 친구</button><button>울고 싶은 날</button><button>웃고 싶을 때</button><button>우리 반 모두</button></div>
+          <input type="text" id="f-reco" placeholder="이런 친구에게 추천해요" maxlength="60">
+        </div>
+
+        <div class="row" style="justify-content:space-between;margin-top:6px">
+          <span id="draftMsg" style="font-size:13px;color:var(--ink-3)"></span>
+          <div class="row"><button class="btn ghost" id="cancelEdit" hidden>취소</button><button class="btn" id="submitBtn" style="font-size:19px;padding:12px 26px">서평 올리기 🌱</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 나무 -->
+    <section class="view" id="v-tree">
+      <div class="treewrap">
+        <div class="card tree">
+          <h2 id="treeTitle">우리 반 독서 나무</h2>
+          <div class="goal" id="treeGoal"></div>
+          <div id="treeSvg"></div>
+          <div class="xpbar" style="margin:8px 20px"><i id="treeBar"></i></div>
+          <p style="font-size:13px;color:var(--ink-2)">서평 한 편 = 열매 하나. 목표를 채우면 나무가 꽃을 피워요.</p>
+        </div>
+        <div class="card hall">
+          <h3>명예의 전당</h3>
+          <div class="lb" id="leader"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 내 서재 -->
+    <section class="view" id="v-me">
+      <div class="prof">
+        <div>
+          <div class="card">
+            <div class="bigav" id="pAv"></div>
+            <div class="lvname" id="pLv"></div>
+            <p style="text-align:center;font-family:var(--font-disp);font-size:20px;margin:2px 0" id="pName"></p>
+            <div class="xpbar"><i id="pBar"></i></div>
+            <p style="text-align:center;font-size:12px;color:var(--ink-3);margin:4px 0 0" id="pNext"></p>
+            <div class="stats"><div><b id="sRev">0</b><span>서평</span></div><div><b id="sRx">0</b><span>받은 반응</span></div><div><b id="sCm">0</b><span>쓴 댓글</span></div></div>
+            <button class="btn ghost sm" id="logout" style="width:100%">나가기</button>
+          </div>
+          <div class="card" style="margin-top:14px"><h3 style="font-size:18px;margin-bottom:8px">배지</h3><div class="badges" id="badges"></div></div>
+        </div>
+        <div>
+          <h3 style="font-size:20px;margin-bottom:10px">내가 쓴 서평</h3>
+          <div class="grid" id="myFeed"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 교사 -->
+    <section class="view" id="v-teach">
+      <div class="teach">
+        <div class="card">
+          <h3>학생 명단</h3>
+          <div class="row" style="margin-bottom:8px"><input type="text" id="newName" placeholder="이름" style="flex:1;min-width:100px"><input type="text" id="newPin" inputmode="numeric" maxlength="4" placeholder="비번 4자리" style="width:110px"><button class="btn sm" id="addStu">추가</button></div>
+          <details style="margin-bottom:10px"><summary style="font-size:13px;color:var(--ink-2);cursor:pointer">여러 명 한꺼번에 넣기</summary><textarea id="bulk" placeholder="한 줄에 한 명: 이름,비번&#10;김하늘,1234&#10;이바다,5678&#10;(비번을 비우면 자동으로 만들어요)" style="min-height:90px;font-size:14px"></textarea><button class="btn sm" id="bulkAdd" style="margin-top:6px">한꺼번에 추가</button></details>
+          <div class="stulist" id="stuList"></div>
+        </div>
+        <div>
+          <div class="card">
+            <h3>설정</h3>
+            <label class="f">우리 반 이름</label><input type="text" id="setClass" placeholder="예) 영전초 5학년 1반">
+            <label class="f" style="margin-top:10px">독서 나무 목표(서평 수)</label><input type="number" id="setGoal" min="5" max="500">
+            <label class="f" style="margin-top:10px">선생님 비밀번호 바꾸기</label><input type="password" id="setTPin" inputmode="numeric" maxlength="4" placeholder="새 비밀번호 4자리(안 바꾸면 비워두기)">
+            <button class="btn" id="saveSettings" style="margin-top:12px">저장</button>
+          </div>
+          <div class="card" style="margin-top:14px">
+            <h3>기록 내려받기</h3>
+            <p style="font-size:14px;color:var(--ink-2);margin:0 0 10px">서평 전체를 CSV(엑셀)로 저장해요. 평가 기록·학부모 상담 자료로 쓸 수 있어요.</p>
+            <button class="btn honey" id="csvBtn">CSV 내려받기</button>
+            <p style="font-size:13px;color:var(--ink-3);margin:12px 0 0">서평 숨기기·삭제는 책방에서 서평을 열면 아래에 버튼이 있어요.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <nav class="tabbar" id="tabsBottom"></nav>
+</div>
+
+<!-- 서평 상세 -->
+<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"></div>
+<canvas class="confetti" id="confetti" hidden></canvas>
+
+<!-- ═══════════════ Firebase 설정 ═══════════════
+  1) console.firebase.google.com → 프로젝트 만들기
+  2) 빌드 → Firestore Database → 데이터베이스 만들기(테스트 모드, 서울 asia-northeast3)
+  3) 프로젝트 설정(톱니) → 내 앱 → 웹앱(</>) 추가 → firebaseConfig 값을 아래에 붙여넣기
+  아래 값이 비어 있으면 자동으로 '미리보기 모드'(이 기기에만 저장)로 켜집니다.
+═══════════════════════════════════════════════ -->
+<script>
+window.FIREBASE_CONFIG = {
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: ""
+};
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+/* ═══════════════════════════════════════════
+   저장소 어댑터 — Firestore / 로컬(localStorage) 동일 인터페이스
+   store.watch(col, cb) / set(col,id,data) / update(col,id,patch) / del(col,id)
+   patch 안에서 배열 추가/제거: AU(v) / AR(v), 중첩 키는 "a.b" 점 표기
+═══════════════════════════════════════════ */
+const AU = v => ({__op:'au', v});
+const AR = v => ({__op:'ar', v});
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+
+function makeLocalStore(){
+  const KEY='bookvillage_local_v1';
+  let data = {students:{}, reviews:{}, settings:{}};
+  try{ const raw=localStorage.getItem(KEY); if(raw) data=JSON.parse(raw);}catch(e){}
+  const subs={};
+  const save=()=>{ try{localStorage.setItem(KEY,JSON.stringify(data));}catch(e){} };
+  const emit=col=>(subs[col]||[]).forEach(cb=>cb(Object.entries(data[col]||{}).map(([id,d])=>({id,...d}))));
+  function applyPatch(obj,patch){
+    for(const [k,v] of Object.entries(patch)){
+      const parts=k.split('.'); let o=obj;
+      for(let i=0;i<parts.length-1;i++){ o[parts[i]]=o[parts[i]]||{}; o=o[parts[i]]; }
+      const last=parts[parts.length-1];
+      if(v && v.__op==='au'){ o[last]=Array.from(new Set([...(o[last]||[]),v.v])); }
+      else if(v && v.__op==='ar'){ o[last]=(o[last]||[]).filter(x=>JSON.stringify(x)!==JSON.stringify(v.v)); }
+      else o[last]=v;
+    }
+  }
+  return {
+    mode:'local',
+    watch(col,cb){ (subs[col]=subs[col]||[]).push(cb); setTimeout(()=>emit(col),0); },
+    async set(col,id,d){ data[col]=data[col]||{}; data[col][id]=JSON.parse(JSON.stringify(d)); save(); emit(col); },
+    async update(col,id,p){ data[col]=data[col]||{}; data[col][id]=data[col][id]||{}; applyPatch(data[col][id],p); save(); emit(col); },
+    async del(col,id){ if(data[col]) delete data[col][id]; save(); emit(col); },
+  };
+}
+function makeFirestore(cfg){
+  firebase.initializeApp(cfg);
+  const fs=firebase.firestore();
+  const FV=firebase.firestore.FieldValue;
+  const conv=p=>{ const o={}; for(const [k,v] of Object.entries(p)){ o[k]=(v&&v.__op==='au')?FV.arrayUnion(v.v):(v&&v.__op==='ar')?FV.arrayRemove(v.v):v; } return o; };
+  return {
+    mode:'firebase',
+    watch(col,cb){ fs.collection(col).onSnapshot(s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))), e=>{console.error(e); toast('서버 연결에 문제가 있어요: '+e.code);}); },
+    set:(col,id,d)=>fs.collection(col).doc(id).set(d),
+    update:(col,id,p)=>fs.collection(col).doc(id).update(conv(p)),
+    del:(col,id)=>fs.collection(col).doc(id).delete(),
+  };
+}
+const HAS_FB = !!(window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.projectId && window.firebase);
+const store = HAS_FB ? makeFirestore(window.FIREBASE_CONFIG) : makeLocalStore();
+
+/* ═══════════════ 상수 ═══════════════ */
+const GENRES=['동화·소설','그림책','과학·자연','역사·인물','만화·학습만화','시·에세이','지식·정보','기타'];
+const RX=[{k:'like',e:'👍',t:'공감'},{k:'read',e:'📖',t:'나도 읽을래'},{k:'laugh',e:'😂',t:'웃겨'},{k:'cry',e:'🥹',t:'뭉클'}];
+const LEVELS=[{xp:0,n:'책벌레 알',av:'🥚'},{xp:150,n:'꼬물 애벌레',av:'🐛'},{xp:400,n:'고치 속 독서가',av:'🌿'},{xp:800,n:'책나비',av:'🦋'},{xp:1500,n:'황금 책나비',av:'✨'}];
+const STAR_WORDS=['','음… 나랑은 안 맞았어','그냥 그랬어','괜찮았어','재미있었어!','인생 책이야!!'];
+const BADGES=[
+  {id:'first',ic:'🌱',n:'첫 열매',d:'첫 서평 쓰기',f:s=>s.reviews>=1},
+  {id:'five',ic:'📚',n:'다섯 권 탑',d:'서평 5편',f:s=>s.reviews>=5},
+  {id:'ten',ic:'🏰',n:'열 권 성',d:'서평 10편',f:s=>s.reviews>=10},
+  {id:'genre',ic:'🧭',n:'장르 탐험가',d:'장르 3종류 이상',f:s=>s.genres>=3},
+  {id:'quote',ic:'✒️',n:'문장 수집가',d:'인용 문장 3개',f:s=>s.quotes>=3},
+  {id:'long',ic:'📜',n:'긴 글 장인',d:'600자 넘는 서평',f:s=>s.longest>=600},
+  {id:'pop',ic:'🔥',n:'인기왕',d:'반응 10개 받기',f:s=>s.rx>=10},
+  {id:'talk',ic:'💬',n:'댓글 요정',d:'댓글 10개 쓰기',f:s=>s.cm>=10},
+  {id:'crit',ic:'⭐',n:'냉정한 평론가',d:'별 2개 이하 서평',f:s=>s.low>=1},
+  {id:'fan',ic:'💖',n:'열혈 독자',d:'별 5개 서평 3편',f:s=>s.five>=3},
+];
+
+/* ═══════════════ 상태 ═══════════════ */
+let students=[], reviews=[], settings=null, me=null, isTeacher=false;
+let editingId=null, formRating=0, curFilter='전체', openId=null;
+let prevReviewCount=null;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtDate=t=>{const d=new Date(t);return `${d.getMonth()+1}월 ${d.getDate()}일`;};
+const rxCount=r=>RX.reduce((a,x)=>a+((r.reactions||{})[x.k]||[]).length,0);
+const rvLen=r=>(r.intro||'').length+(r.plot||'').length+(r.impress||'').length;
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2200);}
+const starSvg=(n,cls='')=>`<span class="stars ${cls}">${[1,2,3,4,5].map(i=>`<svg viewBox="0 0 24 24" data-v="${i}"><path class="${i<=n?'star-on':'star-off'}" d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>`).join('')}</span>`;
+const LOGO=`<svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><rect x="10" y="12" width="44" height="40" rx="6" fill="#4F8F5C"/><rect x="16" y="18" width="32" height="34" rx="3" fill="#F3F6EE"/><path d="M40 12v22l-5-4-5 4V12z" fill="#F2B84B"/><path d="M20 26h14M20 32h18M20 38h12" stroke="#D5DECF" stroke-width="2.5" stroke-linecap="round"/><circle cx="46" cy="46" r="9" fill="#D8566B"/><path d="M42 46l3 3 5-6" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+/* ═══════════════ 통계 ═══════════════ */
+function statsOf(sid){
+  const mine=reviews.filter(r=>r.authorId===sid&&!r.hidden);
+  const cm=reviews.reduce((a,r)=>a+(r.comments||[]).filter(c=>c.by===sid).length,0);
+  const rx=mine.reduce((a,r)=>a+rxCount(r),0);
+  const xp=mine.reduce((a,r)=>a+100+Math.min(100,Math.floor(rvLen(r)/10)),0)+rx*5+cm*10;
+  return {reviews:mine.length,cm,rx,xp,genres:new Set(mine.map(r=>r.genre)).size,quotes:mine.filter(r=>(r.quote||'').trim()).length,
+    longest:Math.max(0,...mine.map(rvLen)),low:mine.filter(r=>r.rating<=2).length,five:mine.filter(r=>r.rating===5).length};
+}
+function levelOf(xp){let l=LEVELS[0],next=null;for(let i=0;i<LEVELS.length;i++){if(xp>=LEVELS[i].xp){l=LEVELS[i];next=LEVELS[i+1]||null;}}return {...l,next};}
+const avatarOf=sid=>levelOf(statsOf(sid).xp).av;
+const nameOf=sid=>(students.find(s=>s.id===sid)||{}).name||'(누구?)';
+
+/* ═══════════════ 입장 화면 ═══════════════ */
+let pickId=null, pin='';
+function renderGate(){
+  $('heroLogo').innerHTML=LOGO;
+  const cls=(settings&&settings.className)||'';
+  $('gateSub').textContent=cls?cls+' 친구들의 책 이야기':'우리 반 책 이야기가 모이는 곳';
+  const needSetup=settings===null||!settings.teacherPin;
+  $('gateSetup').hidden=!needSetup; $('gateStudents').hidden=needSetup;
+  const g=$('nameGrid'); g.innerHTML='';
+  const list=[...students].sort((a,b)=>(a.num||99)-(b.num||99)||a.name.localeCompare(b.name,'ko'));
+  if(!list.length){g.innerHTML='<p style="grid-column:1/-1;text-align:center;color:var(--ink-3)">아직 학생 명단이 없어요. 선생님이 등록하면 이름이 나타나요.</p>';}
+  list.forEach(s=>{const b=document.createElement('button');b.innerHTML=`<span class="av">${avatarOf(s.id)}</span>${esc(s.name)}<small>서평 ${statsOf(s.id).reviews}편</small>`;b.onclick=()=>{pickId=s.id;pin='';$('pickName').textContent=s.name;$('gateStep1').hidden=true;$('gateStep2').hidden=false;drawDots();};g.appendChild(b);});
+}
+function drawDots(){[...$('dots').children].forEach((d,i)=>d.classList.toggle('on',i<pin.length));}
+(function buildPad(){const p=$('pinpad');['1','2','3','4','5','6','7','8','9','←','0','✓'].forEach(k=>{const b=document.createElement('button');b.textContent=k;b.onclick=()=>{
+  if(k==='←')pin=pin.slice(0,-1);else if(k==='✓')tryLogin();else if(pin.length<4)pin+=k;drawDots();if(pin.length===4&&k!=='✓')setTimeout(tryLogin,120);};p.appendChild(b);});})();
+function tryLogin(){const s=students.find(x=>x.id===pickId);if(!s)return;if(pin===s.pin){enter(s.id,false);}else{$('gateStep2').classList.add('shake');setTimeout(()=>$('gateStep2').classList.remove('shake'),400);pin='';drawDots();toast('비밀번호가 달라요. 다시 눌러 보세요');}}
+$('backNames').onclick=()=>{$('gateStep1').hidden=false;$('gateStep2').hidden=true;};
+$('teacherGateBtn').onclick=()=>{$('teacherGate').hidden=!$('teacherGate').hidden;$('tPin').focus();};
+$('tGo').onclick=()=>{if(settings&&$('tPin').value===settings.teacherPin){enter(null,true);}else toast('선생님 비밀번호가 달라요');};
+$('tPin').onkeydown=e=>{if(e.key==='Enter')$('tGo').click();};
+$('setupBtn').onclick=async()=>{const p=$('setupPin').value.trim();if(!/^\d{4}$/.test(p))return toast('숫자 4자리로 정해 주세요');await store.set('settings','main',{teacherPin:p,className:'',treeGoal:50,createdAt:Date.now()});enter(null,true);};
+
+function enter(sid,teacher){
+  isTeacher=teacher; me=teacher?null:students.find(s=>s.id===sid);
+  try{sessionStorage.setItem('bv_session',JSON.stringify({sid,teacher}));}catch(e){}
+  $('gate').style.display='none';$('app').classList.add('on');
+  buildTabs();showTab(teacher?'teach':'feed');renderAll();
+}
+function logout(){me=null;isTeacher=false;try{sessionStorage.removeItem('bv_session');}catch(e){}$('app').classList.remove('on');$('gate').style.display='grid';$('gateStep1').hidden=false;$('gateStep2').hidden=true;$('teacherGate').hidden=true;$('tPin').value='';renderGate();}
+$('logout').onclick=logout;
+
+/* ═══════════════ 탭 ═══════════════ */
+const ICON={feed:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4zm16 0h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z"/></svg>',
+  write:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.3V21h3.8L17.8 9.9l-3.7-3.7zm17.7-10.2a1 1 0 0 0 0-1.4l-2.3-2.3a1 1 0 0 0-1.4 0L15.2 5l3.7 3.8z"/></svg>',
+  tree:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 5 12h3l-3 5h6v5h2v-5h6l-3-5h3z"/></svg>',
+  me:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.4 0-8 2.2-8 5v3h16v-3c0-2.8-3.6-5-8-5z"/></svg>',
+  teach:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3 1 9l11 6 9-4.9V17h2V9zM5 13.2V17c0 2 3.1 4 7 4s7-2 7-4v-3.8l-7 3.8z"/></svg>'};
+function buildTabs(){
+  const tabs=isTeacher?[['feed','책방'],['tree','나무'],['teach','교사']]:[['feed','책방'],['write','쓰기'],['tree','나무'],['me','내 서재']];
+  for(const el of [$('tabsTop'),$('tabsBottom')]){el.innerHTML='';tabs.forEach(([k,t])=>{const b=document.createElement('button');b.dataset.tab=k;b.innerHTML=ICON[k]+'<span>'+t+'</span>';b.onclick=()=>showTab(k);el.appendChild(b);});}
+}
+function showTab(k){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+k));document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===k));window.scrollTo({top:0});if(k==='write'&&!editingId)loadDraft();if(k==='tree')renderTree(true);}
+$('meBtn').onclick=()=>{if(!isTeacher)showTab('me');};
+
+/* ═══════════════ 렌더 ═══════════════ */
+function renderAll(){
+  if(!$('app').classList.contains('on'))return;
+  $('brandClass').textContent=(settings&&settings.className)||'';
+  $('modePill').textContent=store.mode==='firebase'?'실시간 공유 중':'미리보기(내 기기 저장)';$('modePill').classList.toggle('live',store.mode==='firebase');
+  if(isTeacher){$('meAv').textContent='🍎';$('meName').textContent='선생님';$('meLv').textContent='교사 모드';}
+  else{me=students.find(s=>s.id===me.id)||me;const st=statsOf(me.id),lv=levelOf(st.xp);$('meAv').textContent=lv.av;$('meName').textContent=me.name;$('meLv').textContent=lv.n;}
+  renderFeed();renderRank();renderTree(false);if(!isTeacher)renderMe();if(isTeacher)renderTeach();
+  if(openId)openReview(openId,true);
+}
+function visibleReviews(){return reviews.filter(r=>isTeacher||!r.hidden);}
+function renderGenreFilters(){const f=$('genreFilters');f.innerHTML='';['전체',...GENRES].forEach(g=>{const b=document.createElement('button');b.textContent=g;b.classList.toggle('on',g===curFilter);b.onclick=()=>{curFilter=g;renderGenreFilters();renderFeed();};f.appendChild(b);});}
+function cardHtml(r,opts={}){
+  const isNew=Date.now()-r.createdAt<1000*60*60*24*2;
+  const rx=RX.map(x=>({...x,n:((r.reactions||{})[x.k]||[]).length})).filter(x=>x.n);
+  return `<article class="card book" data-id="${r.id}">
+    <span class="spine" style="background:${genreColor(r.genre)}"></span>
+    ${r.hidden?'<span class="hid">숨김</span>':isNew?'<span class="new">NEW</span>':''}
+    <div class="ttl">${esc(r.title)}</div>
+    <div class="auth">${esc(r.author||'지은이 미상')} · <span class="chip genre">${esc(r.genre)}</span></div>
+    <div>${starSvg(r.rating)}</div>
+    <div class="one">${esc(r.oneLine)}</div>
+    <div class="rx">${rx.map(x=>`<span>${x.e} ${x.n}</span>`).join('')}${(r.comments||[]).length?`<span>💬 ${r.comments.length}</span>`:''}</div>
+    <div class="who"><span class="av">${avatarOf(r.authorId)}</span>${esc(nameOf(r.authorId))} · ${fmtDate(r.createdAt)}</div>
+  </article>`;
+}
+function genreColor(g){const m={'동화·소설':'#4F8F5C','그림책':'#F2B84B','과학·자연':'#5B8FD6','역사·인물':'#B07A4A','만화·학습만화':'#D8566B','시·에세이':'#9A6BD1','지식·정보':'#3FA3A0','기타':'#95A3AA'};return m[g]||'#95A3AA';}
+function renderFeed(){
+  const q=$('q').value.trim().toLowerCase(),sort=$('sort').value;
+  let list=visibleReviews().filter(r=>curFilter==='전체'||r.genre===curFilter).filter(r=>!q||[r.title,r.author,nameOf(r.authorId)].join(' ').toLowerCase().includes(q));
+  list.sort((a,b)=>sort==='star'?(b.rating-a.rating)||(b.createdAt-a.createdAt):sort==='hot'?(rxCount(b)+(b.comments||[]).length)-(rxCount(a)+(a.comments||[]).length)||(b.createdAt-a.createdAt):b.createdAt-a.createdAt);
+  const f=$('feed');
+  f.innerHTML=list.length?list.map(r=>cardHtml(r)).join(''):`<div class="empty" style="grid-column:1/-1"><div class="big">📭</div>${reviews.length?'조건에 맞는 서평이 없어요':'아직 서평이 없어요. 첫 번째 열매를 맺어 볼까요?'}</div>`;
+  f.querySelectorAll('.book').forEach(el=>el.onclick=()=>openReview(el.dataset.id));
+}
+$('q').oninput=renderFeed;$('sort').onchange=renderFeed;
+function renderRank(){
+  const vr=visibleReviews();const box=$('rankBox');
+  if(vr.length<1){box.hidden=true;return;}box.hidden=false;
+  const byBook={};vr.forEach(r=>{const k=r.title.trim();(byBook[k]=byBook[k]||{t:k,n:0,s:0,rx:0}).n++;byBook[k].s+=r.rating;byBook[k].rx+=rxCount(r);});
+  const books=Object.values(byBook);
+  const most=[...books].sort((a,b)=>b.n-a.n||b.rx-a.rx).slice(0,3);
+  const best=[...books].sort((a,b)=>(b.s/b.n)-(a.s/a.n)||b.n-a.n).slice(0,3);
+  const hot=[...vr].sort((a,b)=>rxCount(b)-rxCount(a)).slice(0,3);
+  const li=(arr,fn)=>arr.map((x,i)=>`<li><i>${i+1}</i>${fn(x)}</li>`).join('')||'<li style="color:var(--ink-3)">아직 없어요</li>';
+  box.innerHTML=`<div><h3>📚 많이 읽은 책</h3><ol>${li(most,b=>`<span class="n">${esc(b.t)}</span><span class="v">${b.n}명</span>`)}</ol></div>
+  <div><h3>⭐ 별점 높은 책</h3><ol>${li(best,b=>`<span class="n">${esc(b.t)}</span><span class="v">${(b.s/b.n).toFixed(1)}</span>`)}</ol></div>
+  <div><h3>🔥 반응 많은 서평</h3><ol>${li(hot,r=>`<span class="n">${esc(nameOf(r.authorId))} · ${esc(r.title)}</span><span class="v">${rxCount(r)}</span>`)}</ol></div>`;
+}
+
+/* ═══════════════ 나무 ═══════════════ */
+function seeded(i){const x=Math.sin(i*9301+49297)*233280;return x-Math.floor(x);}
+function renderTree(animate){
+  const n=reviews.filter(r=>!r.hidden).length,goal=(settings&&settings.treeGoal)||50,pct=Math.min(100,n/goal*100);
+  $('treeGoal').textContent=`열매 ${n}개 / 목표 ${goal}개`;$('treeBar').style.width=pct+'%';
+  $('treeTitle').textContent=((settings&&settings.className)||'우리 반')+' 독서 나무';
+  const full=n>=goal;
+  let fruits='';
+  for(let i=0;i<Math.min(n,goal);i++){
+    const a=seeded(i+1)*Math.PI*2,rr=Math.sqrt(seeded(i+7))*0.9;
+    const cx=200+Math.cos(a)*rr*150,cy=140+Math.sin(a)*rr*105;
+    const c=['#D8566B','#F2B84B','#E67E5A'][i%3];
+    fruits+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="9" fill="${c}" ${animate&&i===n-1?'class="fruit-pop"':''}/><path d="M${(cx-1).toFixed(1)} ${(cy-8).toFixed(1)}q2-6 6-6" stroke="#4F8F5C" stroke-width="2" fill="none"/>`;
+  }
+  let flowers='';if(full){for(let i=0;i<18;i++){const a=seeded(i+99)*Math.PI*2,rr=Math.sqrt(seeded(i+55));flowers+=`<text x="${(200+Math.cos(a)*rr*135).toFixed(1)}" y="${(150+Math.sin(a)*rr*100).toFixed(1)}" font-size="18" text-anchor="middle">🌸</text>`;}}
+  const g1=full?'#5FA96E':'#4F8F5C';
+  $('treeSvg').innerHTML=`<svg viewBox="0 0 400 340" aria-label="독서 나무">
+    <ellipse cx="200" cy="318" rx="150" ry="16" fill="#DCEBD8"/>
+    <path d="M186 320V210q-6-40-40-60" stroke="#8A5A3B" stroke-width="18" fill="none" stroke-linecap="round"/>
+    <path d="M214 320V200q4-40 44-64" stroke="#8A5A3B" stroke-width="18" fill="none" stroke-linecap="round"/>
+    <rect x="182" y="200" width="36" height="122" rx="8" fill="#8A5A3B"/>
+    <circle cx="200" cy="150" r="118" fill="${g1}"/><circle cx="120" cy="170" r="70" fill="${g1}"/><circle cx="280" cy="170" r="70" fill="${g1}"/><circle cx="200" cy="80" r="70" fill="#6DB37A"/>
+    <circle cx="160" cy="120" r="50" fill="#7FC28B" opacity=".6"/>
+    ${fruits}${flowers}
+    <text x="200" y="335" font-size="12" fill="#5A6A73" text-anchor="middle" font-family="Gowun Dodum">${full?'목표 달성! 나무가 꽃을 피웠어요 🎉':''}</text>
+  </svg>`;
+  const lb=students.map(s=>({s,st:statsOf(s.id)})).filter(x=>x.st.reviews>0).sort((a,b)=>b.st.xp-a.st.xp).slice(0,10);
+  const max=Math.max(1,...lb.map(x=>x.st.xp));
+  $('leader').innerHTML=lb.map((x,i)=>{const lv=levelOf(x.st.xp);return `<div><span class="av">${lv.av}</span><span class="nm">${i+1}. ${esc(x.s.name)}</span><span class="bar"><i style="width:${x.st.xp/max*100}%"></i></span><span class="xp">${x.st.xp} xp</span></div>`;}).join('')||'<p style="color:var(--ink-3)">첫 서평을 쓰면 여기에 이름이 올라가요</p>';
+}
+
+/* ═══════════════ 내 서재 ═══════════════ */
+function renderMe(){
+  const st=statsOf(me.id),lv=levelOf(st.xp);
+  $('pAv').textContent=lv.av;$('pLv').textContent=lv.n;$('pName').textContent=me.name;
+  const base=lv.xp,nx=lv.next?lv.next.xp:null;
+  $('pBar').style.width=(nx?((st.xp-base)/(nx-base)*100):100)+'%';
+  $('pNext').textContent=nx?`${lv.next.n}까지 ${nx-st.xp} xp`:'최고 레벨이에요!';
+  $('sRev').textContent=st.reviews;$('sRx').textContent=st.rx;$('sCm').textContent=st.cm;
+  $('badges').innerHTML=BADGES.map(b=>`<div class="badge ${b.f(st)?'got':''}"><div class="ic">${b.ic}</div><b>${b.n}</b><small>${b.d}</small></div>`).join('');
+  const mine=reviews.filter(r=>r.authorId===me.id).sort((a,b)=>b.createdAt-a.createdAt);
+  const f=$('myFeed');f.innerHTML=mine.length?mine.map(r=>cardHtml(r)).join(''):'<div class="empty" style="grid-column:1/-1"><div class="big">🌱</div>아직 서평이 없어요.<br>첫 서평을 쓰면 알이 꿈틀거려요!</div>';
+  f.querySelectorAll('.book').forEach(el=>el.onclick=()=>openReview(el.dataset.id));
+}
+
+/* ═══════════════ 서평 상세 ═══════════════ */
+function openReview(id,silent){
+  const r=reviews.find(x=>x.id===id);if(!r){closeModal();return;}
+  openId=id;const sheet=$('sheet');
+  const canEdit=!isTeacher&&me&&r.authorId===me.id;
+  const myRx=k=>me&&((r.reactions||{})[k]||[]).includes(me.id);
+  const spoiler=r.spoiler&&!(sheet.dataset.reveal===id);
+  sheet.innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button>
+  <div class="rv">
+    <span class="chip genre">${esc(r.genre)}</span>
+    <h2>${esc(r.title)}</h2>
+    <div class="meta"><span>${esc(r.author||'지은이 미상')}</span>·<span>${avatarOf(r.authorId)} ${esc(nameOf(r.authorId))}</span>·<span>${fmtDate(r.createdAt)}${r.editedAt?' (수정됨)':''}</span></div>
+    <div class="row">${starSvg(r.rating)}<span style="color:var(--ink-2);font-size:14px">${STAR_WORDS[r.rating]||''}</span></div>
+    <p style="font-family:var(--font-disp);font-size:22px;margin:10px 0 0;color:var(--ink)">“${esc(r.oneLine)}”</p>
+    ${r.reco?`<p style="font-size:14px;color:var(--ink-2);margin-top:4px">👉 ${esc(r.reco)}에게 추천해요</p>`:''}
+    <section><h4>책 소개</h4><p>${esc(r.intro)}</p></section>
+    <section><h4>줄거리</h4><div class="spoiler ${spoiler?'hid':''}"><p>${esc(r.plot)}</p><div class="sp-btn"><button class="btn sm" id="spBtn">결말이 들어 있어요 · 살짝 보기 👀</button></div></div></section>
+    <section><h4>인상적인 부분</h4>${(r.quote||'').trim()?`<div class="quote">${esc(r.quote)}</div>`:''}<p>${esc(r.impress)}</p></section>
+    <div class="rxbar">${RX.map(x=>`<button data-rx="${x.k}" class="${myRx(x.k)?'on':''}" ${isTeacher?'disabled':''}>${x.e} ${x.t} <b>${((r.reactions||{})[x.k]||[]).length||''}</b></button>`).join('')}</div>
+    <section><h4>댓글 ${(r.comments||[]).length}</h4>
+      <div class="cmts">${(r.comments||[]).map((c,i)=>`<div class="cmt"><span class="av">${avatarOf(c.by)}</span><div><b>${esc(c.name)}</b><small>${fmtDate(c.at)}</small><p>${esc(c.text)}</p></div>${(isTeacher||(me&&c.by===me.id))?`<button class="del" data-ci="${i}">지우기</button>`:''}</div>`).join('')||'<p style="font-size:14px;color:var(--ink-3);margin:0">첫 댓글을 남겨 보세요. 친구가 좋아할 거예요!</p>'}</div>
+      ${isTeacher?'':`<div class="cmtform"><input type="text" id="cmtIn" placeholder="따뜻한 댓글 한 줄 (예: 나도 이 책 읽어봐야겠다!)" maxlength="120"><button class="btn sm" id="cmtBtn">남기기</button></div>`}
+    </section>
+    <div class="own">
+      ${canEdit?`<button class="btn ghost sm" id="editBtn">고치기</button><button class="btn ghost sm" id="delBtn" style="color:var(--berry)">지우기</button>`:''}
+      ${isTeacher?`<button class="btn ghost sm" id="hideBtn">${r.hidden?'다시 보이기':'숨기기'}</button><button class="btn berry sm" id="delBtn">삭제</button>`:''}
+    </div>
+  </div>`;
+  $('modal').classList.add('on');
+  $('mClose').onclick=closeModal;
+  const sp=$('spBtn');if(sp)sp.onclick=()=>{sheet.dataset.reveal=id;openReview(id,true);};
+  sheet.querySelectorAll('[data-rx]').forEach(b=>b.onclick=()=>toggleRx(r,b.dataset.rx));
+  sheet.querySelectorAll('.del').forEach(b=>b.onclick=()=>delComment(r,+b.dataset.ci));
+  const cb=$('cmtBtn');if(cb){cb.onclick=()=>addComment(r);$('cmtIn').onkeydown=e=>{if(e.key==='Enter')addComment(r);};}
+  const eb=$('editBtn');if(eb)eb.onclick=()=>{startEdit(r);closeModal();};
+  const db=$('delBtn');if(db)db.onclick=async()=>{if(!confirm('정말 지울까요? 되돌릴 수 없어요.'))return;await store.del('reviews',r.id);closeModal();toast('지웠어요');};
+  const hb=$('hideBtn');if(hb)hb.onclick=async()=>{await store.update('reviews',r.id,{hidden:!r.hidden});toast(r.hidden?'다시 보여요':'숨겼어요');};
+  if(!silent)sheet.scrollTop=0;
+}
+function closeModal(){$('modal').classList.remove('on');openId=null;delete $('sheet').dataset.reveal;}
+$('modal').onclick=e=>{if(e.target===$('modal'))closeModal();};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+async function toggleRx(r,k){
+  if(!me)return;const has=((r.reactions||{})[k]||[]).includes(me.id);
+  if(r.authorId===me.id&&!has){toast('내 서평엔 반응을 못 남겨요 😉');return;}
+  await store.update('reviews',r.id,{['reactions.'+k]:has?AR(me.id):AU(me.id)});
+}
+async function addComment(r){
+  const inp=$('cmtIn'),t=inp.value.trim();if(!t)return;
+  await store.update('reviews',r.id,{comments:AU({by:me.id,name:me.name,text:t,at:Date.now()})});inp.value='';toast('댓글을 남겼어요 +10xp');
+}
+async function delComment(r,i){const arr=[...(r.comments||[])];arr.splice(i,1);await store.update('reviews',r.id,{comments:arr});}
+
+/* ═══════════════ 쓰기 ═══════════════ */
+const F=['title','author','genre','intro','plot','quote','impress','one','reco'];
+(function initForm(){
+  $('f-genre').innerHTML=GENRES.map(g=>`<option>${g}</option>`).join('');
+  document.querySelectorAll('.hints').forEach(h=>{const t=$(h.dataset.for);h.querySelectorAll('button').forEach(b=>b.onclick=()=>{const v=t.value;t.value=(v&&!v.endsWith(' ')&&!v.endsWith('\n')?v+' ':v)+b.textContent+' ';t.focus();t.dispatchEvent(new Event('input'));});});
+  document.querySelectorAll('.cnt').forEach(c=>{const t=$(c.dataset.for);const upd=()=>{const n=t.value.length;c.textContent=n+'자'+(n<30?' · 30자 이상 써 보세요':n>=150?' · 훌륭해요!':' ');c.classList.toggle('ok',n>=30);};t.addEventListener('input',upd);upd();});
+  F.forEach(k=>$('f-'+k).addEventListener('input',saveDraft));$('f-spoiler').addEventListener('change',saveDraft);
+  const st=$('f-stars');const draw=()=>{st.innerHTML=starSvg(formRating).replace('<span class="stars ">','').replace(/<\/span>$/,'');$('starWord').textContent=STAR_WORDS[formRating]||'';};draw();
+  st.addEventListener('click',e=>{const s=e.target.closest('svg');if(s){formRating=+s.dataset.v;draw();saveDraft();}});
+  window._drawStars=draw;
+})();
+function formData(){const o={};F.forEach(k=>o[k]=$('f-'+k).value);o.rating=formRating;o.spoiler=$('f-spoiler').checked;return o;}
+function setForm(o){F.forEach(k=>$('f-'+k).value=o[k]||'');formRating=o.rating||0;$('f-spoiler').checked=!!o.spoiler;window._drawStars();document.querySelectorAll('.cnt').forEach(c=>$(c.dataset.for).dispatchEvent(new Event('input')));}
+function draftKey(){return 'bv_draft_'+(me?me.id:'x');}
+function saveDraft(){if(editingId||!me)return;try{localStorage.setItem(draftKey(),JSON.stringify(formData()));$('draftMsg').textContent='임시 저장됨';}catch(e){}}
+function loadDraft(){try{const d=localStorage.getItem(draftKey());if(d){setForm(JSON.parse(d));$('draftMsg').textContent='쓰던 글을 불러왔어요';}}catch(e){}}
+function clearForm(){setForm({});editingId=null;$('writeTitle').textContent='서평 쓰기';$('cancelEdit').hidden=true;$('submitBtn').textContent='서평 올리기 🌱';$('draftMsg').textContent='';try{localStorage.removeItem(draftKey());}catch(e){}}
+function startEdit(r){editingId=r.id;setForm({...r,one:r.oneLine});$('writeTitle').textContent='서평 고치기';$('cancelEdit').hidden=false;$('submitBtn').textContent='고친 내용 저장';showTab('write');}
+$('cancelEdit').onclick=()=>{clearForm();showTab('feed');};
+$('submitBtn').onclick=async()=>{
+  const d=formData();
+  const need=[[!d.title.trim(),'책 제목을 써 주세요','f-title'],[d.intro.trim().length<30,'책 소개를 30자 이상 써 주세요','f-intro'],[d.plot.trim().length<30,'줄거리를 30자 이상 써 주세요','f-plot'],[d.impress.trim().length<30,'인상적인 부분을 30자 이상 써 주세요','f-impress'],[!d.rating,'별점을 골라 주세요','f-stars'],[!d.one.trim(),'한줄평을 써 주세요','f-one']];
+  for(const [bad,msg,id] of need){if(bad){toast(msg);const el=$(id);el.scrollIntoView({behavior:'smooth',block:'center'});if(el.focus)el.focus({preventScroll:true});return;}}
+  const body={authorId:me.id,title:d.title.trim(),author:d.author.trim(),genre:d.genre,intro:d.intro.trim(),plot:d.plot.trim(),spoiler:d.spoiler,quote:d.quote.trim(),impress:d.impress.trim(),rating:d.rating,oneLine:d.one.trim(),reco:d.reco.trim()};
+  $('submitBtn').disabled=true;
+  try{
+    if(editingId){const old=reviews.find(r=>r.id===editingId);await store.set('reviews',editingId,{...old,...body,id:undefined,editedAt:Date.now()});toast('고친 내용을 저장했어요');}
+    else{await store.set('reviews',uid(),{...body,createdAt:Date.now(),reactions:{},comments:[],hidden:false});celebrate();}
+    const wasEdit=!!editingId;clearForm();showTab(wasEdit?'feed':'tree');
+  }catch(e){console.error(e);toast('저장에 실패했어요. 다시 눌러 보세요');}
+  $('submitBtn').disabled=false;
+};
+function celebrate(){
+  toast('열매가 하나 열렸어요! 🍎 +100xp');
+  const c=$('confetti');c.hidden=false;const ctx=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;
+  const ps=Array.from({length:90},()=>({x:Math.random()*c.width,y:-20-Math.random()*200,v:2+Math.random()*3,r:4+Math.random()*5,a:Math.random()*6,col:['#D8566B','#F2B84B','#4F8F5C','#5B8FD6'][Math.random()*4|0]}));
+  let t=0;(function step(){ctx.clearRect(0,0,c.width,c.height);ps.forEach(p=>{p.y+=p.v;p.a+=.1;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);ctx.fillStyle=p.col;ctx.fillRect(-p.r,-p.r/2,p.r*2,p.r);ctx.restore();});if(++t<140)requestAnimationFrame(step);else c.hidden=true;})();
+}
+
+/* ═══════════════ 교사 ═══════════════ */
+function renderTeach(){
+  $('setClass').value=(settings&&settings.className)||'';$('setGoal').value=(settings&&settings.treeGoal)||50;
+  const list=[...students].sort((a,b)=>(a.num||99)-(b.num||99)||a.name.localeCompare(b.name,'ko'));
+  $('stuList').innerHTML=list.map(s=>`<div><span>${avatarOf(s.id)}</span><span class="nm">${esc(s.name)}</span><span style="font-size:12px;color:var(--ink-3)">서평 ${statsOf(s.id).reviews}</span><code>${esc(s.pin)}</code><button data-a="pin" data-id="${s.id}">비번 변경</button><button data-a="del" data-id="${s.id}">삭제</button></div>`).join('')||'<p style="color:var(--ink-3);font-size:14px">아직 학생이 없어요. 위에서 추가해 주세요.</p>';
+  $('stuList').querySelectorAll('button').forEach(b=>b.onclick=async()=>{const s=students.find(x=>x.id===b.dataset.id);
+    if(b.dataset.a==='pin'){const p=prompt(`${s.name}의 새 비밀번호(숫자 4자리)`,'');if(p&&/^\d{4}$/.test(p)){await store.update('students',s.id,{pin:p});toast('바꿨어요');}else if(p!==null)toast('숫자 4자리여야 해요');}
+    else{if(confirm(`${s.name} 학생을 명단에서 지울까요? (쓴 서평은 남아요)`))await store.del('students',s.id);}});
+}
+const randPin=()=>String(Math.floor(1000+Math.random()*9000));
+async function addStudent(name,p){name=name.trim();if(!name)return false;p=(p||'').trim()||randPin();if(!/^\d{4}$/.test(p)){toast(name+': 비밀번호는 숫자 4자리');return false;}
+  if(students.some(s=>s.name===name)){toast(name+'은(는) 이미 있어요');return false;}
+  await store.set('students',uid(),{name,pin:p,num:students.length+1,createdAt:Date.now()});return true;}
+$('addStu').onclick=async()=>{if(await addStudent($('newName').value,$('newPin').value)){$('newName').value='';$('newPin').value='';toast('추가했어요');}};
+$('newPin').onkeydown=e=>{if(e.key==='Enter')$('addStu').click();};
+$('bulkAdd').onclick=async()=>{const lines=$('bulk').value.split('\n').map(l=>l.trim()).filter(Boolean);let n=0;for(const l of lines){const [nm,p]=l.split(/[,\t]/);if(await addStudent(nm||'',p))n++;}$('bulk').value='';toast(n+'명 추가했어요');};
+$('saveSettings').onclick=async()=>{const p=$('setTPin').value.trim();if(p&&!/^\d{4}$/.test(p))return toast('비밀번호는 숫자 4자리');
+  await store.update('settings','main',{className:$('setClass').value.trim(),treeGoal:Math.max(5,+$('setGoal').value||50),...(p?{teacherPin:p}:{})});$('setTPin').value='';toast('저장했어요');};
+$('csvBtn').onclick=()=>{
+  const H=['이름','책 제목','지은이','장르','별점','한줄평','책 소개','줄거리','인상적인 문장','인상적인 부분','추천 대상','글자 수','받은 반응','댓글 수','작성일','숨김'];
+  const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const rows=[...reviews].sort((a,b)=>nameOf(a.authorId).localeCompare(nameOf(b.authorId),'ko')||a.createdAt-b.createdAt).map(r=>[nameOf(r.authorId),r.title,r.author,r.genre,r.rating,r.oneLine,r.intro,r.plot,r.quote,r.impress,r.reco,rvLen(r),rxCount(r),(r.comments||[]).length,new Date(r.createdAt).toLocaleDateString('ko-KR'),r.hidden?'예':''].map(q).join(','));
+  const blob=new Blob(['﻿'+[H.join(','),...rows].join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`서평기록_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+};
+
+/* ═══════════════ 데이터 구독 & 시작 ═══════════════ */
+function seedDemoIfEmpty(){
+  if(store.mode!=='local')return;
+  if(students.length||reviews.length||settings)return;
+  const ids=['s1','s2','s3','s4'];const names=['김하늘','이바다','박소망','최온유'];
+  names.forEach((n,i)=>store.set('students',ids[i],{name:n,pin:'1234',num:i+1,createdAt:Date.now()}));
+  store.set('settings','main',{teacherPin:'0000',className:'예시 5학년 1반',treeGoal:30,createdAt:Date.now()});
+  const d=Date.now();
+  const demo=[
+    {authorId:'s1',title:'마당을 나온 암탉',author:'황선미',genre:'동화·소설',rating:5,oneLine:'울면서 읽었는데 마지막엔 박수를 쳤어요',intro:'(예시) 이 책은 양계장을 탈출한 암탉 잎싹이 자기 알을 품고 싶다는 꿈을 이뤄 가는 이야기예요. 표지에 있는 암탉의 눈이 너무 슬퍼 보여서 골랐어요.',plot:'잎싹은 양계장에서 알만 낳던 암탉이에요. 어느 날 마당으로 나가고 싶어서 죽은 척을 해서 탈출해요. 그런데 마당 동물들이 잎싹을 받아 주지 않아요. 잎싹은 버려진 청둥오리 알을 품어서 초록머리를 키우게 되고, 결국 초록머리를 떠나보내요.',quote:'"소망을 가지고 있다는 건 살아 있다는 뜻이야."',impress:'잎싹이 족제비에게 자기 몸을 내어 주는 마지막 장면이 가장 기억에 남아요. 무섭기만 했던 족제비도 새끼를 키우는 엄마였다는 걸 알고 마음이 이상해졌어요. 만약 나였다면 그렇게 못 했을 것 같아요.',reco:'울고 싶은 날',spoiler:true,createdAt:d-86400000*5,reactions:{like:['s2','s3'],cry:['s2','s4']},comments:[{by:'s2',name:'이바다',text:'나도 이 책 읽고 울었어 ㅠㅠ',at:d-86400000*4}],hidden:false},
+    {authorId:'s2',title:'푸른 사자 와니니',author:'이현',genre:'동화·소설',rating:4,oneLine:'약한 사자도 대장이 될 수 있다는 걸 보여 준 책',intro:'(예시) 무리에서 쫓겨난 어린 암사자 와니니가 자기만의 무리를 만드는 이야기예요. 친구가 재미있다고 추천해 줘서 읽었어요.',plot:'와니니는 몸이 작고 귀가 밝아서 사냥에 방해가 된다고 무리에서 쫓겨나요. 어느 날 혼자 초원을 떠돌다가 떠돌이 수사자 아산테와 잠보를 만나요. 셋은 서로 도우며 살아남고, 와니니는 자기가 잘하는 것으로 리더가 돼요.',quote:'',impress:'와니니가 사냥을 못 해서 창피해하던 장면에서 나도 체육 시간에 그런 적이 있어서 공감했어요. 이 부분에서 나는 잘하는 게 다 다르다는 걸 배웠어요.',reco:'모험을 좋아하는 친구',spoiler:false,createdAt:d-86400000*2,reactions:{like:['s1'],read:['s3','s4','s1']},comments:[],hidden:false},
+    {authorId:'s3',title:'설민석의 한국사 대모험 1',author:'설민석',genre:'만화·학습만화',rating:3,oneLine:'재미있는데 만화라서 금방 끝나요',intro:'(예시) 아이들이 시간여행을 하면서 한국사를 배우는 학습만화예요. 사회 시간에 선사시대를 배워서 골랐어요.',plot:'평강, 온달, 로빈 세 친구가 설쌤과 함께 과거로 떠나요. 구석기 사람들을 만나고 불을 피우는 법도 배워요. 그런데 로빈이 사고를 쳐서 역사가 바뀔 뻔해요. 결국 무사히 돌아와요.',quote:'',impress:'구석기 사람들이 뗀석기로 고기를 자르는 장면이 인상적이었어요. 교과서 그림으로만 봤는데 만화로 보니까 어떻게 쓰는 건지 확실히 알겠더라고요.',reco:'역사를 어려워하는 친구',spoiler:false,createdAt:d-3600000*5,reactions:{laugh:['s1','s2']},comments:[],hidden:false},
+  ];
+  demo.forEach(r=>store.set('reviews',uid(),r));
+}
+let loaded={students:false,reviews:false,settings:false};
+function afterLoad(){
+  if(!Object.values(loaded).every(Boolean))return;
+  if(!window._booted){window._booted=true;seedDemoIfEmpty();renderGenreFilters();
+    try{const s=JSON.parse(sessionStorage.getItem('bv_session')||'null');if(s&&(s.teacher||students.find(x=>x.id===s.sid)))enter(s.sid,s.teacher);}catch(e){}
+  }
+  if(prevReviewCount!==null&&reviews.length>prevReviewCount&&$('app').classList.contains('on')&&!isTeacher){const last=[...reviews].sort((a,b)=>b.createdAt-a.createdAt)[0];if(last&&last.authorId!==me.id&&Date.now()-last.createdAt<60000)toast(`${nameOf(last.authorId)}이(가) 새 서평을 올렸어요!`);}
+  prevReviewCount=reviews.length;
+  renderGate();renderAll();
+}
+store.watch('students',d=>{students=d;loaded.students=true;afterLoad();});
+store.watch('reviews',d=>{reviews=d;loaded.reviews=true;afterLoad();});
+store.watch('settings',d=>{settings=d.find(x=>x.id==='main')||null;loaded.settings=true;afterLoad();});
+$('brandLogo').insertAdjacentHTML('afterbegin',LOGO);
+</script>
+</body>
+</html>

@@ -371,9 +371,11 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
         <div class="card step">
           <span class="no">4</span>
           <h3>나의 평가</h3>
-          <div class="why">별점을 주고, 이 책을 한 문장으로 평가해 봐요. 누구에게 추천하고 싶나요?</div>
+          <div class="why">이 책은 어땠나요? 좋은 점과 아쉬운 점, 별점을 그렇게 준 이유를 써 봐요. 서평의 핵심이에요.</div>
           <div class="row" style="margin-bottom:10px"><span style="font-family:var(--font-disp);font-size:17px">별점</span><div class="stars big" id="f-stars"></div><span id="starWord" style="color:var(--ink-2);font-size:14px"></span></div>
-          <label class="f">한줄평 <span>필수 · 카드에 크게 보여요</span></label>
+          <div class="hints" data-for="f-eval"><span class="lbl">이렇게 시작해 봐 →</span><button>이 책의 좋은 점은</button><button>아쉬운 점은</button><button>내가 별 ○개를 준 이유는</button><button>이 책을 읽고 나서 나는</button><button>다른 책과 비교하면</button></div>
+          <textarea id="f-eval" placeholder="이 책은 어땠나요? 좋은 점·아쉬운 점, 별점을 그렇게 준 이유, 읽고 나서 달라진 생각을 써 주세요"></textarea><div class="cnt" data-for="f-eval"></div>
+          <label class="f" style="margin-top:12px">한줄평 <span>필수 · 카드에 크게 보여요</span></label>
           <input type="text" id="f-one" placeholder="예) 웃다가 울다가 마지막엔 박수 친 책!" maxlength="60">
           <div class="hints" data-for="f-reco" style="margin-top:12px"><span class="lbl">추천 대상 →</span><button>모험을 좋아하는 친구</button><button>동물을 좋아하는 친구</button><button>울고 싶은 날</button><button>웃고 싶을 때</button><button>우리 반 모두</button></div>
           <input type="text" id="f-reco" placeholder="이런 친구에게 추천해요" maxlength="60">
@@ -447,6 +449,7 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
             <p style="font-size:14px;color:var(--ink-2);margin:0 0 10px">서평 전체를 CSV(엑셀)로 저장해요. 평가 기록·학부모 상담 자료로 쓸 수 있어요.</p>
             <button class="btn honey" id="csvBtn">CSV 내려받기</button>
             <p style="font-size:13px;color:var(--ink-3);margin:12px 0 0">서평 숨기기·삭제는 책방에서 서평을 열면 아래에 버튼이 있어요.</p>
+            <div id="localReset" hidden style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)"><p style="font-size:13px;color:var(--ink-2);margin:0 0 8px">지금은 <b>미리보기 모드</b>(이 기기에만 저장)예요. 예시 자료를 지우고 빈 상태로 시작할 수 있어요.</p><button class="btn ghost sm" id="localResetBtn" style="color:var(--berry)">미리보기 데이터 모두 지우기</button></div>
           </div>
         </div>
       </div>
@@ -468,12 +471,12 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
 ═══════════════════════════════════════════════ -->
 <script>
 window.FIREBASE_CONFIG = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: ""
+  apiKey: "AIzaSyDUWiwYK_9d7aVZsFCFN59tIJSf6iJ4Fyk",
+  authDomain: "bookvillage-3f260.firebaseapp.com",
+  projectId: "bookvillage-3f260",
+  storageBucket: "bookvillage-3f260.firebasestorage.app",
+  messagingSenderId: "1086512678657",
+  appId: "1:1086512678657:web:eef2393e879417ea46fd00"
 };
 </script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -527,8 +530,13 @@ function makeFirestore(cfg){
     del:(col,id)=>fs.collection(col).doc(id).delete(),
   };
 }
-const HAS_FB = !!(window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.projectId && window.firebase);
+const CFG_SET = !!(window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.projectId);
+const HAS_FB = CFG_SET && !!window.firebase;
 const store = HAS_FB ? makeFirestore(window.FIREBASE_CONFIG) : makeLocalStore();
+if(CFG_SET && !window.firebase){
+  document.body.insertAdjacentHTML('afterbegin','<div style="position:fixed;left:0;right:0;top:0;z-index:999;background:#D8566B;color:#fff;padding:10px 16px;font-size:14px;text-align:center">⚠️ Firebase 연결 파일(gstatic.com)을 불러오지 못했어요. 이 네트워크에서 차단된 것 같아요. 지금은 이 기기에만 저장되는 미리보기 상태입니다. 휴대폰 핫스팟이나 다른 네트워크에서 다시 열어 보세요.</div>');
+  document.body.style.paddingTop='44px';
+}
 
 /* ═══════════════ 상수 ═══════════════ */
 const GENRES=['동화·소설','그림책','과학·자연','역사·인물','만화·학습만화','시·에세이','지식·정보','기타'];
@@ -556,7 +564,7 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate=t=>{const d=new Date(t);return `${d.getMonth()+1}월 ${d.getDate()}일`;};
 const rxCount=r=>RX.reduce((a,x)=>a+((r.reactions||{})[x.k]||[]).length,0);
-const rvLen=r=>(r.intro||'').length+(r.plot||'').length+(r.impress||'').length;
+const rvLen=r=>(r.intro||'').length+(r.plot||'').length+(r.impress||'').length+(r.evaluation||'').length;
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2200);}
 const starSvg=(n,cls='')=>`<span class="stars ${cls}">${[1,2,3,4,5].map(i=>`<svg viewBox="0 0 24 24" data-v="${i}"><path class="${i<=n?'star-on':'star-off'}" d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>`).join('')}</span>`;
 const LOGO=`<svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><rect x="10" y="12" width="44" height="40" rx="6" fill="#4F8F5C"/><rect x="16" y="18" width="32" height="34" rx="3" fill="#F3F6EE"/><path d="M40 12v22l-5-4-5 4V12z" fill="#F2B84B"/><path d="M20 26h14M20 32h18M20 38h12" stroke="#D5DECF" stroke-width="2.5" stroke-linecap="round"/><circle cx="46" cy="46" r="9" fill="#D8566B"/><path d="M42 46l3 3 5-6" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
@@ -732,6 +740,7 @@ function openReview(id,silent){
     <section><h4>책 소개</h4><p>${esc(r.intro)}</p></section>
     <section><h4>줄거리</h4><div class="spoiler ${spoiler?'hid':''}"><p>${esc(r.plot)}</p><div class="sp-btn"><button class="btn sm" id="spBtn">결말이 들어 있어요 · 살짝 보기 👀</button></div></div></section>
     <section><h4>인상적인 부분</h4>${(r.quote||'').trim()?`<div class="quote">${esc(r.quote)}</div>`:''}<p>${esc(r.impress)}</p></section>
+    <section><h4>나의 평가 ${starSvg(r.rating)}</h4><p>${esc(r.evaluation||'')}</p></section>
     <div class="rxbar">${RX.map(x=>`<button data-rx="${x.k}" class="${myRx(x.k)?'on':''}" ${isTeacher?'disabled':''}>${x.e} ${x.t} <b>${((r.reactions||{})[x.k]||[]).length||''}</b></button>`).join('')}</div>
     <section><h4>댓글 ${(r.comments||[]).length}</h4>
       <div class="cmts">${(r.comments||[]).map((c,i)=>`<div class="cmt"><span class="av">${avatarOf(c.by)}</span><div><b>${esc(c.name)}</b><small>${fmtDate(c.at)}</small><p>${esc(c.text)}</p></div>${(isTeacher||(me&&c.by===me.id))?`<button class="del" data-ci="${i}">지우기</button>`:''}</div>`).join('')||'<p style="font-size:14px;color:var(--ink-3);margin:0">첫 댓글을 남겨 보세요. 친구가 좋아할 거예요!</p>'}</div>
@@ -768,7 +777,7 @@ async function addComment(r){
 async function delComment(r,i){const arr=[...(r.comments||[])];arr.splice(i,1);await store.update('reviews',r.id,{comments:arr});}
 
 /* ═══════════════ 쓰기 ═══════════════ */
-const F=['title','author','genre','intro','plot','quote','impress','one','reco'];
+const F=['title','author','genre','intro','plot','quote','impress','eval','one','reco'];
 (function initForm(){
   $('f-genre').innerHTML=GENRES.map(g=>`<option>${g}</option>`).join('');
   document.querySelectorAll('.hints').forEach(h=>{const t=$(h.dataset.for);h.querySelectorAll('button').forEach(b=>b.onclick=()=>{const v=t.value;t.value=(v&&!v.endsWith(' ')&&!v.endsWith('\n')?v+' ':v)+b.textContent+' ';t.focus();t.dispatchEvent(new Event('input'));});});
@@ -784,13 +793,13 @@ function draftKey(){return 'bv_draft_'+(me?me.id:'x');}
 function saveDraft(){if(editingId||!me)return;try{localStorage.setItem(draftKey(),JSON.stringify(formData()));$('draftMsg').textContent='임시 저장됨';}catch(e){}}
 function loadDraft(){try{const d=localStorage.getItem(draftKey());if(d){setForm(JSON.parse(d));$('draftMsg').textContent='쓰던 글을 불러왔어요';}}catch(e){}}
 function clearForm(){setForm({});editingId=null;$('writeTitle').textContent='서평 쓰기';$('cancelEdit').hidden=true;$('submitBtn').textContent='서평 올리기 🌱';$('draftMsg').textContent='';try{localStorage.removeItem(draftKey());}catch(e){}}
-function startEdit(r){editingId=r.id;setForm({...r,one:r.oneLine});$('writeTitle').textContent='서평 고치기';$('cancelEdit').hidden=false;$('submitBtn').textContent='고친 내용 저장';showTab('write');}
+function startEdit(r){editingId=r.id;setForm({...r,one:r.oneLine,eval:r.evaluation});$('writeTitle').textContent='서평 고치기';$('cancelEdit').hidden=false;$('submitBtn').textContent='고친 내용 저장';showTab('write');}
 $('cancelEdit').onclick=()=>{clearForm();showTab('feed');};
 $('submitBtn').onclick=async()=>{
   const d=formData();
-  const need=[[!d.title.trim(),'책 제목을 써 주세요','f-title'],[d.intro.trim().length<30,'책 소개를 30자 이상 써 주세요','f-intro'],[d.plot.trim().length<30,'줄거리를 30자 이상 써 주세요','f-plot'],[d.impress.trim().length<30,'인상적인 부분을 30자 이상 써 주세요','f-impress'],[!d.rating,'별점을 골라 주세요','f-stars'],[!d.one.trim(),'한줄평을 써 주세요','f-one']];
+  const need=[[!d.title.trim(),'책 제목을 써 주세요','f-title'],[d.intro.trim().length<30,'책 소개를 30자 이상 써 주세요','f-intro'],[d.plot.trim().length<30,'줄거리를 30자 이상 써 주세요','f-plot'],[d.impress.trim().length<30,'인상적인 부분을 30자 이상 써 주세요','f-impress'],[!d.rating,'별점을 골라 주세요','f-stars'],[d.eval.trim().length<30,'나의 평가를 30자 이상 써 주세요','f-eval'],[!d.one.trim(),'한줄평을 써 주세요','f-one']];
   for(const [bad,msg,id] of need){if(bad){toast(msg);const el=$(id);el.scrollIntoView({behavior:'smooth',block:'center'});if(el.focus)el.focus({preventScroll:true});return;}}
-  const body={authorId:me.id,title:d.title.trim(),author:d.author.trim(),genre:d.genre,intro:d.intro.trim(),plot:d.plot.trim(),spoiler:d.spoiler,quote:d.quote.trim(),impress:d.impress.trim(),rating:d.rating,oneLine:d.one.trim(),reco:d.reco.trim()};
+  const body={authorId:me.id,title:d.title.trim(),author:d.author.trim(),genre:d.genre,intro:d.intro.trim(),plot:d.plot.trim(),spoiler:d.spoiler,quote:d.quote.trim(),impress:d.impress.trim(),evaluation:d.eval.trim(),rating:d.rating,oneLine:d.one.trim(),reco:d.reco.trim()};
   $('submitBtn').disabled=true;
   try{
     if(editingId){const old=reviews.find(r=>r.id===editingId);await store.set('reviews',editingId,{...old,...body,id:undefined,editedAt:Date.now()});toast('고친 내용을 저장했어요');}
@@ -808,6 +817,7 @@ function celebrate(){
 
 /* ═══════════════ 교사 ═══════════════ */
 function renderTeach(){
+  $('localReset').hidden=store.mode!=='local';
   $('setClass').value=(settings&&settings.className)||'';$('setGoal').value=(settings&&settings.treeGoal)||50;
   const list=[...students].sort((a,b)=>(a.num||99)-(b.num||99)||a.name.localeCompare(b.name,'ko'));
   $('stuList').innerHTML=list.map(s=>`<div><span>${avatarOf(s.id)}</span><span class="nm">${esc(s.name)}</span><span style="font-size:12px;color:var(--ink-3)">서평 ${statsOf(s.id).reviews}</span><code>${esc(s.pin)}</code><button data-a="pin" data-id="${s.id}">비번 변경</button><button data-a="del" data-id="${s.id}">삭제</button></div>`).join('')||'<p style="color:var(--ink-3);font-size:14px">아직 학생이 없어요. 위에서 추가해 주세요.</p>';
@@ -824,10 +834,11 @@ $('newPin').onkeydown=e=>{if(e.key==='Enter')$('addStu').click();};
 $('bulkAdd').onclick=async()=>{const lines=$('bulk').value.split('\n').map(l=>l.trim()).filter(Boolean);let n=0;for(const l of lines){const [nm,p]=l.split(/[,\t]/);if(await addStudent(nm||'',p))n++;}$('bulk').value='';toast(n+'명 추가했어요');};
 $('saveSettings').onclick=async()=>{const p=$('setTPin').value.trim();if(p&&!/^\d{4}$/.test(p))return toast('비밀번호는 숫자 4자리');
   await store.update('settings','main',{className:$('setClass').value.trim(),treeGoal:Math.max(5,+$('setGoal').value||50),...(p?{teacherPin:p}:{})});$('setTPin').value='';toast('저장했어요');};
+$('localResetBtn').onclick=()=>{if(!confirm('이 기기에 저장된 미리보기 데이터(예시 학생·서평 포함)를 모두 지울까요?'))return;try{localStorage.removeItem('bookvillage_local_v1');sessionStorage.clear();}catch(e){}location.reload();};
 $('csvBtn').onclick=()=>{
-  const H=['이름','책 제목','지은이','장르','별점','한줄평','책 소개','줄거리','인상적인 문장','인상적인 부분','추천 대상','글자 수','받은 반응','댓글 수','작성일','숨김'];
+  const H=['이름','책 제목','지은이','장르','별점','한줄평','책 소개','줄거리','인상적인 문장','인상적인 부분','나의 평가','추천 대상','글자 수','받은 반응','댓글 수','작성일','숨김'];
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
-  const rows=[...reviews].sort((a,b)=>nameOf(a.authorId).localeCompare(nameOf(b.authorId),'ko')||a.createdAt-b.createdAt).map(r=>[nameOf(r.authorId),r.title,r.author,r.genre,r.rating,r.oneLine,r.intro,r.plot,r.quote,r.impress,r.reco,rvLen(r),rxCount(r),(r.comments||[]).length,new Date(r.createdAt).toLocaleDateString('ko-KR'),r.hidden?'예':''].map(q).join(','));
+  const rows=[...reviews].sort((a,b)=>nameOf(a.authorId).localeCompare(nameOf(b.authorId),'ko')||a.createdAt-b.createdAt).map(r=>[nameOf(r.authorId),r.title,r.author,r.genre,r.rating,r.oneLine,r.intro,r.plot,r.quote,r.impress,r.evaluation,r.reco,rvLen(r),rxCount(r),(r.comments||[]).length,new Date(r.createdAt).toLocaleDateString('ko-KR'),r.hidden?'예':''].map(q).join(','));
   const blob=new Blob(['﻿'+[H.join(','),...rows].join('\r\n')],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`서평기록_${new Date().toISOString().slice(0,10)}.csv`;a.click();
 };
@@ -836,14 +847,15 @@ $('csvBtn').onclick=()=>{
 function seedDemoIfEmpty(){
   if(store.mode!=='local')return;
   if(students.length||reviews.length||settings)return;
+  try{if(localStorage.getItem('bv_seeded'))return;localStorage.setItem('bv_seeded','1');}catch(e){}
   const ids=['s1','s2','s3','s4'];const names=['김하늘','이바다','박소망','최온유'];
   names.forEach((n,i)=>store.set('students',ids[i],{name:n,pin:'1234',num:i+1,createdAt:Date.now()}));
   store.set('settings','main',{teacherPin:'0000',className:'예시 5학년 1반',treeGoal:30,createdAt:Date.now()});
   const d=Date.now();
   const demo=[
-    {authorId:'s1',title:'마당을 나온 암탉',author:'황선미',genre:'동화·소설',rating:5,oneLine:'울면서 읽었는데 마지막엔 박수를 쳤어요',intro:'(예시) 이 책은 양계장을 탈출한 암탉 잎싹이 자기 알을 품고 싶다는 꿈을 이뤄 가는 이야기예요. 표지에 있는 암탉의 눈이 너무 슬퍼 보여서 골랐어요.',plot:'잎싹은 양계장에서 알만 낳던 암탉이에요. 어느 날 마당으로 나가고 싶어서 죽은 척을 해서 탈출해요. 그런데 마당 동물들이 잎싹을 받아 주지 않아요. 잎싹은 버려진 청둥오리 알을 품어서 초록머리를 키우게 되고, 결국 초록머리를 떠나보내요.',quote:'"소망을 가지고 있다는 건 살아 있다는 뜻이야."',impress:'잎싹이 족제비에게 자기 몸을 내어 주는 마지막 장면이 가장 기억에 남아요. 무섭기만 했던 족제비도 새끼를 키우는 엄마였다는 걸 알고 마음이 이상해졌어요. 만약 나였다면 그렇게 못 했을 것 같아요.',reco:'울고 싶은 날',spoiler:true,createdAt:d-86400000*5,reactions:{like:['s2','s3'],cry:['s2','s4']},comments:[{by:'s2',name:'이바다',text:'나도 이 책 읽고 울었어 ㅠㅠ',at:d-86400000*4}],hidden:false},
-    {authorId:'s2',title:'푸른 사자 와니니',author:'이현',genre:'동화·소설',rating:4,oneLine:'약한 사자도 대장이 될 수 있다는 걸 보여 준 책',intro:'(예시) 무리에서 쫓겨난 어린 암사자 와니니가 자기만의 무리를 만드는 이야기예요. 친구가 재미있다고 추천해 줘서 읽었어요.',plot:'와니니는 몸이 작고 귀가 밝아서 사냥에 방해가 된다고 무리에서 쫓겨나요. 어느 날 혼자 초원을 떠돌다가 떠돌이 수사자 아산테와 잠보를 만나요. 셋은 서로 도우며 살아남고, 와니니는 자기가 잘하는 것으로 리더가 돼요.',quote:'',impress:'와니니가 사냥을 못 해서 창피해하던 장면에서 나도 체육 시간에 그런 적이 있어서 공감했어요. 이 부분에서 나는 잘하는 게 다 다르다는 걸 배웠어요.',reco:'모험을 좋아하는 친구',spoiler:false,createdAt:d-86400000*2,reactions:{like:['s1'],read:['s3','s4','s1']},comments:[],hidden:false},
-    {authorId:'s3',title:'설민석의 한국사 대모험 1',author:'설민석',genre:'만화·학습만화',rating:3,oneLine:'재미있는데 만화라서 금방 끝나요',intro:'(예시) 아이들이 시간여행을 하면서 한국사를 배우는 학습만화예요. 사회 시간에 선사시대를 배워서 골랐어요.',plot:'평강, 온달, 로빈 세 친구가 설쌤과 함께 과거로 떠나요. 구석기 사람들을 만나고 불을 피우는 법도 배워요. 그런데 로빈이 사고를 쳐서 역사가 바뀔 뻔해요. 결국 무사히 돌아와요.',quote:'',impress:'구석기 사람들이 뗀석기로 고기를 자르는 장면이 인상적이었어요. 교과서 그림으로만 봤는데 만화로 보니까 어떻게 쓰는 건지 확실히 알겠더라고요.',reco:'역사를 어려워하는 친구',spoiler:false,createdAt:d-3600000*5,reactions:{laugh:['s1','s2']},comments:[],hidden:false},
+    {authorId:'s1',title:'마당을 나온 암탉',author:'황선미',genre:'동화·소설',rating:5,oneLine:'울면서 읽었는데 마지막엔 박수를 쳤어요',intro:'(예시) 이 책은 양계장을 탈출한 암탉 잎싹이 자기 알을 품고 싶다는 꿈을 이뤄 가는 이야기예요. 표지에 있는 암탉의 눈이 너무 슬퍼 보여서 골랐어요.',plot:'잎싹은 양계장에서 알만 낳던 암탉이에요. 어느 날 마당으로 나가고 싶어서 죽은 척을 해서 탈출해요. 그런데 마당 동물들이 잎싹을 받아 주지 않아요. 잎싹은 버려진 청둥오리 알을 품어서 초록머리를 키우게 되고, 결국 초록머리를 떠나보내요.',quote:'"소망을 가지고 있다는 건 살아 있다는 뜻이야."',impress:'잎싹이 족제비에게 자기 몸을 내어 주는 마지막 장면이 가장 기억에 남아요. 무섭기만 했던 족제비도 새끼를 키우는 엄마였다는 걸 알고 마음이 이상해졌어요. 만약 나였다면 그렇게 못 했을 것 같아요.',evaluation:'별 다섯 개를 준 이유는 읽는 내내 잎싹이 진짜 살아 있는 것처럼 느껴졌기 때문이에요. 슬프지만 억지로 울리는 게 아니라 잎싹이 끝까지 자기 선택을 하는 게 멋졌어요. 아쉬운 점은 글자가 많아서 처음엔 좀 힘들었다는 거예요.',reco:'울고 싶은 날',spoiler:true,createdAt:d-86400000*5,reactions:{like:['s2','s3'],cry:['s2','s4']},comments:[{by:'s2',name:'이바다',text:'나도 이 책 읽고 울었어 ㅠㅠ',at:d-86400000*4}],hidden:false},
+    {authorId:'s2',title:'푸른 사자 와니니',author:'이현',genre:'동화·소설',rating:4,oneLine:'약한 사자도 대장이 될 수 있다는 걸 보여 준 책',intro:'(예시) 무리에서 쫓겨난 어린 암사자 와니니가 자기만의 무리를 만드는 이야기예요. 친구가 재미있다고 추천해 줘서 읽었어요.',plot:'와니니는 몸이 작고 귀가 밝아서 사냥에 방해가 된다고 무리에서 쫓겨나요. 어느 날 혼자 초원을 떠돌다가 떠돌이 수사자 아산테와 잠보를 만나요. 셋은 서로 도우며 살아남고, 와니니는 자기가 잘하는 것으로 리더가 돼요.',quote:'',impress:'와니니가 사냥을 못 해서 창피해하던 장면에서 나도 체육 시간에 그런 적이 있어서 공감했어요. 이 부분에서 나는 잘하는 게 다 다르다는 걸 배웠어요.',evaluation:'좋은 점은 사자들 이름이 다 다르고 성격이 살아 있어서 헷갈리지 않는다는 거예요. 아쉬운 점은 마지막이 좀 급하게 끝나는 느낌이었어요. 그래도 와니니가 자기 약점을 강점으로 바꾸는 게 인상 깊어서 별 4개예요.',reco:'모험을 좋아하는 친구',spoiler:false,createdAt:d-86400000*2,reactions:{like:['s1'],read:['s3','s4','s1']},comments:[],hidden:false},
+    {authorId:'s3',title:'설민석의 한국사 대모험 1',author:'설민석',genre:'만화·학습만화',rating:3,oneLine:'재미있는데 만화라서 금방 끝나요',intro:'(예시) 아이들이 시간여행을 하면서 한국사를 배우는 학습만화예요. 사회 시간에 선사시대를 배워서 골랐어요.',plot:'평강, 온달, 로빈 세 친구가 설쌤과 함께 과거로 떠나요. 구석기 사람들을 만나고 불을 피우는 법도 배워요. 그런데 로빈이 사고를 쳐서 역사가 바뀔 뻔해요. 결국 무사히 돌아와요.',quote:'',impress:'구석기 사람들이 뗀석기로 고기를 자르는 장면이 인상적이었어요. 교과서 그림으로만 봤는데 만화로 보니까 어떻게 쓰는 건지 확실히 알겠더라고요.',evaluation:'그림이 재미있어서 술술 읽히는 건 좋은데, 다 읽고 나니까 남는 내용이 생각보다 적었어요. 교과서랑 같이 보면 좋을 것 같아요. 그래서 별 3개.',reco:'역사를 어려워하는 친구',spoiler:false,createdAt:d-3600000*5,reactions:{laugh:['s1','s2']},comments:[],hidden:false},
   ];
   demo.forEach(r=>store.set('reviews',uid(),r));
 }

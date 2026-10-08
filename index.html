@@ -92,6 +92,11 @@ main{flex:1;width:100%;max-width:1080px;margin:0 auto;padding:18px 16px 40px}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:13px;background:var(--paper-2);color:var(--ink-2)}
 .chip.genre{background:var(--sky-2);color:#2f5da3}
+.chip.exp{background:var(--honey-2);color:#8A6210}
+.seg{display:inline-flex;margin-bottom:14px}
+.feels{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+.feels button{padding:6px 12px;border-radius:999px;background:var(--paper);border:1.5px solid var(--line);font-size:14px}
+.feels button.on{background:var(--honey-2);border-color:var(--honey);color:#6b4d0c}
 input[type=text],input[type=password],input[type=number],textarea,select{
   width:100%;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;
 }
@@ -213,7 +218,7 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
 .prof .card{padding:18px}
 .prof .bigav{font-size:72px;text-align:center;line-height:1}
 .prof .lvname{text-align:center;font-family:var(--font-disp);font-size:22px;color:var(--leaf)}
-.prof .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:12px 0}
+.prof .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin:12px 0}
 .prof .stats div{text-align:center;background:var(--paper);border-radius:12px;padding:8px 4px}
 .prof .stats b{display:block;font-family:var(--font-disp);font-size:22px;font-weight:400}
 .prof .stats span{font-size:12px;color:var(--ink-2)}
@@ -279,7 +284,7 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
 <div class="gate" id="gate">
   <div class="card">
     <div class="hero" id="heroLogo"></div>
-    <h1 id="gateTitle">책갈피 마을<small id="gateSub">우리 반 책 이야기가 모이는 곳</small></h1>
+    <h1 id="gateTitle">책갈피 마을<small id="gateSub">우리 반 책과 글이 모이는 곳</small></h1>
     <div id="gateSetup" hidden>
       <div class="setup-note">처음 오셨군요! 선생님 비밀번호(4자리)를 먼저 정해 주세요. 학생 명단은 들어가서 등록합니다.</div>
       <div class="row"><input type="password" id="setupPin" inputmode="numeric" maxlength="4" placeholder="선생님 비밀번호 4자리" style="flex:1"><button class="btn" id="setupBtn">시작하기</button></div>
@@ -315,10 +320,11 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
   <main>
     <!-- 책방 -->
     <section class="view" id="v-feed">
+      <nav class="tabs seg" id="kindTabs"></nav>
       <div class="rank card" id="rankBox"></div>
       <div class="feedhead">
-        <h2>책방 둘러보기</h2>
-        <div class="search"><svg viewBox="0 0 24 24"><path d="M10 2a8 8 0 1 0 4.9 14.3l5.4 5.4 1.4-1.4-5.4-5.4A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12z"/></svg><input type="text" id="q" placeholder="책 제목, 작가, 친구 이름"></div>
+        <h2 id="feedTitle">책방 둘러보기</h2>
+        <div class="search"><svg viewBox="0 0 24 24"><path d="M10 2a8 8 0 1 0 4.9 14.3l5.4 5.4 1.4-1.4-5.4-5.4A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12z"/></svg><input type="text" id="q" placeholder="제목, 작가, 친구 이름"></div>
         <select id="sort" style="width:auto"><option value="new">최신순</option><option value="star">별점순</option><option value="hot">인기순</option></select>
       </div>
       <div class="filters" id="genreFilters"></div>
@@ -328,6 +334,8 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
     <!-- 쓰기 -->
     <section class="view" id="v-write">
       <div class="write">
+        <nav class="tabs seg" id="writeKind"><button data-wk="book">📚 서평</button><button data-wk="exp">✏️ 경험한 글</button></nav>
+        <div id="formBook">
         <h2 id="writeTitle">서평 쓰기</h2>
         <p class="sub">네 칸만 채우면 멋진 서평이 완성돼요. 다 쓰면 나무에 열매가 하나 열려요 🍎</p>
 
@@ -385,6 +393,59 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
           <span id="draftMsg" style="font-size:13px;color:var(--ink-3)"></span>
           <div class="row"><button class="btn ghost" id="cancelEdit" hidden>취소</button><button class="btn" id="submitBtn" style="font-size:19px;padding:12px 26px">서평 올리기 🌱</button></div>
         </div>
+        </div>
+
+        <div id="formExp" hidden>
+        <h2 id="expTitle">경험한 글 쓰기</h2>
+        <p class="sub">내가 겪은 일을 처음 · 가운데 · 끝으로 나누어 써요. 다 쓰면 나무에 열매가 하나 열려요 🍎</p>
+
+        <div class="card step">
+          <span class="no">글 정보</span>
+          <h3>어떤 일을 쓸 건가요?</h3>
+          <div class="row" style="align-items:flex-start">
+            <div style="flex:2;min-width:200px"><label class="f">글 제목 <span>필수</span></label><input type="text" id="e-title" placeholder="예) 자전거 보조 바퀴를 뗀 날" maxlength="60"></div>
+            <div style="flex:1;min-width:140px"><label class="f">글감</label><select id="e-topic"></select></div>
+          </div>
+          <div class="row" style="align-items:flex-start;margin-top:10px">
+            <div style="flex:1;min-width:140px"><label class="f">언제</label><input type="text" id="e-when" placeholder="예) 지난 토요일" maxlength="30"></div>
+            <div style="flex:1;min-width:140px"><label class="f">어디서</label><input type="text" id="e-where" placeholder="예) 집 앞 공원" maxlength="30"></div>
+            <div style="flex:1;min-width:140px"><label class="f">누구와</label><input type="text" id="e-who" placeholder="예) 아빠" maxlength="30"></div>
+          </div>
+        </div>
+
+        <div class="card step">
+          <span class="no">처음</span>
+          <h3>이야기의 시작</h3>
+          <div class="why">언제, 어디서, 누구와 있었던 일인가요? 읽는 친구가 궁금해지도록 시작해 봐요.</div>
+          <div class="hints" data-for="e-begin"><span class="lbl">이렇게 시작해 봐 →</span><button>지난 주말에</button><button>그날은</button><button>"……" 하는 소리에</button><button>나는 원래</button></div>
+          <textarea id="e-begin" placeholder="일이 시작된 상황을 써 주세요"></textarea><div class="cnt" data-for="e-begin"></div>
+        </div>
+
+        <div class="card step">
+          <span class="no">가운데</span>
+          <h3>있었던 일</h3>
+          <div class="why">무슨 일이 있었는지 일어난 차례대로 자세히 써요. 주고받은 말, 표정, 행동을 넣으면 글이 생생해져요.</div>
+          <div class="hints" data-for="e-middle"><span class="lbl">이렇게 이어 가 봐 →</span><button>처음에는</button><button>그때</button><button>그런데 갑자기</button><button>"……" 하고 말했다.</button><button>마침내</button></div>
+          <textarea id="e-middle" placeholder="있었던 일을 차례대로 써 주세요" style="min-height:180px"></textarea><div class="cnt" data-for="e-middle"></div>
+        </div>
+
+        <div class="card step">
+          <span class="no">끝</span>
+          <h3>생각과 느낌</h3>
+          <div class="why">그 일을 겪고 어떤 생각이나 느낌이 들었나요? 새로 알게 된 점이나 달라진 점도 좋아요.</div>
+          <label class="f" style="font-size:15px">그때 내 기분 <span>하나 골라 보세요 (선택)</span></label>
+          <div class="feels" id="e-feel"></div>
+          <div class="hints" data-for="e-end"><span class="lbl">이렇게 마무리해 봐 →</span><button>그 일을 겪고 나서</button><button>그때 내 마음은</button><button>이 일로 알게 된 것은</button><button>다음에는</button></div>
+          <textarea id="e-end" placeholder="생각이나 느낌을 써 주세요"></textarea><div class="cnt" data-for="e-end"></div>
+          <label class="f" style="margin-top:12px">한 줄 소개 <span>필수 · 카드에 크게 보여요</span></label>
+          <input type="text" id="e-one" placeholder="예) 무릎은 까졌지만 두 바퀴로 처음 달린 날" maxlength="60">
+        </div>
+
+        <div class="row" style="justify-content:space-between;margin-top:6px">
+          <span id="expDraftMsg" style="font-size:13px;color:var(--ink-3)"></span>
+          <div class="row"><button class="btn ghost" id="expCancel" hidden>취소</button><button class="btn" id="expSubmit" style="font-size:19px;padding:12px 26px">글 올리기 🌱</button></div>
+        </div>
+        </div>
       </div>
     </section>
 
@@ -392,11 +453,11 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
     <section class="view" id="v-tree">
       <div class="treewrap">
         <div class="card tree">
-          <h2 id="treeTitle">우리 반 독서 나무</h2>
+          <h2 id="treeTitle">우리 반 책갈피 나무</h2>
           <div class="goal" id="treeGoal"></div>
           <div id="treeSvg"></div>
           <div class="xpbar" style="margin:8px 20px"><i id="treeBar"></i></div>
-          <p style="font-size:13px;color:var(--ink-2)">서평 한 편 = 열매 하나. 목표를 채우면 나무가 꽃을 피워요.</p>
+          <p style="font-size:13px;color:var(--ink-2)">서평이든 경험한 글이든 한 편 = 열매 하나. 목표를 채우면 나무가 꽃을 피워요.</p>
         </div>
         <div class="card hall">
           <h3>명예의 전당</h3>
@@ -415,13 +476,13 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
             <p style="text-align:center;font-family:var(--font-disp);font-size:20px;margin:2px 0" id="pName"></p>
             <div class="xpbar"><i id="pBar"></i></div>
             <p style="text-align:center;font-size:12px;color:var(--ink-3);margin:4px 0 0" id="pNext"></p>
-            <div class="stats"><div><b id="sRev">0</b><span>서평</span></div><div><b id="sRx">0</b><span>받은 반응</span></div><div><b id="sCm">0</b><span>쓴 댓글</span></div></div>
+            <div class="stats"><div><b id="sRev">0</b><span>서평</span></div><div><b id="sExp">0</b><span>경험한 글</span></div><div><b id="sRx">0</b><span>받은 반응</span></div><div><b id="sCm">0</b><span>쓴 댓글</span></div></div>
             <button class="btn ghost sm" id="logout" style="width:100%">나가기</button>
           </div>
           <div class="card" style="margin-top:14px"><h3 style="font-size:18px;margin-bottom:8px">배지</h3><div class="badges" id="badges"></div></div>
         </div>
         <div>
-          <h3 style="font-size:20px;margin-bottom:10px">내가 쓴 서평</h3>
+          <h3 style="font-size:20px;margin-bottom:10px">내가 쓴 글</h3>
           <div class="grid" id="myFeed"></div>
         </div>
       </div>
@@ -440,15 +501,15 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
           <div class="card">
             <h3>설정</h3>
             <label class="f">우리 반 이름</label><input type="text" id="setClass" placeholder="예) 영전초 5학년 1반">
-            <label class="f" style="margin-top:10px">독서 나무 목표(서평 수)</label><input type="number" id="setGoal" min="5" max="500">
+            <label class="f" style="margin-top:10px">책갈피 나무 목표(글 수)</label><input type="number" id="setGoal" min="5" max="500">
             <label class="f" style="margin-top:10px">선생님 비밀번호 바꾸기</label><input type="password" id="setTPin" inputmode="numeric" maxlength="4" placeholder="새 비밀번호 4자리(안 바꾸면 비워두기)">
             <button class="btn" id="saveSettings" style="margin-top:12px">저장</button>
           </div>
           <div class="card" style="margin-top:14px">
             <h3>기록 내려받기</h3>
-            <p style="font-size:14px;color:var(--ink-2);margin:0 0 10px">서평 전체를 CSV(엑셀)로 저장해요. 평가 기록·학부모 상담 자료로 쓸 수 있어요.</p>
-            <button class="btn honey" id="csvBtn">CSV 내려받기</button>
-            <p style="font-size:13px;color:var(--ink-3);margin:12px 0 0">서평 숨기기·삭제는 책방에서 서평을 열면 아래에 버튼이 있어요.</p>
+            <p style="font-size:14px;color:var(--ink-2);margin:0 0 10px">서평과 경험한 글을 각각 CSV(엑셀)로 저장해요. 평가 기록·학부모 상담 자료로 쓸 수 있어요.</p>
+            <div class="row"><button class="btn honey" id="csvBtn">서평 CSV</button><button class="btn honey" id="csvExpBtn">경험한 글 CSV</button></div>
+            <p style="font-size:13px;color:var(--ink-3);margin:12px 0 0">글 숨기기·삭제는 책방에서 글을 열면 아래에 버튼이 있어요.</p>
             <div id="localReset" hidden style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)"><p style="font-size:13px;color:var(--ink-2);margin:0 0 8px">지금은 <b>미리보기 모드</b>(이 기기에만 저장)예요. 예시 자료를 지우고 빈 상태로 시작할 수 있어요.</p><button class="btn ghost sm" id="localResetBtn" style="color:var(--berry)">미리보기 데이터 모두 지우기</button></div>
           </div>
         </div>
@@ -541,6 +602,10 @@ if(CFG_SET && !window.firebase){
 /* ═══════════════ 상수 ═══════════════ */
 const GENRES=['동화·소설','그림책','과학·자연','역사·인물','만화·학습만화','시·에세이','지식·정보','기타'];
 const RX=[{k:'like',e:'👍',t:'공감'},{k:'read',e:'📖',t:'나도 읽을래'},{k:'laugh',e:'😂',t:'웃겨'},{k:'cry',e:'🥹',t:'뭉클'}];
+const TOPICS=['학교','가족','친구','여행·나들이','체험·도전','기타'];
+const FEELS=[{k:'joy',e:'😊',t:'기뻤어'},{k:'proud',e:'🥰',t:'뿌듯했어'},{k:'fun',e:'😆',t:'신났어'},{k:'surp',e:'😲',t:'놀랐어'},{k:'sad',e:'😢',t:'슬펐어'},{k:'angry',e:'😠',t:'화났어'},{k:'shy',e:'😳',t:'부끄러웠어'},{k:'scare',e:'😨',t:'무서웠어'},{k:'sorry',e:'🥺',t:'미안했어'}];
+const RX_EXP=[{k:'like',e:'👍',t:'공감'},{k:'same',e:'🙋',t:'나도 그런 적 있어'},{k:'laugh',e:'😂',t:'웃겨'},{k:'cry',e:'🥹',t:'뭉클'}];
+const KINDS=[['all','전체'],['book','📚 서평'],['exp','✏️ 경험한 글']];
 const LEVELS=[{xp:0,n:'책벌레 알',av:'🥚'},{xp:150,n:'꼬물 애벌레',av:'🐛'},{xp:400,n:'고치 속 독서가',av:'🌿'},{xp:800,n:'책나비',av:'🦋'},{xp:1500,n:'황금 책나비',av:'✨'}];
 const STAR_WORDS=['','음… 나랑은 안 맞았어','그냥 그랬어','괜찮았어','재미있었어!','인생 책이야!!'];
 const BADGES=[
@@ -554,28 +619,34 @@ const BADGES=[
   {id:'talk',ic:'💬',n:'댓글 요정',d:'댓글 10개 쓰기',f:s=>s.cm>=10},
   {id:'crit',ic:'⭐',n:'냉정한 평론가',d:'별 2개 이하 서평',f:s=>s.low>=1},
   {id:'fan',ic:'💖',n:'열혈 독자',d:'별 5개 서평 3편',f:s=>s.five>=3},
+  {id:'exp1',ic:'✏️',n:'첫 이야기',d:'첫 경험한 글 쓰기',f:s=>s.exps>=1},
+  {id:'exp5',ic:'📔',n:'이야기 보따리',d:'경험한 글 5편',f:s=>s.exps>=5},
+  {id:'both',ic:'🎒',n:'두루두루 작가',d:'서평과 경험한 글 모두 쓰기',f:s=>s.reviews>=1&&s.exps>=1},
 ];
 
 /* ═══════════════ 상태 ═══════════════ */
 let students=[], reviews=[], settings=null, me=null, isTeacher=false;
-let editingId=null, formRating=0, curFilter='전체', openId=null;
+let editingId=null, formRating=0, curFilter='전체', curKind='all', curTopic='전체', openId=null;
 let prevReviewCount=null;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate=t=>{const d=new Date(t);return `${d.getMonth()+1}월 ${d.getDate()}일`;};
-const rxCount=r=>RX.reduce((a,x)=>a+((r.reactions||{})[x.k]||[]).length,0);
-const rvLen=r=>(r.intro||'').length+(r.plot||'').length+(r.impress||'').length+(r.evaluation||'').length;
+/* 경험한 글도 reviews 컬렉션에 kind:'exp'로 함께 저장 */
+const isExp=r=>r.kind==='exp';
+const rxOf=r=>isExp(r)?RX_EXP:RX;
+const rxCount=r=>rxOf(r).reduce((a,x)=>a+((r.reactions||{})[x.k]||[]).length,0);
+const rvLen=r=>isExp(r)?(r.begin||'').length+(r.middle||'').length+(r.end||'').length:(r.intro||'').length+(r.plot||'').length+(r.impress||'').length+(r.evaluation||'').length;
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2200);}
 const starSvg=(n,cls='')=>`<span class="stars ${cls}">${[1,2,3,4,5].map(i=>`<svg viewBox="0 0 24 24" data-v="${i}"><path class="${i<=n?'star-on':'star-off'}" d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>`).join('')}</span>`;
 const LOGO=`<svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><rect x="10" y="12" width="44" height="40" rx="6" fill="#4F8F5C"/><rect x="16" y="18" width="32" height="34" rx="3" fill="#F3F6EE"/><path d="M40 12v22l-5-4-5 4V12z" fill="#F2B84B"/><path d="M20 26h14M20 32h18M20 38h12" stroke="#D5DECF" stroke-width="2.5" stroke-linecap="round"/><circle cx="46" cy="46" r="9" fill="#D8566B"/><path d="M42 46l3 3 5-6" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 /* ═══════════════ 통계 ═══════════════ */
 function statsOf(sid){
-  const mine=reviews.filter(r=>r.authorId===sid&&!r.hidden);
+  const all=reviews.filter(r=>r.authorId===sid&&!r.hidden),mine=all.filter(r=>!isExp(r));
   const cm=reviews.reduce((a,r)=>a+(r.comments||[]).filter(c=>c.by===sid).length,0);
-  const rx=mine.reduce((a,r)=>a+rxCount(r),0);
-  const xp=mine.reduce((a,r)=>a+100+Math.min(100,Math.floor(rvLen(r)/10)),0)+rx*5+cm*10;
-  return {reviews:mine.length,cm,rx,xp,genres:new Set(mine.map(r=>r.genre)).size,quotes:mine.filter(r=>(r.quote||'').trim()).length,
+  const rx=all.reduce((a,r)=>a+rxCount(r),0);
+  const xp=all.reduce((a,r)=>a+100+Math.min(100,Math.floor(rvLen(r)/10)),0)+rx*5+cm*10;
+  return {reviews:mine.length,exps:all.length-mine.length,posts:all.length,cm,rx,xp,genres:new Set(mine.map(r=>r.genre)).size,quotes:mine.filter(r=>(r.quote||'').trim()).length,
     longest:Math.max(0,...mine.map(rvLen)),low:mine.filter(r=>r.rating<=2).length,five:mine.filter(r=>r.rating===5).length};
 }
 function levelOf(xp){let l=LEVELS[0],next=null;for(let i=0;i<LEVELS.length;i++){if(xp>=LEVELS[i].xp){l=LEVELS[i];next=LEVELS[i+1]||null;}}return {...l,next};}
@@ -587,13 +658,13 @@ let pickId=null, pin='';
 function renderGate(){
   $('heroLogo').innerHTML=LOGO;
   const cls=(settings&&settings.className)||'';
-  $('gateSub').textContent=cls?cls+' 친구들의 책 이야기':'우리 반 책 이야기가 모이는 곳';
+  $('gateSub').textContent=cls?cls+' 친구들의 책과 글 이야기':'우리 반 책과 글이 모이는 곳';
   const needSetup=settings===null||!settings.teacherPin;
   $('gateSetup').hidden=!needSetup; $('gateStudents').hidden=needSetup;
   const g=$('nameGrid'); g.innerHTML='';
   const list=[...students].sort((a,b)=>(a.num||99)-(b.num||99)||a.name.localeCompare(b.name,'ko'));
   if(!list.length){g.innerHTML='<p style="grid-column:1/-1;text-align:center;color:var(--ink-3)">아직 학생 명단이 없어요. 선생님이 등록하면 이름이 나타나요.</p>';}
-  list.forEach(s=>{const b=document.createElement('button');b.innerHTML=`<span class="av">${avatarOf(s.id)}</span>${esc(s.name)}<small>서평 ${statsOf(s.id).reviews}편</small>`;b.onclick=()=>{pickId=s.id;pin='';$('pickName').textContent=s.name;$('gateStep1').hidden=true;$('gateStep2').hidden=false;drawDots();};g.appendChild(b);});
+  list.forEach(s=>{const b=document.createElement('button');b.innerHTML=`<span class="av">${avatarOf(s.id)}</span>${esc(s.name)}<small>글 ${statsOf(s.id).posts}편</small>`;b.onclick=()=>{pickId=s.id;pin='';$('pickName').textContent=s.name;$('gateStep1').hidden=true;$('gateStep2').hidden=false;drawDots();};g.appendChild(b);});
 }
 function drawDots(){[...$('dots').children].forEach((d,i)=>d.classList.toggle('on',i<pin.length));}
 (function buildPad(){const p=$('pinpad');['1','2','3','4','5','6','7','8','9','←','0','✓'].forEach(k=>{const b=document.createElement('button');b.textContent=k;b.onclick=()=>{
@@ -624,7 +695,7 @@ function buildTabs(){
   const tabs=isTeacher?[['feed','책방'],['tree','나무'],['teach','교사']]:[['feed','책방'],['write','쓰기'],['tree','나무'],['me','내 서재']];
   for(const el of [$('tabsTop'),$('tabsBottom')]){el.innerHTML='';tabs.forEach(([k,t])=>{const b=document.createElement('button');b.dataset.tab=k;b.innerHTML=ICON[k]+'<span>'+t+'</span>';b.onclick=()=>showTab(k);el.appendChild(b);});}
 }
-function showTab(k){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+k));document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===k));window.scrollTo({top:0});if(k==='write'&&!editingId)loadDraft();if(k==='tree')renderTree(true);}
+function showTab(k){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+k));document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===k));window.scrollTo({top:0});if(k==='write'&&!editingId){loadDraft();loadExpDraft();setWriteKind(writeKind);}if(k==='tree')renderTree(true);}
 $('meBtn').onclick=()=>{if(!isTeacher)showTab('me');};
 
 /* ═══════════════ 렌더 ═══════════════ */
@@ -638,10 +709,22 @@ function renderAll(){
   if(openId)openReview(openId,true);
 }
 function visibleReviews(){return reviews.filter(r=>isTeacher||!r.hidden);}
-function renderGenreFilters(){const f=$('genreFilters');f.innerHTML='';['전체',...GENRES].forEach(g=>{const b=document.createElement('button');b.textContent=g;b.classList.toggle('on',g===curFilter);b.onclick=()=>{curFilter=g;renderGenreFilters();renderFeed();};f.appendChild(b);});}
+function renderKindTabs(){const el=$('kindTabs');el.innerHTML='';KINDS.forEach(([k,t])=>{const b=document.createElement('button');b.textContent=t;b.classList.toggle('on',k===curKind);b.onclick=()=>{curKind=k;renderKindTabs();renderGenreFilters();renderFeed();renderRank();};el.appendChild(b);});
+  $('feedTitle').textContent=curKind==='exp'?'경험한 글 둘러보기':'책방 둘러보기';}
+function renderGenreFilters(){const f=$('genreFilters');f.innerHTML='';f.hidden=curKind==='all';if(curKind==='all')return;const ex=curKind==='exp';['전체',...(ex?TOPICS:GENRES)].forEach(g=>{const b=document.createElement('button');b.textContent=g;b.classList.toggle('on',g===(ex?curTopic:curFilter));b.onclick=()=>{if(ex)curTopic=g;else curFilter=g;renderGenreFilters();renderFeed();};f.appendChild(b);});}
+function topicColor(t){const m={'학교':'#5B8FD6','가족':'#D8566B','친구':'#F2B84B','여행·나들이':'#3FA3A0','체험·도전':'#9A6BD1','기타':'#95A3AA'};return m[t]||'#95A3AA';}
 function cardHtml(r,opts={}){
   const isNew=Date.now()-r.createdAt<1000*60*60*24*2;
-  const rx=RX.map(x=>({...x,n:((r.reactions||{})[x.k]||[]).length})).filter(x=>x.n);
+  const rx=rxOf(r).map(x=>({...x,n:((r.reactions||{})[x.k]||[]).length})).filter(x=>x.n);
+  if(isExp(r)){const fl=FEELS.find(f=>f.k===r.feel);return `<article class="card book" data-id="${r.id}">
+    <span class="spine" style="background:${topicColor(r.topic)}"></span>
+    ${r.hidden?'<span class="hid">숨김</span>':isNew?'<span class="new">NEW</span>':''}
+    <div class="ttl">${esc(r.title)}</div>
+    <div class="auth"><span class="chip exp">✏️ 경험한 글</span> <span class="chip">${esc(r.topic)}</span>${fl?` <span class="chip">${fl.e} ${fl.t}</span>`:''}</div>
+    <div class="one">${esc(r.oneLine)}</div>
+    <div class="rx">${rx.map(x=>`<span>${x.e} ${x.n}</span>`).join('')}${(r.comments||[]).length?`<span>💬 ${r.comments.length}</span>`:''}</div>
+    <div class="who"><span class="av">${avatarOf(r.authorId)}</span>${esc(nameOf(r.authorId))} · ${fmtDate(r.createdAt)}</div>
+  </article>`;}
   return `<article class="card book" data-id="${r.id}">
     <span class="spine" style="background:${genreColor(r.genre)}"></span>
     ${r.hidden?'<span class="hid">숨김</span>':isNew?'<span class="new">NEW</span>':''}
@@ -656,16 +739,16 @@ function cardHtml(r,opts={}){
 function genreColor(g){const m={'동화·소설':'#4F8F5C','그림책':'#F2B84B','과학·자연':'#5B8FD6','역사·인물':'#B07A4A','만화·학습만화':'#D8566B','시·에세이':'#9A6BD1','지식·정보':'#3FA3A0','기타':'#95A3AA'};return m[g]||'#95A3AA';}
 function renderFeed(){
   const q=$('q').value.trim().toLowerCase(),sort=$('sort').value;
-  let list=visibleReviews().filter(r=>curFilter==='전체'||r.genre===curFilter).filter(r=>!q||[r.title,r.author,nameOf(r.authorId)].join(' ').toLowerCase().includes(q));
-  list.sort((a,b)=>sort==='star'?(b.rating-a.rating)||(b.createdAt-a.createdAt):sort==='hot'?(rxCount(b)+(b.comments||[]).length)-(rxCount(a)+(a.comments||[]).length)||(b.createdAt-a.createdAt):b.createdAt-a.createdAt);
+  let list=visibleReviews().filter(r=>curKind==='all'||(curKind==='exp')===isExp(r)).filter(r=>curKind==='book'?(curFilter==='전체'||r.genre===curFilter):curKind==='exp'?(curTopic==='전체'||r.topic===curTopic):true).filter(r=>!q||[r.title,r.author,nameOf(r.authorId)].join(' ').toLowerCase().includes(q));
+  list.sort((a,b)=>sort==='star'?((b.rating||0)-(a.rating||0))||(b.createdAt-a.createdAt):sort==='hot'?(rxCount(b)+(b.comments||[]).length)-(rxCount(a)+(a.comments||[]).length)||(b.createdAt-a.createdAt):b.createdAt-a.createdAt);
   const f=$('feed');
-  f.innerHTML=list.length?list.map(r=>cardHtml(r)).join(''):`<div class="empty" style="grid-column:1/-1"><div class="big">📭</div>${reviews.length?'조건에 맞는 서평이 없어요':'아직 서평이 없어요. 첫 번째 열매를 맺어 볼까요?'}</div>`;
+  f.innerHTML=list.length?list.map(r=>cardHtml(r)).join(''):`<div class="empty" style="grid-column:1/-1"><div class="big">📭</div>${reviews.length?'조건에 맞는 글이 없어요':'아직 글이 없어요. 첫 번째 열매를 맺어 볼까요?'}</div>`;
   f.querySelectorAll('.book').forEach(el=>el.onclick=()=>openReview(el.dataset.id));
 }
 $('q').oninput=renderFeed;$('sort').onchange=renderFeed;
 function renderRank(){
-  const vr=visibleReviews();const box=$('rankBox');
-  if(vr.length<1){box.hidden=true;return;}box.hidden=false;
+  const vr=visibleReviews().filter(r=>!isExp(r));const box=$('rankBox');
+  if(vr.length<1||curKind==='exp'){box.hidden=true;return;}box.hidden=false;
   const byBook={};vr.forEach(r=>{const k=r.title.trim();(byBook[k]=byBook[k]||{t:k,n:0,s:0,rx:0}).n++;byBook[k].s+=r.rating;byBook[k].rx+=rxCount(r);});
   const books=Object.values(byBook);
   const most=[...books].sort((a,b)=>b.n-a.n||b.rx-a.rx).slice(0,3);
@@ -682,7 +765,7 @@ function seeded(i){const x=Math.sin(i*9301+49297)*233280;return x-Math.floor(x);
 function renderTree(animate){
   const n=reviews.filter(r=>!r.hidden).length,goal=(settings&&settings.treeGoal)||50,pct=Math.min(100,n/goal*100);
   $('treeGoal').textContent=`열매 ${n}개 / 목표 ${goal}개`;$('treeBar').style.width=pct+'%';
-  $('treeTitle').textContent=((settings&&settings.className)||'우리 반')+' 독서 나무';
+  $('treeTitle').textContent=((settings&&settings.className)||'우리 반')+' 책갈피 나무';
   const full=n>=goal;
   let fruits='';
   for(let i=0;i<Math.min(n,goal);i++){
@@ -693,7 +776,7 @@ function renderTree(animate){
   }
   let flowers='';if(full){for(let i=0;i<18;i++){const a=seeded(i+99)*Math.PI*2,rr=Math.sqrt(seeded(i+55));flowers+=`<text x="${(200+Math.cos(a)*rr*135).toFixed(1)}" y="${(150+Math.sin(a)*rr*100).toFixed(1)}" font-size="18" text-anchor="middle">🌸</text>`;}}
   const g1=full?'#5FA96E':'#4F8F5C';
-  $('treeSvg').innerHTML=`<svg viewBox="0 0 400 340" aria-label="독서 나무">
+  $('treeSvg').innerHTML=`<svg viewBox="0 0 400 340" aria-label="책갈피 나무">
     <ellipse cx="200" cy="318" rx="150" ry="16" fill="#DCEBD8"/>
     <path d="M186 320V210q-6-40-40-60" stroke="#8A5A3B" stroke-width="18" fill="none" stroke-linecap="round"/>
     <path d="M214 320V200q4-40 44-64" stroke="#8A5A3B" stroke-width="18" fill="none" stroke-linecap="round"/>
@@ -703,9 +786,9 @@ function renderTree(animate){
     ${fruits}${flowers}
     <text x="200" y="335" font-size="12" fill="#5A6A73" text-anchor="middle" font-family="Gowun Dodum">${full?'목표 달성! 나무가 꽃을 피웠어요 🎉':''}</text>
   </svg>`;
-  const lb=students.map(s=>({s,st:statsOf(s.id)})).filter(x=>x.st.reviews>0).sort((a,b)=>b.st.xp-a.st.xp).slice(0,10);
+  const lb=students.map(s=>({s,st:statsOf(s.id)})).filter(x=>x.st.posts>0).sort((a,b)=>b.st.xp-a.st.xp).slice(0,10);
   const max=Math.max(1,...lb.map(x=>x.st.xp));
-  $('leader').innerHTML=lb.map((x,i)=>{const lv=levelOf(x.st.xp);return `<div><span class="av">${lv.av}</span><span class="nm">${i+1}. ${esc(x.s.name)}</span><span class="bar"><i style="width:${x.st.xp/max*100}%"></i></span><span class="xp">${x.st.xp} xp</span></div>`;}).join('')||'<p style="color:var(--ink-3)">첫 서평을 쓰면 여기에 이름이 올라가요</p>';
+  $('leader').innerHTML=lb.map((x,i)=>{const lv=levelOf(x.st.xp);return `<div><span class="av">${lv.av}</span><span class="nm">${i+1}. ${esc(x.s.name)}</span><span class="bar"><i style="width:${x.st.xp/max*100}%"></i></span><span class="xp">${x.st.xp} xp</span></div>`;}).join('')||'<p style="color:var(--ink-3)">첫 글을 쓰면 여기에 이름이 올라가요</p>';
 }
 
 /* ═══════════════ 내 서재 ═══════════════ */
@@ -715,10 +798,10 @@ function renderMe(){
   const base=lv.xp,nx=lv.next?lv.next.xp:null;
   $('pBar').style.width=(nx?((st.xp-base)/(nx-base)*100):100)+'%';
   $('pNext').textContent=nx?`${lv.next.n}까지 ${nx-st.xp} xp`:'최고 레벨이에요!';
-  $('sRev').textContent=st.reviews;$('sRx').textContent=st.rx;$('sCm').textContent=st.cm;
+  $('sRev').textContent=st.reviews;$('sExp').textContent=st.exps;$('sRx').textContent=st.rx;$('sCm').textContent=st.cm;
   $('badges').innerHTML=BADGES.map(b=>`<div class="badge ${b.f(st)?'got':''}"><div class="ic">${b.ic}</div><b>${b.n}</b><small>${b.d}</small></div>`).join('');
   const mine=reviews.filter(r=>r.authorId===me.id).sort((a,b)=>b.createdAt-a.createdAt);
-  const f=$('myFeed');f.innerHTML=mine.length?mine.map(r=>cardHtml(r)).join(''):'<div class="empty" style="grid-column:1/-1"><div class="big">🌱</div>아직 서평이 없어요.<br>첫 서평을 쓰면 알이 꿈틀거려요!</div>';
+  const f=$('myFeed');f.innerHTML=mine.length?mine.map(r=>cardHtml(r)).join(''):'<div class="empty" style="grid-column:1/-1"><div class="big">🌱</div>아직 쓴 글이 없어요.<br>첫 글을 쓰면 알이 꿈틀거려요!</div>';
   f.querySelectorAll('.book').forEach(el=>el.onclick=()=>openReview(el.dataset.id));
 }
 
@@ -729,8 +812,19 @@ function openReview(id,silent){
   const canEdit=!isTeacher&&me&&r.authorId===me.id;
   const myRx=k=>me&&((r.reactions||{})[k]||[]).includes(me.id);
   const spoiler=r.spoiler&&!(sheet.dataset.reveal===id);
+  const ex=isExp(r),fl=ex&&FEELS.find(f=>f.k===r.feel);
+  const facts=ex?[['언제',r.when],['어디서',r.where],['누구와',r.who]].filter(x=>(x[1]||'').trim()).map(x=>`<span class="chip">${x[0]} · ${esc(x[1])}</span>`).join(''):'';
+  const exBody=ex?`
+    <span class="chip exp">✏️ 경험한 글</span> <span class="chip">${esc(r.topic)}</span>
+    <h2>${esc(r.title)}</h2>
+    <div class="meta"><span>${avatarOf(r.authorId)} ${esc(nameOf(r.authorId))}</span>·<span>${fmtDate(r.createdAt)}${r.editedAt?' (수정됨)':''}</span></div>
+    <p style="font-family:var(--font-disp);font-size:22px;margin:0;color:var(--ink)">“${esc(r.oneLine)}”</p>
+    ${facts||fl?`<div class="row" style="gap:6px;margin-top:10px">${facts}${fl?`<span class="chip exp">${fl.e} ${fl.t}</span>`:''}</div>`:''}
+    <section><h4>처음</h4><p>${esc(r.begin)}</p></section>
+    <section><h4>가운데</h4><p>${esc(r.middle)}</p></section>
+    <section><h4>끝</h4><p>${esc(r.end)}</p></section>`:'';
   sheet.innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button>
-  <div class="rv">
+  <div class="rv">${ex?exBody:`
     <span class="chip genre">${esc(r.genre)}</span>
     <h2>${esc(r.title)}</h2>
     <div class="meta"><span>${esc(r.author||'지은이 미상')}</span>·<span>${avatarOf(r.authorId)} ${esc(nameOf(r.authorId))}</span>·<span>${fmtDate(r.createdAt)}${r.editedAt?' (수정됨)':''}</span></div>
@@ -740,11 +834,11 @@ function openReview(id,silent){
     <section><h4>책 소개</h4><p>${esc(r.intro)}</p></section>
     <section><h4>줄거리</h4><div class="spoiler ${spoiler?'hid':''}"><p>${esc(r.plot)}</p><div class="sp-btn"><button class="btn sm" id="spBtn">결말이 들어 있어요 · 살짝 보기 👀</button></div></div></section>
     <section><h4>인상적인 부분</h4>${(r.quote||'').trim()?`<div class="quote">${esc(r.quote)}</div>`:''}<p>${esc(r.impress)}</p></section>
-    <section><h4>나의 평가 ${starSvg(r.rating)}</h4><p>${esc(r.evaluation||'')}</p></section>
-    <div class="rxbar">${RX.map(x=>`<button data-rx="${x.k}" class="${myRx(x.k)?'on':''}" ${isTeacher?'disabled':''}>${x.e} ${x.t} <b>${((r.reactions||{})[x.k]||[]).length||''}</b></button>`).join('')}</div>
+    <section><h4>나의 평가 ${starSvg(r.rating)}</h4><p>${esc(r.evaluation||'')}</p></section>`}
+    <div class="rxbar">${rxOf(r).map(x=>`<button data-rx="${x.k}" class="${myRx(x.k)?'on':''}" ${isTeacher?'disabled':''}>${x.e} ${x.t} <b>${((r.reactions||{})[x.k]||[]).length||''}</b></button>`).join('')}</div>
     <section><h4>댓글 ${(r.comments||[]).length}</h4>
       <div class="cmts">${(r.comments||[]).map((c,i)=>`<div class="cmt"><span class="av">${avatarOf(c.by)}</span><div><b>${esc(c.name)}</b><small>${fmtDate(c.at)}</small><p>${esc(c.text)}</p></div>${(isTeacher||(me&&c.by===me.id))?`<button class="del" data-ci="${i}">지우기</button>`:''}</div>`).join('')||'<p style="font-size:14px;color:var(--ink-3);margin:0">첫 댓글을 남겨 보세요. 친구가 좋아할 거예요!</p>'}</div>
-      ${isTeacher?'':`<div class="cmtform"><input type="text" id="cmtIn" placeholder="따뜻한 댓글 한 줄 (예: 나도 이 책 읽어봐야겠다!)" maxlength="120"><button class="btn sm" id="cmtBtn">남기기</button></div>`}
+      ${isTeacher?'':`<div class="cmtform"><input type="text" id="cmtIn" placeholder="따뜻한 댓글 한 줄 (예: ${ex?'나도 그런 적 있어!':'나도 이 책 읽어봐야겠다!'})" maxlength="120"><button class="btn sm" id="cmtBtn">남기기</button></div>`}
     </section>
     <div class="own">
       ${canEdit?`<button class="btn ghost sm" id="editBtn">고치기</button><button class="btn ghost sm" id="delBtn" style="color:var(--berry)">지우기</button>`:''}
@@ -767,7 +861,7 @@ $('modal').onclick=e=>{if(e.target===$('modal'))closeModal();};
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 async function toggleRx(r,k){
   if(!me)return;const has=((r.reactions||{})[k]||[]).includes(me.id);
-  if(r.authorId===me.id&&!has){toast('내 서평엔 반응을 못 남겨요 😉');return;}
+  if(r.authorId===me.id&&!has){toast('내 글엔 반응을 못 남겨요 😉');return;}
   await store.update('reviews',r.id,{['reactions.'+k]:has?AR(me.id):AU(me.id)});
 }
 async function addComment(r){
@@ -788,12 +882,14 @@ const F=['title','author','genre','intro','plot','quote','impress','eval','one',
   window._drawStars=draw;
 })();
 function formData(){const o={};F.forEach(k=>o[k]=$('f-'+k).value);o.rating=formRating;o.spoiler=$('f-spoiler').checked;return o;}
-function setForm(o){F.forEach(k=>$('f-'+k).value=o[k]||'');formRating=o.rating||0;$('f-spoiler').checked=!!o.spoiler;window._drawStars();document.querySelectorAll('.cnt').forEach(c=>$(c.dataset.for).dispatchEvent(new Event('input')));}
+function setForm(o){F.forEach(k=>$('f-'+k).value=o[k]||'');formRating=o.rating||0;$('f-spoiler').checked=!!o.spoiler;if(!$('f-genre').value)$('f-genre').selectedIndex=0;window._drawStars();document.querySelectorAll('#formBook .cnt').forEach(c=>$(c.dataset.for).dispatchEvent(new Event('input')));}
 function draftKey(){return 'bv_draft_'+(me?me.id:'x');}
 function saveDraft(){if(editingId||!me)return;try{localStorage.setItem(draftKey(),JSON.stringify(formData()));$('draftMsg').textContent='임시 저장됨';}catch(e){}}
 function loadDraft(){try{const d=localStorage.getItem(draftKey());if(d){setForm(JSON.parse(d));$('draftMsg').textContent='쓰던 글을 불러왔어요';}}catch(e){}}
-function clearForm(){setForm({});editingId=null;$('writeTitle').textContent='서평 쓰기';$('cancelEdit').hidden=true;$('submitBtn').textContent='서평 올리기 🌱';$('draftMsg').textContent='';try{localStorage.removeItem(draftKey());}catch(e){}}
-function startEdit(r){editingId=r.id;setForm({...r,one:r.oneLine,eval:r.evaluation});$('writeTitle').textContent='서평 고치기';$('cancelEdit').hidden=false;$('submitBtn').textContent='고친 내용 저장';showTab('write');}
+function clearForm(){setForm({});editingId=null;$('writeTitle').textContent='서평 쓰기';$('cancelEdit').hidden=true;$('submitBtn').textContent='서평 올리기 🌱';$('draftMsg').textContent='';$('writeKind').hidden=false;try{localStorage.removeItem(draftKey());}catch(e){}}
+function startEdit(r){
+  if(isExp(r)){editingId=r.id;setExp({...r,one:r.oneLine});$('expTitle').textContent='경험한 글 고치기';$('expCancel').hidden=false;$('expSubmit').textContent='고친 내용 저장';setWriteKind('exp');showTab('write');return;}
+  editingId=r.id;setWriteKind('book');setForm({...r,one:r.oneLine,eval:r.evaluation});$('writeTitle').textContent='서평 고치기';$('cancelEdit').hidden=false;$('submitBtn').textContent='고친 내용 저장';showTab('write');}
 $('cancelEdit').onclick=()=>{clearForm();showTab('feed');};
 $('submitBtn').onclick=async()=>{
   const d=formData();
@@ -802,11 +898,44 @@ $('submitBtn').onclick=async()=>{
   const body={authorId:me.id,title:d.title.trim(),author:d.author.trim(),genre:d.genre,intro:d.intro.trim(),plot:d.plot.trim(),spoiler:d.spoiler,quote:d.quote.trim(),impress:d.impress.trim(),evaluation:d.eval.trim(),rating:d.rating,oneLine:d.one.trim(),reco:d.reco.trim()};
   $('submitBtn').disabled=true;
   try{
-    if(editingId){const old=reviews.find(r=>r.id===editingId);await store.set('reviews',editingId,{...old,...body,id:undefined,editedAt:Date.now()});toast('고친 내용을 저장했어요');}
+    if(editingId){const {id:_id,...old}=reviews.find(r=>r.id===editingId);await store.set('reviews',editingId,{...old,...body,editedAt:Date.now()});toast('고친 내용을 저장했어요');}
     else{await store.set('reviews',uid(),{...body,createdAt:Date.now(),reactions:{},comments:[],hidden:false});celebrate();}
     const wasEdit=!!editingId;clearForm();showTab(wasEdit?'feed':'tree');
   }catch(e){console.error(e);toast('저장에 실패했어요. 다시 눌러 보세요');}
   $('submitBtn').disabled=false;
+};
+
+/* ═══════════════ 경험한 글 쓰기 ═══════════════ */
+const E=['title','topic','when','where','who','begin','middle','end','one'];
+let writeKind='book', expFeel='';
+function setWriteKind(k){writeKind=k;$('formBook').hidden=k!=='book';$('formExp').hidden=k!=='exp';$('writeKind').hidden=!!editingId;document.querySelectorAll('[data-wk]').forEach(b=>b.classList.toggle('on',b.dataset.wk===k));}
+function drawFeel(){$('e-feel').innerHTML=FEELS.map(f=>`<button type="button" data-k="${f.k}" class="${f.k===expFeel?'on':''}">${f.e} ${f.t}</button>`).join('');}
+(function initExp(){
+  $('e-topic').innerHTML=TOPICS.map(t=>`<option>${t}</option>`).join('');
+  E.forEach(k=>$('e-'+k).addEventListener('input',saveExpDraft));
+  $('e-feel').addEventListener('click',e=>{const b=e.target.closest('button');if(b){expFeel=expFeel===b.dataset.k?'':b.dataset.k;drawFeel();saveExpDraft();}});
+  drawFeel();
+  document.querySelectorAll('[data-wk]').forEach(b=>b.onclick=()=>setWriteKind(b.dataset.wk));
+})();
+function expData(){const o={};E.forEach(k=>o[k]=$('e-'+k).value);o.feel=expFeel;return o;}
+function setExp(o){E.forEach(k=>$('e-'+k).value=o[k]||'');if(!$('e-topic').value)$('e-topic').selectedIndex=0;expFeel=o.feel||'';drawFeel();document.querySelectorAll('#formExp .cnt').forEach(c=>$(c.dataset.for).dispatchEvent(new Event('input')));}
+function expDraftKey(){return 'bv_draftx_'+(me?me.id:'x');}
+function saveExpDraft(){if(editingId||!me)return;try{localStorage.setItem(expDraftKey(),JSON.stringify(expData()));$('expDraftMsg').textContent='임시 저장됨';}catch(e){}}
+function loadExpDraft(){try{const d=localStorage.getItem(expDraftKey());if(d){setExp(JSON.parse(d));$('expDraftMsg').textContent='쓰던 글을 불러왔어요';}}catch(e){}}
+function clearExp(){setExp({});editingId=null;$('expTitle').textContent='경험한 글 쓰기';$('expCancel').hidden=true;$('expSubmit').textContent='글 올리기 🌱';$('expDraftMsg').textContent='';$('writeKind').hidden=false;try{localStorage.removeItem(expDraftKey());}catch(e){}}
+$('expCancel').onclick=()=>{clearExp();showTab('feed');};
+$('expSubmit').onclick=async()=>{
+  const d=expData();
+  const need=[[!d.title.trim(),'글 제목을 써 주세요','e-title'],[d.begin.trim().length<30,'처음 부분을 30자 이상 써 주세요','e-begin'],[d.middle.trim().length<30,'가운데 부분을 30자 이상 써 주세요','e-middle'],[d.end.trim().length<30,'끝 부분을 30자 이상 써 주세요','e-end'],[!d.one.trim(),'한 줄 소개를 써 주세요','e-one']];
+  for(const [bad,msg,id] of need){if(bad){toast(msg);const el=$(id);el.scrollIntoView({behavior:'smooth',block:'center'});el.focus({preventScroll:true});return;}}
+  const body={kind:'exp',authorId:me.id,title:d.title.trim(),topic:d.topic,when:d.when.trim(),where:d.where.trim(),who:d.who.trim(),feel:d.feel,begin:d.begin.trim(),middle:d.middle.trim(),end:d.end.trim(),oneLine:d.one.trim()};
+  $('expSubmit').disabled=true;
+  try{
+    if(editingId){const {id:_id,...old}=reviews.find(r=>r.id===editingId);await store.set('reviews',editingId,{...old,...body,editedAt:Date.now()});toast('고친 내용을 저장했어요');}
+    else{await store.set('reviews',uid(),{...body,createdAt:Date.now(),reactions:{},comments:[],hidden:false});celebrate();}
+    const wasEdit=!!editingId;clearExp();showTab(wasEdit?'feed':'tree');
+  }catch(e){console.error(e);toast('저장에 실패했어요. 다시 눌러 보세요');}
+  $('expSubmit').disabled=false;
 };
 function celebrate(){
   toast('열매가 하나 열렸어요! 🍎 +100xp');
@@ -820,10 +949,10 @@ function renderTeach(){
   $('localReset').hidden=store.mode!=='local';
   $('setClass').value=(settings&&settings.className)||'';$('setGoal').value=(settings&&settings.treeGoal)||50;
   const list=[...students].sort((a,b)=>(a.num||99)-(b.num||99)||a.name.localeCompare(b.name,'ko'));
-  $('stuList').innerHTML=list.map(s=>`<div><span>${avatarOf(s.id)}</span><span class="nm">${esc(s.name)}</span><span style="font-size:12px;color:var(--ink-3)">서평 ${statsOf(s.id).reviews}</span><code>${esc(s.pin)}</code><button data-a="pin" data-id="${s.id}">비번 변경</button><button data-a="del" data-id="${s.id}">삭제</button></div>`).join('')||'<p style="color:var(--ink-3);font-size:14px">아직 학생이 없어요. 위에서 추가해 주세요.</p>';
+  $('stuList').innerHTML=list.map(s=>`<div><span>${avatarOf(s.id)}</span><span class="nm">${esc(s.name)}</span><span style="font-size:12px;color:var(--ink-3)">서평 ${statsOf(s.id).reviews} · 경험 ${statsOf(s.id).exps}</span><code>${esc(s.pin)}</code><button data-a="pin" data-id="${s.id}">비번 변경</button><button data-a="del" data-id="${s.id}">삭제</button></div>`).join('')||'<p style="color:var(--ink-3);font-size:14px">아직 학생이 없어요. 위에서 추가해 주세요.</p>';
   $('stuList').querySelectorAll('button').forEach(b=>b.onclick=async()=>{const s=students.find(x=>x.id===b.dataset.id);
     if(b.dataset.a==='pin'){const p=prompt(`${s.name}의 새 비밀번호(숫자 4자리)`,'');if(p&&/^\d{4}$/.test(p)){await store.update('students',s.id,{pin:p});toast('바꿨어요');}else if(p!==null)toast('숫자 4자리여야 해요');}
-    else{if(confirm(`${s.name} 학생을 명단에서 지울까요? (쓴 서평은 남아요)`))await store.del('students',s.id);}});
+    else{if(confirm(`${s.name} 학생을 명단에서 지울까요? (쓴 글은 남아요)`))await store.del('students',s.id);}});
 }
 const randPin=()=>String(Math.floor(1000+Math.random()*9000));
 async function addStudent(name,p){name=name.trim();if(!name)return false;p=(p||'').trim()||randPin();if(!/^\d{4}$/.test(p)){toast(name+': 비밀번호는 숫자 4자리');return false;}
@@ -838,9 +967,16 @@ $('localResetBtn').onclick=()=>{if(!confirm('이 기기에 저장된 미리보�
 $('csvBtn').onclick=()=>{
   const H=['이름','책 제목','지은이','장르','별점','한줄평','책 소개','줄거리','인상적인 문장','인상적인 부분','나의 평가','추천 대상','글자 수','받은 반응','댓글 수','작성일','숨김'];
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
-  const rows=[...reviews].sort((a,b)=>nameOf(a.authorId).localeCompare(nameOf(b.authorId),'ko')||a.createdAt-b.createdAt).map(r=>[nameOf(r.authorId),r.title,r.author,r.genre,r.rating,r.oneLine,r.intro,r.plot,r.quote,r.impress,r.evaluation,r.reco,rvLen(r),rxCount(r),(r.comments||[]).length,new Date(r.createdAt).toLocaleDateString('ko-KR'),r.hidden?'예':''].map(q).join(','));
+  const rows=reviews.filter(r=>!isExp(r)).sort((a,b)=>nameOf(a.authorId).localeCompare(nameOf(b.authorId),'ko')||a.createdAt-b.createdAt).map(r=>[nameOf(r.authorId),r.title,r.author,r.genre,r.rating,r.oneLine,r.intro,r.plot,r.quote,r.impress,r.evaluation,r.reco,rvLen(r),rxCount(r),(r.comments||[]).length,new Date(r.createdAt).toLocaleDateString('ko-KR'),r.hidden?'예':''].map(q).join(','));
   const blob=new Blob(['﻿'+[H.join(','),...rows].join('\r\n')],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`서평기록_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+};
+$('csvExpBtn').onclick=()=>{
+  const H=['이름','제목','글감','언제','어디서','누구와','기분','한 줄 소개','처음','가운데','끝','글자 수','받은 반응','댓글 수','작성일','숨김'];
+  const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const rows=reviews.filter(isExp).sort((a,b)=>nameOf(a.authorId).localeCompare(nameOf(b.authorId),'ko')||a.createdAt-b.createdAt).map(r=>[nameOf(r.authorId),r.title,r.topic,r.when,r.where,r.who,(FEELS.find(f=>f.k===r.feel)||{}).t,r.oneLine,r.begin,r.middle,r.end,rvLen(r),rxCount(r),(r.comments||[]).length,new Date(r.createdAt).toLocaleDateString('ko-KR'),r.hidden?'예':''].map(q).join(','));
+  const blob=new Blob(['\ufeff'+[H.join(','),...rows].join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`경험한글기록_${new Date().toISOString().slice(0,10)}.csv`;a.click();
 };
 
 /* ═══════════════ 데이터 구독 & 시작 ═══════════════ */
@@ -857,15 +993,16 @@ function seedDemoIfEmpty(){
     {authorId:'s2',title:'푸른 사자 와니니',author:'이현',genre:'동화·소설',rating:4,oneLine:'약한 사자도 대장이 될 수 있다는 걸 보여 준 책',intro:'(예시) 무리에서 쫓겨난 어린 암사자 와니니가 자기만의 무리를 만드는 이야기예요. 친구가 재미있다고 추천해 줘서 읽었어요.',plot:'와니니는 몸이 작고 귀가 밝아서 사냥에 방해가 된다고 무리에서 쫓겨나요. 어느 날 혼자 초원을 떠돌다가 떠돌이 수사자 아산테와 잠보를 만나요. 셋은 서로 도우며 살아남고, 와니니는 자기가 잘하는 것으로 리더가 돼요.',quote:'',impress:'와니니가 사냥을 못 해서 창피해하던 장면에서 나도 체육 시간에 그런 적이 있어서 공감했어요. 이 부분에서 나는 잘하는 게 다 다르다는 걸 배웠어요.',evaluation:'좋은 점은 사자들 이름이 다 다르고 성격이 살아 있어서 헷갈리지 않는다는 거예요. 아쉬운 점은 마지막이 좀 급하게 끝나는 느낌이었어요. 그래도 와니니가 자기 약점을 강점으로 바꾸는 게 인상 깊어서 별 4개예요.',reco:'모험을 좋아하는 친구',spoiler:false,createdAt:d-86400000*2,reactions:{like:['s1'],read:['s3','s4','s1']},comments:[],hidden:false},
     {authorId:'s3',title:'설민석의 한국사 대모험 1',author:'설민석',genre:'만화·학습만화',rating:3,oneLine:'재미있는데 만화라서 금방 끝나요',intro:'(예시) 아이들이 시간여행을 하면서 한국사를 배우는 학습만화예요. 사회 시간에 선사시대를 배워서 골랐어요.',plot:'평강, 온달, 로빈 세 친구가 설쌤과 함께 과거로 떠나요. 구석기 사람들을 만나고 불을 피우는 법도 배워요. 그런데 로빈이 사고를 쳐서 역사가 바뀔 뻔해요. 결국 무사히 돌아와요.',quote:'',impress:'구석기 사람들이 뗀석기로 고기를 자르는 장면이 인상적이었어요. 교과서 그림으로만 봤는데 만화로 보니까 어떻게 쓰는 건지 확실히 알겠더라고요.',evaluation:'그림이 재미있어서 술술 읽히는 건 좋은데, 다 읽고 나니까 남는 내용이 생각보다 적었어요. 교과서랑 같이 보면 좋을 것 같아요. 그래서 별 3개.',reco:'역사를 어려워하는 친구',spoiler:false,createdAt:d-3600000*5,reactions:{laugh:['s1','s2']},comments:[],hidden:false},
   ];
+  demo.push({kind:'exp',authorId:'s4',title:'자전거 보조 바퀴를 뗀 날',topic:'체험·도전',when:'지난 토요일',where:'집 앞 공원',who:'아빠',feel:'proud',oneLine:'무릎은 까졌지만 두 바퀴로 처음 달린 날',begin:'(예시) 지난 토요일 아침, 아빠가 갑자기 "오늘은 보조 바퀴 떼 보자." 하고 말씀하셨다. 나는 겁이 나서 싫다고 했지만 아빠는 벌써 공구를 들고 계셨다.',middle:'공원에 도착해서 아빠가 뒤에서 자전거를 잡아 주셨다. 처음에는 핸들이 자꾸 흔들려서 세 번이나 넘어졌다. 무릎이 까져서 눈물이 찔끔 났다. 그런데 네 번째에는 뭔가 달랐다. 페달을 세게 밟으니까 자전거가 똑바로 나아갔다. 뒤를 돌아보니 아빠는 저 멀리서 손을 흔들고 계셨다.',end:'혼자 달리고 있다는 걸 알았을 때 가슴이 쿵쾅거렸다. 무서워서 안 하려고 했던 내가 조금 부끄럽기도 했다. 다음에는 겁이 나도 일단 한 번은 해 봐야겠다고 생각했다.',createdAt:d-3600000*20,reactions:{same:['s1','s2']},comments:[],hidden:false});
   demo.forEach(r=>store.set('reviews',uid(),r));
 }
 let loaded={students:false,reviews:false,settings:false};
 function afterLoad(){
   if(!Object.values(loaded).every(Boolean))return;
-  if(!window._booted){window._booted=true;seedDemoIfEmpty();renderGenreFilters();
+  if(!window._booted){window._booted=true;seedDemoIfEmpty();renderKindTabs();renderGenreFilters();
     try{const s=JSON.parse(sessionStorage.getItem('bv_session')||'null');if(s&&(s.teacher||students.find(x=>x.id===s.sid)))enter(s.sid,s.teacher);}catch(e){}
   }
-  if(prevReviewCount!==null&&reviews.length>prevReviewCount&&$('app').classList.contains('on')&&!isTeacher){const last=[...reviews].sort((a,b)=>b.createdAt-a.createdAt)[0];if(last&&last.authorId!==me.id&&Date.now()-last.createdAt<60000)toast(`${nameOf(last.authorId)}이(가) 새 서평을 올렸어요!`);}
+  if(prevReviewCount!==null&&reviews.length>prevReviewCount&&$('app').classList.contains('on')&&!isTeacher){const last=[...reviews].sort((a,b)=>b.createdAt-a.createdAt)[0];if(last&&last.authorId!==me.id&&Date.now()-last.createdAt<60000)toast(`${nameOf(last.authorId)}이(가) 새 ${isExp(last)?'글':'서평'}을 올렸어요!`);}
   prevReviewCount=reviews.length;
   renderGate();renderAll();
 }

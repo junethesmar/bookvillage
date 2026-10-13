@@ -356,6 +356,20 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
 .imgcheck{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:4px;max-height:260px;overflow:auto;font-size:12px}
 .imgcheck span{background:var(--paper);border-radius:8px;padding:3px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .imgcheck span.ok{background:var(--leaf-2);color:var(--leaf)}
+.facewrap{position:relative;display:block}
+.facewrap img{width:100%;display:block;filter:drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 1.5px #fff)}
+.lvb{position:absolute;right:-10%;bottom:-6%;font-style:normal;font-size:calc(var(--w) * .3cqw);line-height:1}
+.padwrap{position:relative;width:min(300px,100%);aspect-ratio:1;margin:0 auto;border-radius:20px;border:3px solid var(--line);background:repeating-conic-gradient(#fff 0 25%,#F6F3EE 0 50%) 0 0/20px 20px}
+.padwrap::after{content:"";position:absolute;inset:9%;border:2.5px dashed rgba(91,64,51,.3);border-radius:50%;pointer-events:none}
+.padwrap canvas{width:100%;height:100%;display:block;touch-action:none;border-radius:17px;cursor:crosshair}
+.padcolors{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:12px 0 8px}
+.padcolors button{width:32px;height:32px;border-radius:50%;border:2px solid var(--line)}
+.padcolors button.on{outline:3px solid var(--ink);outline-offset:2px}
+.padtools{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center}
+.padtools button{display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:999px;background:var(--paper);border:1.5px solid var(--line);font-size:14px}
+.padtools button i{display:inline-block;border-radius:50%;background:currentColor}
+.padtools button.on{background:var(--leaf);color:#fff;border-color:var(--leaf)}
+.padtools .sep{width:1px;height:22px;background:var(--line)}
 </style>
 </head>
 <body>
@@ -534,6 +548,7 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
           <div class="roomhead">
             <h2 id="roomTitle">내 방</h2>
             <button class="btn ghost sm" id="roomBack" hidden>← 돌아가기</button>
+            <button class="btn honey sm" id="faceBtn">✏️ 내 얼굴 그리기</button>
             <button class="btn sm" id="shopBtn">🛍️ 상점</button>
           </div>
           <div class="room" id="room"><div class="wall" id="rWall"></div><div class="floor" id="rFloor"></div><div id="rItems"></div></div>
@@ -562,6 +577,7 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
             <div class="xpbar"><i id="pBar"></i></div>
             <p style="text-align:center;font-size:12px;color:var(--ink-3);margin:4px 0 0" id="pNext"></p>
             <div class="stats"><div><b id="sRev">0</b><span>서평</span></div><div><b id="sExp">0</b><span>게시판 글</span></div><div><b id="sRx">0</b><span>받은 반응</span></div><div><b id="sCm">0</b><span>쓴 댓글</span></div></div>
+            <button class="btn honey sm" id="faceBtn2" style="width:100%;margin-bottom:8px">✏️ 내 얼굴 그리기</button>
             <button class="btn ghost sm" id="logout" style="width:100%">나가기</button>
           </div>
           <div class="card" style="margin-top:14px"><h3 style="font-size:18px;margin-bottom:8px">배지</h3><div class="badges" id="badges"></div></div>
@@ -810,7 +826,7 @@ function renderAll(){
   $('brandClass').textContent=(settings&&settings.className)||'';
   $('modePill').textContent=store.mode==='firebase'?'실시간 공유 중':'미리보기(내 기기 저장)';$('modePill').classList.toggle('live',store.mode==='firebase');
   if(isTeacher){$('meAv').textContent='🍎';$('meName').textContent='선생님';$('meLv').textContent='교사 모드';}
-  else{me=students.find(s=>s.id===me.id)||me;const st=statsOf(me.id),lv=levelOf(st.xp);$('meAv').textContent=lv.av;$('meName').textContent=me.name;$('meLv').textContent=lv.n;}
+  else{me=students.find(s=>s.id===me.id)||me;const st=statsOf(me.id),lv=levelOf(st.xp);$('meAv').textContent=lv.av;$('meName').textContent=me.name;$('meLv').textContent=lv.n;paintMyAv();}
   renderFeed();renderRank();renderTree(false);if(!isTeacher)renderMe();if(isTeacher)renderTeach();renderTown();
   if(openId)openReview(openId,true);
 }
@@ -904,7 +920,7 @@ function renderTree(animate){
 /* ═══════════════ 내 서재 ═══════════════ */
 function renderMe(){
   const st=statsOf(me.id),lv=levelOf(st.xp);
-  $('pAv').textContent=lv.av;$('pLv').textContent=lv.n;$('pName').textContent=me.name;
+  $('pAv').textContent=lv.av;paintMyAv();$('pLv').textContent=lv.n;$('pName').textContent=me.name;
   const base=lv.xp,nx=lv.next?lv.next.xp:null;
   $('pBar').style.width=(nx?((st.xp-base)/(nx-base)*100):100)+'%';
   $('pNext').textContent=nx?`${lv.next.n}까지 ${nx-st.xp} xp`:'최고 레벨이에요!';
@@ -1069,9 +1085,10 @@ function renderTeach(){
   const off=!!(settings&&settings.playOff);$('playToggle').textContent=off?'🌞 마을 열기':'🌙 마을 닫기';$('playToggle').className='btn '+(off?'':'ghost');renderImgCheck();
   $('setClass').value=(settings&&settings.className)||'';$('setGoal').value=(settings&&settings.treeGoal)||50;
   const list=[...students].sort((a,b)=>(a.num||99)-(b.num||99)||a.name.localeCompare(b.name,'ko'));
-  $('stuList').innerHTML=list.map(s=>`<div><span>${avatarOf(s.id)}</span><span class="nm">${esc(s.name)}</span><span style="font-size:12px;color:var(--ink-3)">서평 ${statsOf(s.id).reviews} · 경험 ${statsOf(s.id).exps}</span><code>${esc(s.pin)}</code><button data-a="pin" data-id="${s.id}">비번 변경</button><button data-a="del" data-id="${s.id}">삭제</button></div>`).join('')||'<p style="color:var(--ink-3);font-size:14px">아직 학생이 없어요. 위에서 추가해 주세요.</p>';
+  $('stuList').innerHTML=list.map(s=>`<div><span>${faceOf(s.id)?`<img src="${faceOf(s.id)}" alt="" style="width:26px;height:26px;vertical-align:middle">`:avatarOf(s.id)}</span><span class="nm">${esc(s.name)}</span><span style="font-size:12px;color:var(--ink-3)">서평 ${statsOf(s.id).reviews} · 경험 ${statsOf(s.id).exps}</span><code>${esc(s.pin)}</code><button data-a="pin" data-id="${s.id}">비번 변경</button>${faceOf(s.id)?`<button data-a="face" data-id="${s.id}">얼굴 지우기</button>`:''}<button data-a="del" data-id="${s.id}">삭제</button></div>`).join('')||'<p style="color:var(--ink-3);font-size:14px">아직 학생이 없어요. 위에서 추가해 주세요.</p>';
   $('stuList').querySelectorAll('button').forEach(b=>b.onclick=async()=>{const s=students.find(x=>x.id===b.dataset.id);
     if(b.dataset.a==='pin'){const p=prompt(`${s.name}의 새 비밀번호(숫자 4자리)`,'');if(p&&/^\d{4}$/.test(p)){await store.update('students',s.id,{pin:p});toast('바꿨어요');}else if(p!==null)toast('숫자 4자리여야 해요');}
+    else if(b.dataset.a==='face'){if(confirm(`${s.name} 학생이 그린 얼굴을 지울까요? (원래 캐릭터로 돌아가요)`)){await saveRoom(s.id,{face:null});toast('지웠어요');}}
     else{if(confirm(`${s.name} 학생을 명단에서 지울까요? (쓴 글은 남아요)`))await store.del('students',s.id);}});
 }
 const randPin=()=>String(Math.floor(1000+Math.random()*9000));
@@ -1140,7 +1157,7 @@ function probeImages(){
 }
 const art=(id,emo)=>IMG_OK[id]?`<img src="img/${id}.png" alt="" draggable="false">`:`<span class="emo">${emo}</span>`;
 const lvIdx=xp=>{let k=0;LEVELS.forEach((l,i)=>{if(xp>=l.xp)k=i;});return k;};
-const charArt=sid=>{const i=lvIdx(statsOf(sid).xp);return art('lv'+i,LEVELS[i].av);};
+const charArt=sid=>{const i=lvIdx(statsOf(sid).xp),f=faceOf(sid);return f?`<span class="facewrap"><img src="${f}" alt="" draggable="false"><i class="lvb">${LEVELS[i].av}</i></span>`:art('lv'+i,LEVELS[i].av);};
 
 let rooms=[],roomsErr=null,twView='room',visitId=null,selIdx=-1,dragging=false,workPlaced=[],shopOpen=false,shopCat='furn',shopArm=null,prevGuest=null,trimmed=false;
 const ROOM0=()=>({wall:'w_cream',floor:'fl_wood',house:'h_basic',owned:[],placed:[{i:'_me',x:50,y:92}],guest:[],attend:[]});
@@ -1190,7 +1207,7 @@ function renderRoom(){
   const sid=visitId||(me&&me.id);if(!sid)return;
   const mine=!isTeacher&&me&&sid===me.id,rm=roomOf(sid),st=statsOf(sid);
   $('roomTitle').textContent=mine?'내 방':nameOf(sid)+'의 방';
-  $('roomBack').hidden=mine;$('shopBtn').hidden=!mine;$('bagBox').hidden=!mine;
+  $('roomBack').hidden=mine;$('shopBtn').hidden=$('faceBtn').hidden=!mine;$('bagBox').hidden=!mine;
   $('rWall').style.background=(ITEM[rm.wall]||ITEM.w_cream).css;$('rFloor').style.background=(ITEM[rm.floor]||ITEM.fl_wood).css;
   workPlaced=validPlaced(sid);if(selIdx>=workPlaced.length)selIdx=-1;
   $('room').classList.toggle('edit',!!mine);
@@ -1244,7 +1261,8 @@ function renderVillage(){
   list.forEach((s,i)=>{const row=Math.floor(i/9)%4,col=i%9,x=7+col*10.8+(row%2?2.5:0)+(seeded(i+3)-.5)*2,y=rowsY[row]+(seeded(i+11)-.5)*2;
     const hs=ITEM[roomOf(s.id).house]||ITEM.h_basic,mine=me&&s.id===me.id;
     h+=`<div class="pin ${mine?'mine':''}" data-sid="${s.id}" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;width:8%;--w:8;z-index:${Math.round(y)}"><div class="art">${art(hs.id,hs.e)}</div><span class="lbl">${mine?'⭐ ':''}${esc(s.name)}</span></div>`;
-    h+=`<div class="walker" style="left:${(x+4.5).toFixed(1)}%;top:${(y-.5).toFixed(1)}%;width:3.6%;--w:3.6;--dx:${(seeded(i+5)*30+10).toFixed(0)}px;--d:${(4+seeded(i+9)*5).toFixed(1)}s;z-index:${Math.round(y)+1}">${charArt(s.id)}</div>`;});
+    const ww=faceOf(s.id)?5:3.6;
+    h+=`<div class="walker" style="left:${(x+4.5).toFixed(1)}%;top:${(y-.5).toFixed(1)}%;width:${ww}%;--w:${ww};--dx:${(seeded(i+5)*30+10).toFixed(0)}px;--d:${(4+seeded(i+9)*5).toFixed(1)}s;z-index:${Math.round(y)+1}">${charArt(s.id)}</div>`;});
   v.innerHTML=h;
   v.querySelectorAll('[data-sid]').forEach(el=>el.onclick=()=>{visitId=el.dataset.sid;if(me&&visitId===me.id)visitId=null;twView='room';selIdx=-1;renderTown();window.scrollTo({top:0});});
   v.querySelectorAll('[data-fac]').forEach(el=>el.onclick=ev=>{const f=FAC[+el.dataset.fac],need=Math.ceil(goal*f.r);const [x,y]=evPos(ev);
@@ -1287,11 +1305,75 @@ function onRooms(){
   if(me&&!isTeacher){const g=roomOf(me.id).guest||[];
     if(prevGuest!==null&&g.length>prevGuest){const last=g[g.length-1];if(last&&last.by!==me.id)toast(`${nameOf(last.by)}이(가) 내 방에 ${last.e} 스티커를 붙였어요!`);}
     prevGuest=g.length;}
-  renderTown();if(shopOpen)renderShop();
+  paintMyAv();renderTown();if(shopOpen)renderShop();if(isTeacher&&$('v-teach').classList.contains('on'))renderTeach();
 }
 function renderImgCheck(){probeImages();$('imgCheck').innerHTML=IMG_IDS.map(id=>`<span class="${IMG_OK[id]?'ok':''}">${IMG_OK[id]?'✅':'⬜'} ${id}.png</span>`).join('');}
 $('playToggle').onclick=async()=>{const off=!(settings&&settings.playOff);await store.update('settings','main',{playOff:off});toast(off?'마을을 닫았어요':'마을을 열었어요');};
 store.watch('rooms',d=>{rooms=d;roomsErr=null;onRooms();},e=>{roomsErr=e.code||'오류';renderTown();});
+
+/* ═══════════════ 내 얼굴 그리기 ═══════════════
+   rooms/{학생id}.face = 160px PNG dataURL. 있으면 마을·내 방·이름표·내 서재에서 레벨 캐릭터 대신 보여요. */
+const faceOf=sid=>{const f=(rooms.find(r=>r.id===sid)||{}).face;return typeof f==='string'&&f.length<150000&&/^data:image\/(png|webp);base64,[A-Za-z0-9+\/=]+$/.test(f)?f:null;};
+function paintMyAv(){
+  if(!me||isTeacher)return;const f=faceOf(me.id),lv=levelOf(statsOf(me.id).xp);
+  $('meAv').innerHTML=f?`<img src="${f}" alt="" style="width:100%;height:100%;object-fit:contain">`:esc(lv.av);
+  $('pAv').innerHTML=f?`<span class="facewrap" style="width:120px;margin:0 auto;--w:30"><img src="${f}" alt="내 얼굴" style="width:120px;display:block"><i class="lvb" style="font-size:30px">${lv.av}</i></span>`:esc(lv.av);
+}
+const PAD_COLORS=['#3B2A22','#7A4E2D','#F6C04E','#FDE3CF','#F5C9A6','#D9A07A','#A8714F','#F28B82','#F7A1B5','#FFB067','#FFE07A','#A8DD8C','#A9D3F5','#CDB8F0','#FFFFFF'];
+const PAD_SIZES=[['가늘게',4],['보통',9],['굵게',18]];
+let pad={color:'#3B2A22',size:9,tool:'pen',undo:[]};
+function openFacePad(){
+  if(!me||isTeacher)return;shopOpen=false;openId=null;pad.undo=[];
+  $('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><h2 style="font-size:26px">✏️ 내 얼굴 그리기</h2>
+    <p class="shopsub">점선 동그라미 안에 내 얼굴을 그려 보세요. 마을에서 친구들이 보게 돼요 😊</p>
+    <div class="padwrap"><canvas id="padCv" width="256" height="256"></canvas></div>
+    <div class="padcolors" id="padColors">${PAD_COLORS.map(c=>`<button data-c="${c}" style="background:${c}" aria-label="색깔 ${c}"></button>`).join('')}</div>
+    <div class="padtools" id="padTools">${PAD_SIZES.map(([t,s])=>`<button data-s="${s}"><i style="width:${Math.max(4,s/1.5)}px;height:${Math.max(4,s/1.5)}px"></i>${t}</button>`).join('')}<span class="sep"></span>
+      <button data-t="pen">✏️ 펜</button><button data-t="fill">🪣 칠하기</button><button data-t="eraser">🧽 지우개</button><span class="sep"></span>
+      <button id="padUndo">↩️ 되돌리기</button><button id="padClear">🗑️ 다 지우기</button></div>
+    <div class="row" style="justify-content:space-between;margin-top:14px"><button class="btn ghost sm" id="padReset">기본 캐릭터로 돌아가기</button><button class="btn" id="padSave">다 그렸어요! 💾</button></div>`;
+  $('modal').classList.add('on');$('mClose').onclick=closeModal;
+  const cv=$('padCv'),ctx=cv.getContext('2d',{willReadFrequently:true});
+  const f=faceOf(me.id);if(f){const im=new Image();im.onload=()=>ctx.drawImage(im,0,0,256,256);im.src=f;}
+  const sync=()=>{document.querySelectorAll('#padColors button').forEach(b=>b.classList.toggle('on',b.dataset.c===pad.color));
+    document.querySelectorAll('#padTools [data-s]').forEach(b=>b.classList.toggle('on',+b.dataset.s===pad.size));
+    document.querySelectorAll('#padTools [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===pad.tool));};
+  document.querySelectorAll('#padColors button').forEach(b=>b.onclick=()=>{pad.color=b.dataset.c;if(pad.tool==='eraser')pad.tool='pen';sync();});
+  document.querySelectorAll('#padTools [data-s]').forEach(b=>b.onclick=()=>{pad.size=+b.dataset.s;if(pad.tool==='fill')pad.tool='pen';sync();});
+  document.querySelectorAll('#padTools [data-t]').forEach(b=>b.onclick=()=>{pad.tool=b.dataset.t;sync();});
+  sync();
+  const snap=()=>{pad.undo.push(ctx.getImageData(0,0,256,256));if(pad.undo.length>25)pad.undo.shift();};
+  $('padUndo').onclick=()=>{const u=pad.undo.pop();if(u)ctx.putImageData(u,0,0);};
+  $('padClear').onclick=()=>{snap();ctx.clearRect(0,0,256,256);};
+  const pos=e=>{const r=cv.getBoundingClientRect();return [Math.round((e.clientX-r.left)/r.width*256),Math.round((e.clientY-r.top)/r.height*256)];};
+  let last=null;
+  const line=(a,b)=>{ctx.globalCompositeOperation=pad.tool==='eraser'?'destination-out':'source-over';ctx.strokeStyle=pad.color;ctx.lineWidth=pad.tool==='eraser'?pad.size*2:pad.size;
+    ctx.lineCap=ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0]+.01,b[1]);ctx.stroke();ctx.globalCompositeOperation='source-over';};
+  cv.onpointerdown=e=>{e.preventDefault();const p=pos(e);snap();
+    if(pad.tool==='fill'){floodFill(ctx,Math.min(255,Math.max(0,p[0])),Math.min(255,Math.max(0,p[1])),pad.color);return;}
+    last=p;line(p,p);try{cv.setPointerCapture(e.pointerId);}catch(_){}};
+  cv.onpointermove=e=>{if(!last)return;const p=pos(e);line(last,p);last=p;};
+  cv.onpointerup=cv.onpointercancel=()=>{last=null;};
+  $('padReset').onclick=async()=>{if(!confirm('그린 얼굴을 지우고 원래 캐릭터로 돌아갈까요?'))return;await saveRoom(me.id,{face:null});closeModal();toast('원래 캐릭터로 돌아왔어요');};
+  $('padSave').onclick=async e=>{
+    const d=ctx.getImageData(0,0,256,256).data;let ink=0;for(let i=3;i<d.length;i+=4)if(d[i]>20)ink++;
+    if(ink<200){toast('얼굴을 조금 더 그려 주세요 ✏️');return;}
+    const c2=document.createElement('canvas');c2.width=c2.height=160;c2.getContext('2d').drawImage(cv,0,0,160,160);
+    let url=c2.toDataURL('image/png');if(url.length>140000){const w=c2.toDataURL('image/webp',.9);if(w.startsWith('data:image/webp')&&w.length<url.length)url=w;}
+    if(url.length>=150000){toast('그림이 너무 복잡해요. 조금 지우고 다시 저장해 보세요');return;}
+    const [x,y]=evPos(e);floatEmoji('😊',x,y);await saveRoom(me.id,{face:url});closeModal();toast('내 얼굴을 저장했어요! 마을에 가 보세요');};
+}
+function floodFill(ctx,x,y,hex){
+  const W=256,H=256,img=ctx.getImageData(0,0,W,H),d=img.data,i0=(y*W+x)*4,t=[d[i0],d[i0+1],d[i0+2],d[i0+3]];
+  const c=[parseInt(hex.slice(1,3),16),parseInt(hex.slice(3,5),16),parseInt(hex.slice(5,7),16),255];
+  if(t[3]>200&&Math.abs(t[0]-c[0])+Math.abs(t[1]-c[1])+Math.abs(t[2]-c[2])<6)return;
+  const match=p=>t[3]<40?d[p+3]<90:d[p+3]>=40&&Math.abs(d[p]-t[0])+Math.abs(d[p+1]-t[1])+Math.abs(d[p+2]-t[2])<80;
+  const seen=new Uint8Array(W*H),st=[x,y];
+  while(st.length){const py=st.pop(),px=st.pop();if(px<0||py<0||px>=W||py>=H)continue;const k=py*W+px;if(seen[k])continue;seen[k]=1;const p=k*4;if(!match(p))continue;
+    d[p]=c[0];d[p+1]=c[1];d[p+2]=c[2];d[p+3]=255;st.push(px+1,py,px-1,py,px,py+1,px,py-1);}
+  ctx.putImageData(img,0,0);
+}
+$('faceBtn').onclick=openFacePad;$('faceBtn2').onclick=openFacePad;
 
 /* ═══════════════ 데이터 구독 & 시작 ═══════════════ */
 function seedDemoIfEmpty(){

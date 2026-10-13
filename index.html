@@ -95,6 +95,13 @@ main{flex:1;width:100%;max-width:1080px;margin:0 auto;padding:18px 16px 40px}
 .chip.exp{background:var(--honey-2);color:#8A6210}
 .seg{display:inline-flex;margin-bottom:14px}
 .board{overflow:hidden}
+.brow .bt b{font-weight:400;font-family:var(--font-body);font-size:13px;color:var(--leaf);margin-right:5px}
+.pics{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.pics .pic{position:relative;width:96px;height:96px;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--paper)}
+.pics .pic img{width:100%;height:100%;object-fit:cover;display:block}
+.pics .pic button{position:absolute;right:4px;top:4px;width:24px;height:24px;border-radius:50%;background:rgba(34,48,58,.75);color:#fff;font-size:13px;display:grid;place-items:center}
+.rv .photos{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.rv .photos img{max-width:100%;border-radius:12px;display:block}
 .brow{display:flex;align-items:center;gap:10px;padding:12px 16px;border-top:1px solid var(--line);cursor:pointer}
 .brow:first-child{border-top:0}
 .brow:hover{background:var(--paper)}
@@ -343,7 +350,7 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
     <!-- 쓰기 -->
     <section class="view" id="v-write">
       <div class="write">
-        <nav class="tabs seg" id="writeKind"><button data-wk="book">📚 서평</button><button data-wk="exp">✏️ 경험한 글</button></nav>
+        <nav class="tabs seg" id="writeKind"><button data-wk="book">📚 서평</button><button data-wk="exp">📝 게시판 글</button></nav>
         <div id="formBook">
         <h2 id="writeTitle">서평 쓰기</h2>
         <p class="sub">네 칸만 채우면 멋진 서평이 완성돼요. 다 쓰면 나무에 열매가 하나 열려요 🍎</p>
@@ -405,15 +412,21 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
         </div>
 
         <div id="formExp" hidden>
-        <h2 id="expTitle">경험한 글 쓰기</h2>
-        <p class="sub">내가 겪은 일을 자유롭게 써요. 다 쓰면 나무에 열매가 하나 열려요 🍎</p>
+        <h2 id="expTitle">게시판 글쓰기</h2>
+        <p class="sub">있었던 일, 내가 지은 이야기, 하고 싶은 말을 자유롭게 써요. 사진도 넣을 수 있어요 📷</p>
 
         <div class="card step" style="padding-top:18px">
-          <label class="f">제목</label>
-          <input type="text" id="e-title" placeholder="제목을 써 주세요" maxlength="60">
+          <div class="row" style="align-items:flex-start">
+            <div style="flex:1;min-width:130px"><label class="f">말머리</label><select id="e-cat"></select></div>
+            <div style="flex:3;min-width:200px"><label class="f">제목</label><input type="text" id="e-title" placeholder="제목을 써 주세요" maxlength="60"></div>
+          </div>
           <label class="f" style="margin-top:12px">내용</label>
           <textarea id="e-body" placeholder="내용을 써 주세요" style="min-height:340px"></textarea>
           <div id="e-cnt" style="text-align:right;font-size:12px;color:var(--ink-3);margin-top:4px"></div>
+          <label class="f" style="margin-top:6px">사진 <span>3장까지 넣을 수 있어요 (선택)</span></label>
+          <div class="row"><button type="button" class="btn ghost sm" id="e-photoBtn">📷 사진 넣기</button><span id="e-photoMsg" style="font-size:13px;color:var(--ink-3)"></span></div>
+          <input type="file" id="e-file" accept="image/*" multiple hidden>
+          <div class="pics" id="e-pics"></div>
         </div>
 
         <div class="row" style="justify-content:space-between;margin-top:6px">
@@ -432,7 +445,7 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
           <div class="goal" id="treeGoal"></div>
           <div id="treeSvg"></div>
           <div class="xpbar" style="margin:8px 20px"><i id="treeBar"></i></div>
-          <p style="font-size:13px;color:var(--ink-2)">서평이든 경험한 글이든 한 편 = 열매 하나. 목표를 채우면 나무가 꽃을 피워요.</p>
+          <p style="font-size:13px;color:var(--ink-2)">서평이든 게시판 글이든 한 편 = 열매 하나. 목표를 채우면 나무가 꽃을 피워요.</p>
         </div>
         <div class="card hall">
           <h3>명예의 전당</h3>
@@ -451,7 +464,7 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
             <p style="text-align:center;font-family:var(--font-disp);font-size:20px;margin:2px 0" id="pName"></p>
             <div class="xpbar"><i id="pBar"></i></div>
             <p style="text-align:center;font-size:12px;color:var(--ink-3);margin:4px 0 0" id="pNext"></p>
-            <div class="stats"><div><b id="sRev">0</b><span>서평</span></div><div><b id="sExp">0</b><span>경험한 글</span></div><div><b id="sRx">0</b><span>받은 반응</span></div><div><b id="sCm">0</b><span>쓴 댓글</span></div></div>
+            <div class="stats"><div><b id="sRev">0</b><span>서평</span></div><div><b id="sExp">0</b><span>게시판 글</span></div><div><b id="sRx">0</b><span>받은 반응</span></div><div><b id="sCm">0</b><span>쓴 댓글</span></div></div>
             <button class="btn ghost sm" id="logout" style="width:100%">나가기</button>
           </div>
           <div class="card" style="margin-top:14px"><h3 style="font-size:18px;margin-bottom:8px">배지</h3><div class="badges" id="badges"></div></div>
@@ -482,8 +495,8 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
           </div>
           <div class="card" style="margin-top:14px">
             <h3>기록 내려받기</h3>
-            <p style="font-size:14px;color:var(--ink-2);margin:0 0 10px">서평과 경험한 글을 각각 CSV(엑셀)로 저장해요. 평가 기록·학부모 상담 자료로 쓸 수 있어요.</p>
-            <div class="row"><button class="btn honey" id="csvBtn">서평 CSV</button><button class="btn honey" id="csvExpBtn">경험한 글 CSV</button></div>
+            <p style="font-size:14px;color:var(--ink-2);margin:0 0 10px">서평과 게시판 글을 각각 CSV(엑셀)로 저장해요. 평가 기록·학부모 상담 자료로 쓸 수 있어요.</p>
+            <div class="row"><button class="btn honey" id="csvBtn">서평 CSV</button><button class="btn honey" id="csvExpBtn">게시판 글 CSV</button></div>
             <p style="font-size:13px;color:var(--ink-3);margin:12px 0 0">글 숨기기·삭제는 책방에서 글을 열면 아래에 버튼이 있어요.</p>
             <div id="localReset" hidden style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)"><p style="font-size:13px;color:var(--ink-2);margin:0 0 8px">지금은 <b>미리보기 모드</b>(이 기기에만 저장)예요. 예시 자료를 지우고 빈 상태로 시작할 수 있어요.</p><button class="btn ghost sm" id="localResetBtn" style="color:var(--berry)">미리보기 데이터 모두 지우기</button></div>
           </div>
@@ -551,6 +564,7 @@ function makeLocalStore(){
     async set(col,id,d){ data[col]=data[col]||{}; data[col][id]=JSON.parse(JSON.stringify(d)); save(); emit(col); },
     async update(col,id,p){ data[col]=data[col]||{}; data[col][id]=data[col][id]||{}; applyPatch(data[col][id],p); save(); emit(col); },
     async del(col,id){ if(data[col]) delete data[col][id]; save(); emit(col); },
+    async get(col,id){ const d=(data[col]||{})[id]; return d?JSON.parse(JSON.stringify(d)):null; },
   };
 }
 function makeFirestore(cfg){
@@ -564,6 +578,7 @@ function makeFirestore(cfg){
     set:(col,id,d)=>fs.collection(col).doc(id).set(d),
     update:(col,id,p)=>fs.collection(col).doc(id).update(conv(p)),
     del:(col,id)=>fs.collection(col).doc(id).delete(),
+    get:(col,id)=>fs.collection(col).doc(id).get().then(d=>d.exists?d.data():null),
   };
 }
 const CFG_SET = !!(window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.projectId);
@@ -578,7 +593,9 @@ if(CFG_SET && !window.firebase){
 const GENRES=['동화·소설','그림책','과학·자연','역사·인물','만화·학습만화','시·에세이','지식·정보','기타'];
 const RX=[{k:'like',e:'👍',t:'공감'},{k:'read',e:'📖',t:'나도 읽을래'},{k:'laugh',e:'😂',t:'웃겨'},{k:'cry',e:'🥹',t:'뭉클'}];
 const RX_EXP=[{k:'like',e:'👍',t:'공감'},{k:'same',e:'🙋',t:'나도 그런 적 있어'},{k:'laugh',e:'😂',t:'웃겨'},{k:'cry',e:'🥹',t:'뭉클'}];
-const KINDS=[['book','📚 서평'],['exp','✏️ 경험한 글']];
+const KINDS=[['book','📚 서평'],['exp','📝 우리 반 게시판']];
+const CATS=['있었던 일','이야기 짓기','자유 글'];
+const MAX_PICS=3;
 const LEVELS=[{xp:0,n:'책벌레 알',av:'🥚'},{xp:150,n:'꼬물 애벌레',av:'🐛'},{xp:400,n:'고치 속 독서가',av:'🌿'},{xp:800,n:'책나비',av:'🦋'},{xp:1500,n:'황금 책나비',av:'✨'}];
 const STAR_WORDS=['','음… 나랑은 안 맞았어','그냥 그랬어','괜찮았어','재미있었어!','인생 책이야!!'];
 const BADGES=[
@@ -592,20 +609,27 @@ const BADGES=[
   {id:'talk',ic:'💬',n:'댓글 요정',d:'댓글 10개 쓰기',f:s=>s.cm>=10},
   {id:'crit',ic:'⭐',n:'냉정한 평론가',d:'별 2개 이하 서평',f:s=>s.low>=1},
   {id:'fan',ic:'💖',n:'열혈 독자',d:'별 5개 서평 3편',f:s=>s.five>=3},
-  {id:'exp1',ic:'✏️',n:'첫 이야기',d:'첫 경험한 글 쓰기',f:s=>s.exps>=1},
-  {id:'exp5',ic:'📔',n:'이야기 보따리',d:'경험한 글 5편',f:s=>s.exps>=5},
-  {id:'both',ic:'🎒',n:'두루두루 작가',d:'서평과 경험한 글 모두 쓰기',f:s=>s.reviews>=1&&s.exps>=1},
+  {id:'exp1',ic:'✏️',n:'첫 이야기',d:'게시판에 첫 글 쓰기',f:s=>s.exps>=1},
+  {id:'exp5',ic:'📔',n:'이야기 보따리',d:'게시판 글 5편',f:s=>s.exps>=5},
+  {id:'both',ic:'🎒',n:'두루두루 작가',d:'서평과 게시판 글 모두 쓰기',f:s=>s.reviews>=1&&s.exps>=1},
 ];
 
 /* ═══════════════ 상태 ═══════════════ */
 let students=[], reviews=[], settings=null, me=null, isTeacher=false;
-let editingId=null, formRating=0, curFilter='전체', curKind='book', openId=null;
+let editingId=null, formRating=0, curFilter='전체', curKind='book', curCat='전체', openId=null;
 let prevReviewCount=null;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate=t=>{const d=new Date(t);return `${d.getMonth()+1}월 ${d.getDate()}일`;};
-/* 경험한 글도 reviews 컬렉션에 kind:'exp'로 함께 저장 */
+/* 게시판 글도 reviews 컬렉션에 kind:'exp'로 함께 저장, 사진은 photos 컬렉션에 한 장씩 따로 */
 const isExp=r=>r.kind==='exp';
+const catOf=r=>r.cat||CATS[0];
+const photoCache={};
+async function loadPhotos(r){
+  const need=(r.photos||[]).filter(p=>!(p in photoCache));if(!need.length)return;
+  await Promise.all(need.map(async p=>{try{const d=await store.get('photos',p);photoCache[p]=d&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(d.data||'')?d.data:'';}catch(e){console.error(e);photoCache[p]='';}}));
+  if(openId===r.id)openReview(r.id,true);
+}
 const rxOf=r=>isExp(r)?RX_EXP:RX;
 const rxCount=r=>rxOf(r).reduce((a,x)=>a+((r.reactions||{})[x.k]||[]).length,0);
 const rvLen=r=>isExp(r)?(r.body||'').length:(r.intro||'').length+(r.plot||'').length+(r.impress||'').length+(r.evaluation||'').length;
@@ -683,11 +707,11 @@ function renderAll(){
 }
 function visibleReviews(){return reviews.filter(r=>isTeacher||!r.hidden);}
 function renderKindTabs(){const el=$('kindTabs');el.innerHTML='';KINDS.forEach(([k,t])=>{const b=document.createElement('button');b.textContent=t;b.classList.toggle('on',k===curKind);b.onclick=()=>{curKind=k;renderKindTabs();renderGenreFilters();renderFeed();renderRank();};el.appendChild(b);});
-  $('feedTitle').textContent=curKind==='exp'?'경험한 글 게시판':'책방 둘러보기';}
-function renderGenreFilters(){const f=$('genreFilters');f.innerHTML='';f.hidden=curKind==='exp';if(curKind==='exp')return;['전체',...GENRES].forEach(g=>{const b=document.createElement('button');b.textContent=g;b.classList.toggle('on',g===curFilter);b.onclick=()=>{curFilter=g;renderGenreFilters();renderFeed();};f.appendChild(b);});}
+  $('feedTitle').textContent=curKind==='exp'?'우리 반 게시판':'책방 둘러보기';}
+function renderGenreFilters(){const f=$('genreFilters');f.innerHTML='';const ex=curKind==='exp';['전체',...(ex?CATS:GENRES)].forEach(g=>{const b=document.createElement('button');b.textContent=g;b.classList.toggle('on',g===(ex?curCat:curFilter));b.onclick=()=>{if(ex)curCat=g;else curFilter=g;renderGenreFilters();renderFeed();};f.appendChild(b);});}
 function boardHtml(list){const order=reviews.filter(isExp).sort((a,b)=>a.createdAt-b.createdAt).map(r=>r.id);
   return `<div class="card board" style="grid-column:1/-1">${list.map(r=>{const isNew=Date.now()-r.createdAt<1000*60*60*24*2,n=rxCount(r),c=(r.comments||[]).length;
-    return `<div class="brow" data-id="${r.id}"><span class="bno">${order.indexOf(r.id)+1}</span><span class="bt">${esc(r.title)}${c?` <small>[${c}]</small>`:''}${r.hidden?' <em class="bh">숨김</em>':isNew?' <em>NEW</em>':''}</span><span class="bm">${avatarOf(r.authorId)} ${esc(nameOf(r.authorId))} · ${fmtDate(r.createdAt)}${n?` · 👍 ${n}`:''}</span></div>`;}).join('')}</div>`;}
+    return `<div class="brow" data-id="${r.id}"><span class="bno">${order.indexOf(r.id)+1}</span><span class="bt"><b>[${esc(catOf(r))}]</b>${esc(r.title)}${(r.photos||[]).length?' 📷':''}${c?` <small>[${c}]</small>`:''}${r.hidden?' <em class="bh">숨김</em>':isNew?' <em>NEW</em>':''}</span><span class="bm">${avatarOf(r.authorId)} ${esc(nameOf(r.authorId))} · ${fmtDate(r.createdAt)}${n?` · 👍 ${n}`:''}</span></div>`;}).join('')}</div>`;}
 function cardHtml(r,opts={}){
   const isNew=Date.now()-r.createdAt<1000*60*60*24*2;
   const rx=rxOf(r).map(x=>({...x,n:((r.reactions||{})[x.k]||[]).length})).filter(x=>x.n);
@@ -695,7 +719,7 @@ function cardHtml(r,opts={}){
     <span class="spine" style="background:var(--honey)"></span>
     ${r.hidden?'<span class="hid">숨김</span>':isNew?'<span class="new">NEW</span>':''}
     <div class="ttl">${esc(r.title)}</div>
-    <div class="auth"><span class="chip exp">✏️ 경험한 글</span></div>
+    <div class="auth"><span class="chip exp">📝 ${esc(catOf(r))}</span>${(r.photos||[]).length?` <span class="chip">📷 ${r.photos.length}</span>`:''}</div>
     <div style="font-size:15px;padding-left:6px;color:var(--ink-2)">${esc(b.slice(0,70))}${b.length>70?'…':''}</div>
     <div class="rx">${rx.map(x=>`<span>${x.e} ${x.n}</span>`).join('')}${(r.comments||[]).length?`<span>💬 ${r.comments.length}</span>`:''}</div>
     <div class="who"><span class="av">${avatarOf(r.authorId)}</span>${esc(nameOf(r.authorId))} · ${fmtDate(r.createdAt)}</div>
@@ -715,7 +739,7 @@ function genreColor(g){const m={'동화·소설':'#4F8F5C','그림책':'#F2B84B'
 function renderFeed(){
   const q=$('q').value.trim().toLowerCase(),sort=$('sort').value;
   const ex=curKind==='exp',pool=visibleReviews().filter(r=>ex===isExp(r));$('boardWrite').hidden=!ex||isTeacher;
-  let list=pool.filter(r=>ex||curFilter==='전체'||r.genre===curFilter).filter(r=>!q||[r.title,r.author,r.body,nameOf(r.authorId)].join(' ').toLowerCase().includes(q));
+  let list=pool.filter(r=>ex?(curCat==='전체'||catOf(r)===curCat):(curFilter==='전체'||r.genre===curFilter)).filter(r=>!q||[r.title,r.author,r.body,nameOf(r.authorId)].join(' ').toLowerCase().includes(q));
   list.sort((a,b)=>sort==='star'?((b.rating||0)-(a.rating||0))||(b.createdAt-a.createdAt):sort==='hot'?(rxCount(b)+(b.comments||[]).length)-(rxCount(a)+(a.comments||[]).length)||(b.createdAt-a.createdAt):b.createdAt-a.createdAt);
   const f=$('feed');
   f.innerHTML=list.length?(ex?boardHtml(list):list.map(r=>cardHtml(r)).join('')):`<div class="empty" style="grid-column:1/-1"><div class="big">📭</div>${pool.length?'조건에 맞는 글이 없어요':'아직 글이 없어요. 첫 번째 열매를 맺어 볼까요?'}</div>`;
@@ -791,10 +815,10 @@ function openReview(id,silent){
   const spoiler=r.spoiler&&!(sheet.dataset.reveal===id);
   const ex=isExp(r);
   const exBody=ex?`
-    <span class="chip exp">✏️ 경험한 글</span>
+    <span class="chip exp">📝 ${esc(catOf(r))}</span>
     <h2>${esc(r.title)}</h2>
     <div class="meta"><span>${avatarOf(r.authorId)} ${esc(nameOf(r.authorId))}</span>·<span>${fmtDate(r.createdAt)}${r.editedAt?' (수정됨)':''}</span></div>
-    <section><p>${esc(r.body)}</p></section>`:'';
+    <section><p>${esc(r.body)}</p>${(r.photos||[]).length?`<div class="photos">${r.photos.map(p=>photoCache[p]?`<img src="${photoCache[p]}" alt="글에 넣은 사진">`:'').join('')}${r.photos.some(p=>!(p in photoCache))?'<p style="font-size:13px;color:var(--ink-3)">사진을 불러오는 중…</p>':''}</div>`:''}</section>`:'';
   sheet.innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button>
   <div class="rv">${ex?exBody:`
     <span class="chip genre">${esc(r.genre)}</span>
@@ -818,13 +842,14 @@ function openReview(id,silent){
     </div>
   </div>`;
   $('modal').classList.add('on');
+  if(ex)loadPhotos(r);
   $('mClose').onclick=closeModal;
   const sp=$('spBtn');if(sp)sp.onclick=()=>{sheet.dataset.reveal=id;openReview(id,true);};
   sheet.querySelectorAll('[data-rx]').forEach(b=>b.onclick=()=>toggleRx(r,b.dataset.rx));
   sheet.querySelectorAll('.del').forEach(b=>b.onclick=()=>delComment(r,+b.dataset.ci));
   const cb=$('cmtBtn');if(cb){cb.onclick=()=>addComment(r);$('cmtIn').onkeydown=e=>{if(e.key==='Enter')addComment(r);};}
   const eb=$('editBtn');if(eb)eb.onclick=()=>{startEdit(r);closeModal();};
-  const db=$('delBtn');if(db)db.onclick=async()=>{if(!confirm('정말 지울까요? 되돌릴 수 없어요.'))return;await store.del('reviews',r.id);closeModal();toast('지웠어요');};
+  const db=$('delBtn');if(db)db.onclick=async()=>{if(!confirm('정말 지울까요? 되돌릴 수 없어요.'))return;(r.photos||[]).forEach(p=>store.del('photos',p).catch(()=>{}));await store.del('reviews',r.id);closeModal();toast('지웠어요');};
   const hb=$('hideBtn');if(hb)hb.onclick=async()=>{await store.update('reviews',r.id,{hidden:!r.hidden});toast(r.hidden?'다시 보여요':'숨겼어요');};
   if(!silent)sheet.scrollTop=0;
 }
@@ -860,7 +885,7 @@ function saveDraft(){if(editingId||!me)return;try{localStorage.setItem(draftKey(
 function loadDraft(){try{const d=localStorage.getItem(draftKey());if(d){setForm(JSON.parse(d));$('draftMsg').textContent='쓰던 글을 불러왔어요';}}catch(e){}}
 function clearForm(){setForm({});editingId=null;$('writeTitle').textContent='서평 쓰기';$('cancelEdit').hidden=true;$('submitBtn').textContent='서평 올리기 🌱';$('draftMsg').textContent='';$('writeKind').hidden=false;try{localStorage.removeItem(draftKey());}catch(e){}}
 function startEdit(r){
-  if(isExp(r)){editingId=r.id;setExp(r);$('expTitle').textContent='경험한 글 고치기';$('expCancel').hidden=false;$('expSubmit').textContent='고친 내용 저장';setWriteKind('exp');showTab('write');return;}
+  if(isExp(r)){editingId=r.id;setExp({...r,cat:catOf(r)});expPics=(r.photos||[]).map(id=>({id,data:photoCache[id]||''}));drawPics();loadPhotos(r).then(()=>{expPics.forEach(p=>{if(p.id&&!p.data)p.data=photoCache[p.id]||'';});drawPics();});$('expTitle').textContent='게시판 글 고치기';$('expCancel').hidden=false;$('expSubmit').textContent='고친 내용 저장';setWriteKind('exp');showTab('write');return;}
   editingId=r.id;setWriteKind('book');setForm({...r,one:r.oneLine,eval:r.evaluation});$('writeTitle').textContent='서평 고치기';$('cancelEdit').hidden=false;$('submitBtn').textContent='고친 내용 저장';showTab('write');}
 $('cancelEdit').onclick=()=>{clearForm();showTab('feed');};
 $('submitBtn').onclick=async()=>{
@@ -877,35 +902,50 @@ $('submitBtn').onclick=async()=>{
   $('submitBtn').disabled=false;
 };
 
-/* ═══════════════ 경험한 글 쓰기 ═══════════════ */
-const E=['title','body'];
-let writeKind='book';
+/* ═══════════════ 게시판 글쓰기 ═══════════════ */
+const E=['cat','title','body'];
+let writeKind='book', expPics=[];   // {id?,data} — id가 있으면 이미 저장된 사진
 function setWriteKind(k){writeKind=k;$('formBook').hidden=k!=='book';$('formExp').hidden=k!=='exp';$('writeKind').hidden=!!editingId;document.querySelectorAll('[data-wk]').forEach(b=>b.classList.toggle('on',b.dataset.wk===k));}
 function drawExpCnt(){$('e-cnt').textContent=$('e-body').value.length+'자';}
+function drawPics(){$('e-pics').innerHTML=expPics.map((p,i)=>`<div class="pic">${p.data?`<img src="${p.data}" alt="사진 ${i+1}">`:''}<button type="button" data-i="${i}" aria-label="사진 빼기">✕</button></div>`).join('');$('e-photoBtn').disabled=expPics.length>=MAX_PICS;$('e-photoMsg').textContent=expPics.length?`${expPics.length} / ${MAX_PICS}장`:'';}
+/* 사진은 긴 변 1280px JPEG로 줄여서 저장(문서 하나 1MB 제한) */
+function shrinkImage(file){return new Promise((res,rej)=>{const img=new Image(),url=URL.createObjectURL(file);
+  img.onload=()=>{URL.revokeObjectURL(url);let side=1280,q=.75,out='';
+    for(let t=0;t<6;t++){const k=Math.min(1,side/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*k));c.height=Math.max(1,Math.round(img.height*k));
+      const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(img,0,0,c.width,c.height);out=c.toDataURL('image/jpeg',q);if(out.length<=600000)break;side=Math.round(side*.8);q-=.07;}
+    out.length<=900000?res(out):rej(new Error('too big'));};
+  img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('not image'));};img.src=url;});}
 (function initExp(){
+  $('e-cat').innerHTML=CATS.map(c=>`<option>${c}</option>`).join('');
   E.forEach(k=>$('e-'+k).addEventListener('input',saveExpDraft));
-  $('e-body').addEventListener('input',drawExpCnt);drawExpCnt();
+  $('e-body').addEventListener('input',drawExpCnt);drawExpCnt();drawPics();
+  $('e-photoBtn').onclick=()=>$('e-file').click();
+  $('e-file').onchange=async e=>{const files=[...e.target.files];e.target.value='';for(const f of files){if(expPics.length>=MAX_PICS){toast(`사진은 ${MAX_PICS}장까지 넣을 수 있어요`);break;}try{expPics.push({data:await shrinkImage(f)});}catch(err){toast('이 사진은 넣을 수 없어요');}drawPics();}};
+  $('e-pics').addEventListener('click',e=>{const b=e.target.closest('button');if(b){expPics.splice(+b.dataset.i,1);drawPics();}});
   document.querySelectorAll('[data-wk]').forEach(b=>b.onclick=()=>setWriteKind(b.dataset.wk));
 })();
 function expData(){const o={};E.forEach(k=>o[k]=$('e-'+k).value);return o;}
-function setExp(o){E.forEach(k=>$('e-'+k).value=o[k]||'');drawExpCnt();}
+function setExp(o){E.forEach(k=>$('e-'+k).value=o[k]||'');if(!$('e-cat').value)$('e-cat').selectedIndex=0;drawExpCnt();}
 function expDraftKey(){return 'bv_draftx_'+(me?me.id:'x');}
-function saveExpDraft(){if(editingId||!me)return;try{localStorage.setItem(expDraftKey(),JSON.stringify(expData()));$('expDraftMsg').textContent='임시 저장됨';}catch(e){}}
+function saveExpDraft(){if(editingId||!me)return;try{localStorage.setItem(expDraftKey(),JSON.stringify(expData()));$('expDraftMsg').textContent='임시 저장됨 (사진은 올릴 때 저장돼요)';}catch(e){}}
 function loadExpDraft(){try{const d=localStorage.getItem(expDraftKey());if(d){setExp(JSON.parse(d));$('expDraftMsg').textContent='쓰던 글을 불러왔어요';}}catch(e){}}
-function clearExp(){setExp({});editingId=null;$('expTitle').textContent='경험한 글 쓰기';$('expCancel').hidden=true;$('expSubmit').textContent='글 올리기 🌱';$('expDraftMsg').textContent='';$('writeKind').hidden=false;try{localStorage.removeItem(expDraftKey());}catch(e){}}
-$('expCancel').onclick=()=>{clearExp();curKind='exp';renderKindTabs();renderGenreFilters();renderRank();showTab('feed');renderFeed();};
+function clearExp(){setExp({});expPics=[];drawPics();editingId=null;$('expTitle').textContent='게시판 글쓰기';$('expCancel').hidden=true;$('expSubmit').textContent='글 올리기 🌱';$('expDraftMsg').textContent='';$('writeKind').hidden=false;try{localStorage.removeItem(expDraftKey());}catch(e){}}
+function goBoard(){curKind='exp';renderKindTabs();renderGenreFilters();renderRank();showTab('feed');renderFeed();}
+$('expCancel').onclick=()=>{clearExp();goBoard();};
 $('expSubmit').onclick=async()=>{
-  const d=expData();
+  const d=expData(),btn=$('expSubmit'),label=btn.textContent;
   const need=[[!d.title.trim(),'제목을 써 주세요','e-title'],[!d.body.trim(),'내용을 써 주세요','e-body']];
   for(const [bad,msg,id] of need){if(bad){toast(msg);const el=$(id);el.scrollIntoView({behavior:'smooth',block:'center'});el.focus({preventScroll:true});return;}}
-  const body={kind:'exp',authorId:me.id,title:d.title.trim(),body:d.body.trim()};
-  $('expSubmit').disabled=true;
+  btn.disabled=true;btn.textContent='올리는 중…';
   try{
-    if(editingId){const {id:_id,...old}=reviews.find(r=>r.id===editingId);await store.set('reviews',editingId,{...old,...body,editedAt:Date.now()});toast('고친 내용을 저장했어요');}
-    else{await store.set('reviews',uid(),{...body,createdAt:Date.now(),reactions:{},comments:[],hidden:false});celebrate();}
-    clearExp();curKind='exp';renderKindTabs();renderGenreFilters();renderRank();showTab('feed');renderFeed();
-  }catch(e){console.error(e);toast('저장에 실패했어요. 다시 눌러 보세요');}
-  $('expSubmit').disabled=false;
+    const postId=editingId||uid(),photos=[];
+    for(const p of expPics){if(p.id){photos.push(p.id);continue;}const pid=uid();await store.set('photos',pid,{postId,authorId:me.id,data:p.data,createdAt:Date.now()});photoCache[pid]=p.data;photos.push(pid);}
+    const body={kind:'exp',authorId:me.id,cat:d.cat,title:d.title.trim(),body:d.body.trim(),photos};
+    if(editingId){const {id:_id,...old}=reviews.find(r=>r.id===editingId);await store.set('reviews',editingId,{...old,...body,editedAt:Date.now()});(old.photos||[]).filter(x=>!photos.includes(x)).forEach(x=>store.del('photos',x).catch(()=>{}));toast('고친 내용을 저장했어요');}
+    else{await store.set('reviews',postId,{...body,createdAt:Date.now(),reactions:{},comments:[],hidden:false});celebrate();}
+    clearExp();goBoard();
+  }catch(e){console.error(e);btn.textContent=label;toast('저장에 실패했어요. 다시 눌러 보세요');}
+  btn.disabled=false;
 };
 function celebrate(){
   toast('열매가 하나 열렸어요! 🍎 +100xp');
@@ -942,11 +982,11 @@ $('csvBtn').onclick=()=>{
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`서평기록_${new Date().toISOString().slice(0,10)}.csv`;a.click();
 };
 $('csvExpBtn').onclick=()=>{
-  const H=['이름','제목','내용','글자 수','받은 반응','댓글 수','작성일','숨김'];
+  const H=['이름','말머리','제목','내용','사진 수','글자 수','받은 반응','댓글 수','작성일','숨김'];
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
-  const rows=reviews.filter(isExp).sort((a,b)=>nameOf(a.authorId).localeCompare(nameOf(b.authorId),'ko')||a.createdAt-b.createdAt).map(r=>[nameOf(r.authorId),r.title,r.body,rvLen(r),rxCount(r),(r.comments||[]).length,new Date(r.createdAt).toLocaleDateString('ko-KR'),r.hidden?'예':''].map(q).join(','));
+  const rows=reviews.filter(isExp).sort((a,b)=>nameOf(a.authorId).localeCompare(nameOf(b.authorId),'ko')||a.createdAt-b.createdAt).map(r=>[nameOf(r.authorId),catOf(r),r.title,r.body,(r.photos||[]).length,rvLen(r),rxCount(r),(r.comments||[]).length,new Date(r.createdAt).toLocaleDateString('ko-KR'),r.hidden?'예':''].map(q).join(','));
   const blob=new Blob(['\ufeff'+[H.join(','),...rows].join('\r\n')],{type:'text/csv;charset=utf-8'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`경험한글기록_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`게시판글기록_${new Date().toISOString().slice(0,10)}.csv`;a.click();
 };
 
 /* ═══════════════ 데이터 구독 & 시작 ═══════════════ */

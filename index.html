@@ -1309,7 +1309,7 @@ function seedDemoIfEmpty(){
   ];
   demo.push({kind:'exp',authorId:'s4',title:'자전거 보조 바퀴를 뗀 날',body:'(예시) 지난 토요일 아침, 아빠가 갑자기 "오늘은 보조 바퀴 떼 보자." 하고 말씀하셨다. 나는 겁이 나서 싫다고 했지만 아빠는 벌써 공구를 들고 계셨다.\n\n공원에 도착해서 아빠가 뒤에서 자전거를 잡아 주셨다. 처음에는 핸들이 자꾸 흔들려서 세 번이나 넘어졌다. 그런데 네 번째에는 뭔가 달랐다. 페달을 세게 밟으니까 자전거가 똑바로 나아갔다. 뒤를 돌아보니 아빠는 저 멀리서 손을 흔들고 계셨다.\n\n혼자 달리고 있다는 걸 알았을 때 가슴이 쿵쾅거렸다. 다음에는 겁이 나도 일단 한 번은 해 봐야겠다고 생각했다.',createdAt:d-3600000*20,reactions:{same:['s1','s2']},comments:[],hidden:false});
   demo.forEach(r=>store.set('reviews',uid(),r));
-  store.set('rooms','s1',{wall:'w_pink',floor:'fl_wood',house:'h_basic',owned:['w_pink'],placed:[{i:'_me',x:42,y:92},{i:'f_plant',x:80,y:90},{i:'f_lamp',x:20,y:36}],guest:[{by:'s2',e:'💖',at:d-3600000*3}],attend:[]});
+  store.set('rooms','s1',{wall:'w_pink',floor:'fl_wood',house:'h_basic',owned:['w_pink','f_plant','f_lamp'],placed:[{i:'_me',x:42,y:92},{i:'f_plant',x:80,y:90},{i:'f_lamp',x:20,y:36}],guest:[{by:'s2',e:'💖',at:d-3600000*3}],attend:[]});
   store.set('rooms','s2',{wall:'w_cream',floor:'fl_grass',house:'h_basic',owned:['fl_grass'],placed:[{i:'_me',x:60,y:94}],guest:[],attend:[]});
 }
 let loaded={students:false,reviews:false,settings:false};

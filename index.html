@@ -370,6 +370,37 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
 .padtools button i{display:inline-block;border-radius:50%;background:currentColor}
 .padtools button.on{background:var(--leaf);color:#fff;border-color:var(--leaf)}
 .padtools .sep{width:1px;height:22px;background:var(--line)}
+/* ───────── 알림장 (공책) ───────── */
+.note{position:relative;background:#FFFEF8;border-radius:6px 16px 16px 6px;padding:14px 16px 16px 46px;box-shadow:0 1px 0 #E8DFC9,0 10px 22px -12px rgba(86,66,40,.35);
+  background-image:linear-gradient(90deg,transparent 33px,#F2B3B8 33px 35px,transparent 35px),repeating-linear-gradient(#FFFEF8 0 31px,#DCE7F3 31px 32px);background-position:0 0,0 14px;overflow:hidden}
+.note::before{content:"";position:absolute;left:10px;top:14px;bottom:14px;width:12px;background:radial-gradient(circle at 6px 6px,#E9E2D2 4.5px,transparent 5px) 0 0/12px 32px}
+.note .nhead{display:flex;align-items:center;gap:8px;min-height:32px;margin-bottom:0}
+.note .nhead b{font-family:var(--font-disp);font-weight:400;font-size:20px;flex:1}
+.note .nhead button{width:32px;height:32px;border-radius:50%;background:var(--paper);border:1px solid var(--line);font-size:15px}
+.note .nhead button:disabled{opacity:.3}
+.note ol{margin:0;padding:0;list-style:none;counter-reset:n}
+.note li{counter-increment:n;min-height:32px;line-height:32px;font-size:17px;display:flex;gap:6px;align-items:baseline}
+.note li::before{content:counter(n) ".";font-family:var(--font-disp);color:var(--leaf);width:22px;flex:none}
+.note li>span:last-child{min-width:0;overflow-wrap:anywhere}
+.note li .tag{font-size:12px;line-height:1.5;border-radius:999px;padding:1px 8px;background:var(--honey-2);color:#8A6210;flex:none;align-self:center}
+.note li .tag.t1{background:var(--sky-2);color:#2f5da3}.note li .tag.t2{background:var(--berry-2);color:var(--berry)}
+.note .nfoot{display:flex;align-items:center;gap:10px;justify-content:flex-end;margin-top:8px;min-height:40px}
+.note .stamp{font-family:var(--font-disp);color:var(--berry);border:3px solid var(--berry);border-radius:50%;width:64px;height:64px;display:grid;place-items:center;font-size:15px;line-height:1.1;text-align:center;transform:rotate(-12deg);opacity:.85;animation:pop .4s}
+.note .none{line-height:32px;color:var(--ink-3)}
+.nchips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.nchips button{font-size:13px;padding:4px 10px;border-radius:999px;background:var(--honey-2);color:#6b4d0c;border:1px dashed #E2C57C}
+/* ───────── 오늘의 낱말 ───────── */
+.dwhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:4px 0 12px}
+.dwhead h2{font-size:24px;margin-right:auto}
+.dwgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.dw{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px 16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:6px}
+.dw .top{display:flex;align-items:center;gap:8px}
+.dw .top b{font-family:var(--font-disp);font-weight:400;font-size:30px;line-height:1.2;flex:1;word-break:keep-all}
+.dw .top button{width:40px;height:40px;border-radius:50%;background:var(--honey-2);border:1px solid #EAD39A;font-size:18px;flex:none}
+.dw .m{font-size:16px}
+.dw .e{font-size:14px;color:var(--ink-2);background:var(--paper);border-radius:10px;padding:6px 10px}
+.dw .e mark{background:linear-gradient(transparent 55%,#FBE3A0 55%);color:inherit}
+.dwfoot{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:14px}
 /* ───────── 숙제 알림 ───────── */
 .bell{position:relative;font-size:20px;width:40px;height:40px;border-radius:50%;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;flex:none}
 .bell b{position:absolute;right:-4px;top:-4px;min-width:20px;height:20px;border-radius:999px;background:var(--berry);color:#fff;font:400 12px/20px var(--font-disp);padding:0 5px}
@@ -652,7 +683,7 @@ input:focus,textarea:focus,select:focus{box-shadow:0 0 0 4px rgba(69,128,80,.14)
     <nav class="tabs" id="tabsTop"></nav>
     <div class="spacer"></div>
     <span class="mode-pill" id="modePill">미리보기(내 기기 저장)</span>
-    <button class="bell" id="bellBtn" hidden aria-label="숙제 알림">🔔<b id="bellN" hidden></b></button>
+    <button class="bell" id="bellBtn" hidden aria-label="알림장과 숙제">🔔<b id="bellN" hidden></b></button>
     <button class="me" id="meBtn"><span class="av" id="meAv">🥚</span><b id="meName"></b><span class="lv" id="meLv"></span></button>
   </header>
   <main>
@@ -814,7 +845,17 @@ input:focus,textarea:focus,select:focus{box-shadow:0 0 0 4px rgba(69,128,80,.14)
 
     <!-- 놀이터 -->
     <section class="view" id="v-play">
-      <div class="playhead"><nav class="tabs seg" id="playTabs" style="flex-wrap:wrap;border-radius:20px"><button data-pv="words">📒 영어 단어장</button><button data-pv="game">🎯 단어 게임</button><button data-pv="wolf">🐺 한밤의 늑대</button></nav></div>
+      <div class="playhead"><nav class="tabs seg" id="playTabs" style="flex-wrap:wrap;border-radius:20px"><button data-pv="today">📖 오늘의 낱말</button><button data-pv="words">📒 영어 단어장</button><button data-pv="game">🎯 단어 게임</button><button data-pv="wolf">🐺 한밤의 늑대</button></nav></div>
+      <div id="pv-today" hidden>
+        <div class="card" id="dwTeach" hidden style="padding:14px 16px;margin-bottom:14px">
+          <h3 style="font-size:18px;margin-bottom:8px">📖 오늘의 낱말 올리기 (선생님)</h3>
+          <div class="row"><span style="font-size:14px;color:var(--ink-2)">날짜</span><input type="date" id="dwDate" style="width:auto;flex:1"></div>
+          <textarea id="dwText" placeholder="한 줄에 하나씩: 낱말, 뜻, 예문(선택)&#10;성실하다, 정성스럽고 참되다, 민수는 성실하게 숙제를 했다.&#10;아늑하다, 따뜻하고 포근하다, 아늑한 내 방&#10;(엑셀에서 세 칸을 복사해 붙여 넣어도 돼요)" style="margin-top:6px;min-height:110px"></textarea>
+          <div class="row" style="margin-top:8px;justify-content:flex-end"><button class="btn ghost sm" id="dwDel" hidden>이 날 낱말 지우기</button><button class="btn sm" id="dwSave">오늘의 낱말 올리기</button></div>
+          <div class="hw" id="dwList"></div>
+        </div>
+        <div id="dwBody"></div>
+      </div>
       <div id="pv-words">
         <div class="card" id="vTeach" hidden style="padding:14px 16px;margin-bottom:14px">
           <h3 style="font-size:18px;margin-bottom:8px">📒 단어 묶음 만들기 (선생님)</h3>
@@ -868,6 +909,14 @@ input:focus,textarea:focus,select:focus{box-shadow:0 0 0 4px rgba(69,128,80,.14)
             <label class="f" style="margin-top:10px">책갈피 나무 목표(글 수)</label><input type="number" id="setGoal" min="5" max="500">
             <label class="f" style="margin-top:10px">선생님 비밀번호 바꾸기</label><input type="password" id="setTPin" inputmode="numeric" maxlength="4" placeholder="새 비밀번호 4자리(안 바꾸면 비워두기)">
             <button class="btn" id="saveSettings" style="margin-top:12px">저장</button>
+          </div>
+          <div class="card" style="margin-top:14px">
+            <h3>📒 알림장</h3>
+            <div class="row"><span style="font-size:14px;color:var(--ink-2)">날짜</span><input type="date" id="ntDate" style="width:auto;flex:1"></div>
+            <div class="nchips" id="ntChips"><button>준비물: </button><button>숙제: </button><button>가정통신문: </button><button>전달: </button></div>
+            <textarea id="ntText" placeholder="한 줄에 하나씩 써 주세요&#10;준비물: 색연필, 풀&#10;숙제: 수학익힘책 34쪽&#10;가정통신문: 현장체험학습 동의서 내일까지" style="min-height:120px"></textarea>
+            <div class="row" style="margin-top:6px;justify-content:flex-end"><button class="btn ghost sm" id="ntDel" hidden>이 날 알림장 지우기</button><button class="btn sm" id="ntSave">알림장 올리기</button></div>
+            <div class="hw" id="ntList"></div>
           </div>
           <div class="card" style="margin-top:14px">
             <h3>📌 숙제 알림</h3>
@@ -1376,7 +1425,7 @@ function celebrate(){
 
 /* ═══════════════ 교사 ═══════════════ */
 function renderTeach(){
-  $('localReset').hidden=store.mode!=='local';renderHwTeach();renderInvite();
+  $('localReset').hidden=store.mode!=='local';renderHwTeach();renderNoticeTeach();renderInvite();
   const off=!!(settings&&settings.playOff);$('playToggle').textContent=off?'🌞 마을 열기':'🌙 마을 닫기';$('playToggle').className='btn '+(off?'':'ghost');renderImgCheck();
   $('setClass').value=(settings&&settings.className)||'';$('setGoal').value=(settings&&settings.treeGoal)||50;
   const list=[...students].sort((a,b)=>(a.num||99)-(b.num||99)||a.name.localeCompare(b.name,'ko'));
@@ -1696,15 +1745,16 @@ const ddayHtml=due=>{const n=ddayOf(due);return `<span class="dday ${n<0?'past':
 const hwOpen=()=>homework.filter(h=>me&&!isTeacher&&!isGuest&&!(h.done||[]).includes(me.id)&&ddayOf(h.due)>=0);
 function paintBell(){
   const b=$('bellBtn');b.hidden=!me||isTeacher||isGuest;if(b.hidden)return;
-  const n=hwOpen().length;$('bellN').textContent=n;$('bellN').hidden=!n;
+  const n=hwOpen().length+(noticeUnread()?1:0);$('bellN').textContent=n;$('bellN').hidden=!n;
 }
-function hwNotice(){const urgent=hwOpen().filter(h=>ddayOf(h.due)<=1);if(urgent.length){toast(`📌 오늘·내일 마감 숙제가 ${urgent.length}개 있어요!`);$('bellBtn').classList.add('ring');setTimeout(()=>$('bellBtn').classList.remove('ring'),2600);}}
+function hwNotice(){if(noticeUnread())setTimeout(()=>toast('📒 오늘 알림장이 있어요! 🔔를 눌러 보세요'),2600);const urgent=hwOpen().filter(h=>ddayOf(h.due)<=1);if(urgent.length){toast(`📌 오늘·내일 마감 숙제가 ${urgent.length}개 있어요!`);$('bellBtn').classList.add('ring');setTimeout(()=>$('bellBtn').classList.remove('ring'),2600);}}
 function openHw(){
   shopOpen=false;openId=null;
   const list=[...homework].filter(h=>ddayOf(h.due)>=-7).sort((a,b)=>a.due.localeCompare(b.due));
-  $('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><h2 style="font-size:26px">📌 우리 반 숙제</h2>
+  $('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><h2 style="font-size:26px;margin-bottom:10px">📒 알림장</h2>${noteHtml()}
+    <h2 style="font-size:22px;margin-top:20px">📌 우리 반 숙제</h2>
     <div class="hw">${list.map(h=>{const d=(h.done||[]).includes(me.id);return `<div class="it ${d?'done':''}">${ddayHtml(h.due)}<div class="tx"><b>${esc(h.title)}</b>${h.body?`<p>${esc(h.body)}</p>`:''}<div class="who">마감 ${esc(h.due.slice(5).replace('-','월 '))}일</div></div><button class="btn sm ${d?'ghost':''}" data-hw="${h.id}">${d?'다시 안 함':'했어요 ✅'}</button></div>`;}).join('')||'<div class="empty"><div class="big">🎈</div>지금은 숙제가 없어요!</div>'}</div>`;
-  $('modal').classList.add('on');$('mClose').onclick=closeModal;
+  $('modal').classList.add('on');$('mClose').onclick=closeModal;bindNote();
   $('sheet').querySelectorAll('[data-hw]').forEach(b=>b.onclick=async ev=>{const h=homework.find(x=>x.id===b.dataset.hw),d=(h.done||[]).includes(me.id);const [x,y]=evPos(ev);
     if(!d)floatEmoji('✅',x,y);await store.update('homework',h.id,{done:d?AR(me.id):AU(me.id)});openHw();});
 }
@@ -1725,27 +1775,71 @@ function onHomework(){
 }
 store.watch('homework',d=>{homework=d.filter(h=>h&&h.title&&/^\d{4}-\d{2}-\d{2}$/.test(h.due||''));onHomework();});
 
+/* ═══════════════ 알림장 ═══════════════
+   notices/{YYYY-MM-DD} = {date, lines:[문장], read:[학생id], updatedAt}
+   선생님이 날짜별로 한 장씩 쓰고, 학생은 🔔에서 읽고 「확인했어요」 도장을 찍어요 */
+let notices=[],prevNt=null,noteDay=null,noticeErr=null;
+const NTAGS=[['준비물',''],['숙제','t1'],['가정통신문','t2'],['전달','']];
+const noticeShown=()=>[...notices].filter(n=>n.date<=isoDay()).sort((a,b)=>b.date.localeCompare(a.date));   // 오늘까지의 알림장, 최신 먼저
+const noticeUnread=()=>{if(!me||isTeacher||isGuest)return false;const n=noticeShown()[0];return !!n&&ddayOf(n.date)>=-1&&!(n.read||[]).includes(me.id);};
+const dayLabel=d=>{const t=new Date(d+'T00:00');return `${t.getMonth()+1}월 ${t.getDate()}일 (${'일월화수목금토'[t.getDay()]})`;};
+function noteLine(t){const m=t.match(/^(준비물|숙제|가정통신문|전달)\s*[:：]\s*(.*)$/);if(!m)return `<li><span>${esc(t)}</span></li>`;
+  const k=NTAGS.find(x=>x[0]===m[1]);return `<li><span class="tag ${k[1]}">${m[1]}</span><span>${esc(m[2])}</span></li>`;}
+function noteHtml(){
+  if(noticeErr)return `<p class="setup-note">알림장을 불러오지 못했어요 (${esc(noticeErr)}). Firebase 콘솔 → Firestore → 규칙에서 <b>notices</b> 컬렉션 읽기·쓰기를 허용해 주세요.</p>`;
+  const list=noticeShown();if(!list.length)return '<div class="note"><div class="none">아직 올라온 알림장이 없어요.</div></div>';
+  if(!noteDay||!list.some(n=>n.date===noteDay))noteDay=list[0].date;
+  const i=list.findIndex(n=>n.date===noteDay),n=list[i],rd=me&&(n.read||[]).includes(me.id);
+  return `<div class="note"><div class="nhead"><button id="ntPrev" ${i>=list.length-1?'disabled':''} aria-label="이전 알림장">◀</button><b>${dayLabel(n.date)}${n.date===isoDay()?' · 오늘':''}</b><button id="ntNext" ${i<=0?'disabled':''} aria-label="다음 알림장">▶</button></div>
+    <ol>${(n.lines||[]).map(noteLine).join('')}</ol>
+    <div class="nfoot">${rd?'<span class="stamp">확인<br>했어요</span>':`<button class="btn honey sm" id="ntRead">확인했어요 ✅</button>`}</div></div>`;
+}
+function bindNote(){
+  const list=noticeShown(),i=list.findIndex(n=>n.date===noteDay),go=d=>{noteDay=list[i+d].date;openHw();};
+  const pv=$('ntPrev');if(pv)pv.onclick=()=>go(1);const nx=$('ntNext');if(nx)nx.onclick=()=>go(-1);
+  const rb=$('ntRead');if(rb)rb.onclick=async ev=>{const [x,y]=evPos(ev);floatEmoji('💮',x,y);await store.update('notices',noteDay,{read:AU(me.id)});openHw();};
+}
+function renderNoticeTeach(){
+  const cls=students.length,list=[...notices].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,10);
+  $('ntDel').hidden=!notices.some(n=>n.date===$('ntDate').value);
+  $('ntList').innerHTML=noticeErr?`<p class="setup-note">알림장을 불러오지 못했어요 (${esc(noticeErr)}). Firebase 규칙에서 <b>notices</b> 컬렉션을 허용해 주세요.</p>`:list.map(n=>{const rd=(n.read||[]).filter(id=>students.some(s=>s.id===id)),not=students.filter(s=>!rd.includes(s.id)).map(s=>s.name);
+    return `<div class="it" data-nt="${n.date}" style="cursor:pointer"><div class="tx"><b>${dayLabel(n.date)}</b><p>${esc((n.lines||[]).join(' · '))}</p><div class="who">✅ ${rd.length}/${cls}명 확인 ${not.length&&not.length<cls?`· 아직: ${not.map(esc).join(', ')}`:''}</div></div></div>`;}).join('')||'<p style="font-size:14px;color:var(--ink-3)">올린 알림장이 없어요.</p>';
+  $('ntList').querySelectorAll('[data-nt]').forEach(el=>el.onclick=()=>{$('ntDate').value=el.dataset.nt;loadNoticeForm();});
+}
+function loadNoticeForm(){const n=notices.find(x=>x.date===$('ntDate').value);$('ntText').value=n?(n.lines||[]).join('\n'):'';$('ntDel').hidden=!n;$('ntSave').textContent=n?'고친 알림장 저장':'알림장 올리기';}
+$('ntDate').value=isoDay();$('ntDate').onchange=loadNoticeForm;
+$('ntChips').querySelectorAll('button').forEach(b=>b.onclick=()=>{const t=$('ntText'),v=t.value;t.value=(v&&!v.endsWith('\n')?v+'\n':v)+b.textContent;t.focus();});
+$('ntSave').onclick=async()=>{const d=$('ntDate').value,lines=$('ntText').value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,20);
+  if(!d)return toast('날짜를 골라 주세요');if(!lines.length)return toast('알림장 내용을 써 주세요');
+  try{await store.merge('notices',d,{date:d,lines,updatedAt:Date.now()});toast('알림장을 올렸어요. 학생 화면 🔔에 떠요');loadNoticeForm();}catch(e){console.error(e);toast('저장에 실패했어요: '+(e.code||e.message));}};
+$('ntDel').onclick=async()=>{const d=$('ntDate').value;if(!confirm(dayLabel(d)+' 알림장을 지울까요?'))return;await store.del('notices',d);$('ntText').value='';loadNoticeForm();};
+function onNotices(){
+  if(prevNt&&me&&!isTeacher&&!isGuest){const nw=noticeShown().find(n=>!prevNt.has(n.date+n.updatedAt));if(nw){toast('📒 알림장이 올라왔어요!');$('bellBtn').classList.add('ring');setTimeout(()=>$('bellBtn').classList.remove('ring'),2600);}}
+  prevNt=new Set(notices.map(n=>n.date+n.updatedAt));paintBell();if(isTeacher){renderNoticeTeach();if(!$('ntText').value)loadNoticeForm();}
+}
+store.watch('notices',d=>{noticeErr=null;notices=d.filter(n=>n&&/^\d{4}-\d{2}-\d{2}$/.test(n.date||'')&&Array.isArray(n.lines));onNotices();},e=>{noticeErr=e.code||'오류';if(isTeacher)renderNoticeTeach();});
+
 /* ═══════════════ 놀이터: 영어 단어장 + 단어 게임 ═══════════════
    vocab/{id} = {title, words:[{en,ko}], createdAt}
    rooms/{학생id}.mywords=[{en,ko}] 나만의 단어장, .known=[en] 외운 단어, .gcLog=[{d,g,s,n,at}] 게임 기록(n=받은 열매, 하루 15개까지) */
-let vocab=[],pv='words',vSet=null,vIdx=0,vFlip=false,vEdit=null,gm=null,gSet=null;
+let vocab=[],pv='today',vSet=null,vIdx=0,vFlip=false,vEdit=null,gm=null,gSet=null;
 const GAME_CAP=15;
 const MY='_my';
 const myWords=sid=>(roomOf(sid).mywords||[]).filter(w=>w&&w.en&&w.ko);
-const setWords=id=>id===MY?(me&&!isTeacher&&!isGuest?myWords(me.id):[]):((vocab.find(v=>v.id===id)||{}).words||[]);
-const setName=id=>id===MY?'⭐ 나만의 단어장':((vocab.find(v=>v.id===id)||{}).title||'');
+const setWords=id=>id===TODAY?((dwCur()||{}).words||[]).map(x=>({en:x.w,ko:x.m})):id===MY?(me&&!isTeacher&&!isGuest?myWords(me.id):[]):((vocab.find(v=>v.id===id)||{}).words||[]);
+const setName=id=>id===TODAY?'📖 오늘의 낱말':id===MY?'⭐ 나만의 단어장':((vocab.find(v=>v.id===id)||{}).title||'');
 const knownOf=()=>me&&!isTeacher&&!isGuest?(roomOf(me.id).known||[]):[];
 const canSave=()=>me&&!isTeacher&&!isGuest;
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
-function speak(t){try{const s=speechSynthesis;s.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=.85;const v=s.getVoices().find(v=>/^en(-|_)US/i.test(v.lang))||s.getVoices().find(v=>/^en/i.test(v.lang));if(v)u.voice=v;s.speak(u);}catch(e){toast('이 기기에서는 소리를 낼 수 없어요');}}
+function speak(t){try{const s=speechSynthesis;s.cancel();const u=new SpeechSynthesisUtterance(t),ko=/[가-힣]/.test(t);u.lang=ko?'ko-KR':'en-US';u.rate=ko?.9:.85;const v=ko?s.getVoices().find(v=>/^ko/i.test(v.lang)):(s.getVoices().find(v=>/^en(-|_)US/i.test(v.lang))||s.getVoices().find(v=>/^en/i.test(v.lang)));if(v)u.voice=v;s.speak(u);}catch(e){toast('이 기기에서는 소리를 낼 수 없어요');}}
 function parseWords(txt){return txt.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const m=l.match(/^(.+?)\s*(?:,|\t|\s-\s|:|=)\s*(.+)$/);return m?{en:m[1].trim().slice(0,40),ko:m[2].trim().slice(0,40)}:null;}).filter(Boolean).slice(0,200);}
-const setIds=()=>[...[...vocab].sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)).map(v=>v.id),...(canSave()?[MY]:[])];
+const setIds=()=>[...(dwCur()?[TODAY]:[]),...[...vocab].sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)).map(v=>v.id),...(canSave()?[MY]:[])];
 
 function renderPlay(){
   if(!$('v-play').classList.contains('on'))return;
   document.querySelectorAll('[data-pv]').forEach(b=>b.classList.toggle('on',b.dataset.pv===pv));
-  $('pv-words').hidden=pv!=='words';$('pv-game').hidden=pv!=='game';$('pv-wolf').hidden=pv!=='wolf';
-  if(pv==='words')renderWords();else if(pv==='game'){if(!gm)renderGameHome();}else renderWolf();
+  $('pv-today').hidden=pv!=='today';$('pv-words').hidden=pv!=='words';$('pv-game').hidden=pv!=='game';$('pv-wolf').hidden=pv!=='wolf';
+  if(pv==='today')renderToday();else if(pv==='words')renderWords();else if(pv==='game'){if(!gm)renderGameHome();}else renderWolf();
 }
 document.querySelectorAll('[data-pv]').forEach(b=>b.onclick=()=>{if(gm&&b.dataset.pv!=='game'){gm.stop&&gm.stop();gm=null;}pv=b.dataset.pv;renderPlay();});
 
@@ -1783,8 +1877,58 @@ $('vSave').onclick=async()=>{const t=$('vTitle').value.trim(),ws=parseWords($('v
   if(vEdit)await store.update('vocab',vEdit,{title:t,words:ws});else await store.set('vocab',uid(),{title:t,words:ws,createdAt:Date.now()});
   toast(`단어 ${ws.length}개를 ${vEdit?'고쳤어요':'올렸어요'}`);vEdit=null;$('vTitle').value='';$('vText').value='';$('vSave').textContent='단어 묶음 올리기';};
 
+/* ── 오늘의 낱말 ──
+   daywords/{YYYY-MM-DD} = {date, words:[{w:낱말, m:뜻, e:예문}], learned:[학생id], updatedAt}
+   단어 묶음 목록에 TODAY로 끼워져서 카드·발음·게임을 영어 단어장과 같이 써요 */
+const TODAY='_today';
+let daywords=[],dwDay=null,dwErr=null,prevDw=null;
+const dwShown=()=>[...daywords].filter(d=>d.date<=isoDay()).sort((a,b)=>b.date.localeCompare(a.date));   // 오늘까지, 최신 먼저
+const dwCur=()=>{const l=dwShown();return l.find(d=>d.date===dwDay)||l[0]||null;};
+function parseDayWords(t){return t.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const p=l.includes('\t')?l.split('\t'):l.split(/\s*[,，]\s*/);
+  const w=(p[0]||'').trim(),m=(p[1]||'').trim(),e=p.slice(2).join(', ').trim();return w&&m?{w:w.slice(0,30),m:m.slice(0,80),e:e.slice(0,120)}:null;}).filter(Boolean).slice(0,20);}
+function renderToday(){
+  $('dwTeach').hidden=!isTeacher;if(isTeacher)renderDwTeach();
+  const box=$('dwBody'),list=dwShown().slice(0,7),d=dwCur();
+  if(dwErr){box.innerHTML=`<p class="setup-note">오늘의 낱말을 불러오지 못했어요 (${esc(dwErr)}). Firebase 콘솔 → Firestore → 규칙에서 <b>daywords</b> 컬렉션 읽기·쓰기를 허용해 주세요.</p>`;return;}
+  if(!d){box.innerHTML=`<div class="card empty"><div class="big">📖</div>${isTeacher?'위에서 오늘의 낱말을 올려 보세요.':'선생님이 오늘의 낱말을 올리면 여기에 나와요.'}<p><button class="btn ghost sm" id="dwGoWords">📒 영어 단어장 보러 가기</button></p></div>`;$('dwGoWords').onclick=()=>{pv='words';renderPlay();};return;}
+  const ws=d.words||[],known=knownOf(),learned=me&&!isTeacher&&(d.learned||[]).includes(me.id),cnt=(d.learned||[]).filter(id=>students.some(s=>s.id===id)).length;
+  const ex=(e,w)=>esc(e).split(esc(w)).join(`<mark>${esc(w)}</mark>`);
+  box.innerHTML=`<div class="dwhead"><h2>📖 ${dayLabel(d.date)}${d.date===isoDay()?' · 오늘':''}의 낱말 <small style="font-family:var(--font-body);font-size:14px;color:var(--ink-3)">${ws.length}개</small></h2>
+      ${list.length>1?`<div class="sets" style="margin:0">${list.map(x=>`<button data-dw="${x.date}" class="${x.date===d.date?'on':''}">${x.date.slice(5).replace('-','/')}</button>`).join('')}</div>`:''}</div>
+    <div class="dwgrid">${ws.map((x,i)=>`<div class="dw"><div class="top"><b>${esc(x.w)}</b>${known.includes(x.w.toLowerCase())?'<span title="외운 낱말">✅</span>':''}<button data-dsay="${i}" aria-label="${esc(x.w)} 듣기">🔊</button></div>
+      <div class="m">${esc(x.m)}</div>${x.e?`<div class="e">${ex(x.e,x.w)}</div>`:''}</div>`).join('')}</div>
+    <div class="dwfoot">${canSave()?(learned?'<span class="chip" style="font-size:15px;background:var(--leaf-2);color:var(--leaf)">💮 다 외웠어요!</span>':'<button class="btn" id="dwLearn">✅ 다 외웠어요</button>'):''}
+      <button class="btn ghost" id="dwCards">🃏 카드로 외우기</button>${ws.length>=4?'<button class="btn honey" id="dwGame">🎯 게임으로 연습</button>':''}
+      ${isTeacher?`<span style="font-size:14px;color:var(--ink-2)">✅ ${cnt}/${students.length}명이 다 외웠어요</span>`:''}</div>`;
+  box.querySelectorAll('[data-dw]').forEach(b=>b.onclick=()=>{dwDay=b.dataset.dw;renderToday();});
+  box.querySelectorAll('[data-dsay]').forEach(b=>b.onclick=()=>{const x=ws[+b.dataset.dsay];speak(x.e?x.w+'. '+x.e:x.w);});
+  $('dwCards').onclick=()=>{vSet=TODAY;vIdx=0;vFlip=false;pv='words';renderPlay();};
+  if($('dwGame'))$('dwGame').onclick=()=>{gSet=TODAY;pv='game';renderPlay();};
+  if($('dwLearn'))$('dwLearn').onclick=async ev=>{const [x,y]=evPos(ev);floatEmoji('💮',x,y);await store.update('daywords',d.date,{learned:AU(me.id)});toast('멋져요! 오늘의 낱말을 다 외웠어요');};
+}
+function renderDwTeach(){
+  const list=[...daywords].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,10);
+  $('dwDel').hidden=!daywords.some(d=>d.date===$('dwDate').value);
+  $('dwList').innerHTML=list.map(d=>{const c=(d.learned||[]).filter(id=>students.some(s=>s.id===id)).length;
+    return `<div class="it" data-dwe="${d.date}" style="cursor:pointer"><div class="tx"><b>${dayLabel(d.date)}</b><p>${esc((d.words||[]).map(x=>x.w).join(' · '))}</p><div class="who">✅ ${c}/${students.length}명이 다 외웠어요</div></div></div>`;}).join('')||'<p style="font-size:14px;color:var(--ink-3)">올린 낱말이 없어요.</p>';
+  $('dwList').querySelectorAll('[data-dwe]').forEach(el=>el.onclick=()=>{$('dwDate').value=el.dataset.dwe;loadDwForm();});
+}
+function loadDwForm(){const d=daywords.find(x=>x.date===$('dwDate').value);$('dwText').value=d?(d.words||[]).map(x=>[x.w,x.m,x.e].filter(Boolean).join(', ')).join('\n'):'';$('dwDel').hidden=!d;$('dwSave').textContent=d?'고친 낱말 저장':'오늘의 낱말 올리기';}
+$('dwDate').value=isoDay();$('dwDate').onchange=loadDwForm;
+$('dwSave').onclick=async()=>{const date=$('dwDate').value,words=parseDayWords($('dwText').value);
+  if(!date)return toast('날짜를 골라 주세요');if(!words.length)return toast('"낱말, 뜻, 예문"처럼 한 줄에 하나씩 써 주세요');
+  try{await store.merge('daywords',date,{date,words,updatedAt:Date.now()});dwDay=date;toast(`낱말 ${words.length}개를 올렸어요`);loadDwForm();}catch(e){console.error(e);toast('저장에 실패했어요: '+(e.code||e.message));}};
+$('dwDel').onclick=async()=>{const d=$('dwDate').value;if(!confirm(dayLabel(d)+' 낱말을 지울까요?'))return;await store.del('daywords',d);loadDwForm();};
+function onDaywords(){
+  if(prevDw&&me&&!isTeacher&&!isGuest){const nw=dwShown().find(d=>!prevDw.has(d.date+d.updatedAt));if(nw)toast('📖 오늘의 낱말이 올라왔어요! 놀이터에서 볼 수 있어요');}
+  prevDw=new Set(daywords.map(d=>d.date+d.updatedAt));
+  if(isTeacher&&!$('dwText').value)loadDwForm();
+  if(!gm)renderPlay();
+}
+store.watch('daywords',d=>{dwErr=null;daywords=d.filter(x=>x&&/^\d{4}-\d{2}-\d{2}$/.test(x.date||'')&&Array.isArray(x.words));onDaywords();},e=>{dwErr=e.code||'오류';renderPlay();});
+
 /* ── 단어 게임 ── */
-const GAMES={match:{ic:'🃏',n:'짝 맞추기',d:'영어와 뜻 카드를 뒤집어 짝을 찾아요'},quiz:{ic:'⚡',n:'스피드 퀴즈',d:'10초 안에 알맞은 답을 골라요'},spell:{ic:'🔤',n:'철자 맞추기',d:'알파벳을 순서대로 눌러 단어를 완성해요'}};
+const GAMES={match:{ic:'🃏',n:'짝 맞추기',d:'영어와 뜻 카드를 뒤집어 짝을 찾아요'},quiz:{ic:'⚡',n:'스피드 퀴즈',d:'10초 안에 알맞은 답을 골라요'},spell:{ic:'🔤',n:'철자 맞추기',d:'글자를 순서대로 눌러 단어를 완성해요'}};
 const todayLog=sid=>(roomOf(sid).gcLog||[]).filter(x=>x&&x.d===isoDay());
 const todayCoins=sid=>todayLog(sid).reduce((a,x)=>a+(+x.n||0),0);
 function renderGameHome(){
@@ -1841,7 +1985,7 @@ function playQuiz(){
   const ask=()=>{if(gm.qi>=N){gm.msg=`${N}문제 중 ${gm.right}개 맞혔어요`;return endGame();}
     const q=gm.qs[gm.qi],t0=Date.now(),LIM=10000;let done=false;
     $('pv-game').innerHTML=gameBar(`<span>${gm.qi+1}/${N}</span><span>⭐ ${Math.round(gm.score)}</span>${gm.combo>1?`<span style="color:var(--berry)">🔥${gm.combo}</span>`:''}`)+
-      `<div class="qbox"><p style="color:var(--ink-2);margin:0">${q.rev?'영어로 뭘까요?':'뜻이 뭘까요?'}</p><div class="qword">${esc(q.rev?q.w.ko:q.w.en)}</div>${q.rev?'':'<button class="btn ghost sm" id="qSay">🔊</button>'}
+      `<div class="qbox"><p style="color:var(--ink-2);margin:0">${q.rev?(/[가-힣]/.test(q.w.en)?'어떤 낱말일까요?':'영어로 뭘까요?'):'뜻이 뭘까요?'}</p><div class="qword">${esc(q.rev?q.w.ko:q.w.en)}</div>${q.rev?'':'<button class="btn ghost sm" id="qSay">🔊</button>'}
       <div class="qtime"><i id="qBar" style="width:100%"></i></div><div class="qopts">${q.opts.map((o,i)=>`<button data-o="${i}">${esc(q.rev?o.en:o.ko)}</button>`).join('')}</div></div>`;
     bindQuit();if(!q.rev){speak(q.w.en);$('qSay').onclick=()=>speak(q.w.en);}
     const fin=pick=>{if(done)return;done=true;clearInterval(timer);const ok=pick&&q.opts[pick]===q.w;
@@ -1853,13 +1997,13 @@ function playQuiz(){
   ask();
 }
 function playSpell(){
-  const ws=gm.words.filter(w=>/^[a-zA-Z]{2,12}$/.test(w.en)).slice(0,8);
-  if(ws.length<3){toast('철자 게임은 띄어쓰기 없는 영어 단어가 3개 이상 필요해요');gm=null;return renderGameHome();}
+  const ws=gm.words.filter(w=>/^([a-zA-Z]{2,12}|[가-힣]{2,8})$/.test(w.en)).slice(0,8);   /* 영어는 알파벳, 우리말 낱말은 글자(음절) 조각 */
+  if(ws.length<3){toast('철자 게임은 띄어쓰기 없는 단어가 3개 이상 필요해요');gm=null;return renderGameHome();}
   gm.wi=0;gm.right=0;
   const next=()=>{if(gm.wi>=ws.length){gm.msg=`${ws.length}개 중 ${gm.right}개 완성!`;return endGame();}
     const w=ws[gm.wi],ans=w.en.toLowerCase();let typed=[],miss=0;const tiles=shuffle(ans.split('').map((c,i)=>({c,i})));
     const draw=()=>{$('pv-game').innerHTML=gameBar(`<span>${gm.wi+1}/${ws.length}</span><span>⭐ ${Math.round(gm.score)}</span>`)+
-      `<div class="qbox"><p style="color:var(--ink-2);margin:0">이 뜻의 영어 단어는?</p><div class="qword" style="font-size:clamp(28px,7vw,42px)">${esc(w.ko)}</div><button class="btn ghost sm" id="sSay">🔊 힌트 듣기</button>
+      `<div class="qbox"><p style="color:var(--ink-2);margin:0">이 뜻의 ${/[가-힣]/.test(w.en)?'낱말은':'영어 단어는'}?</p><div class="qword" style="font-size:clamp(28px,7vw,42px)">${esc(w.ko)}</div><button class="btn ghost sm" id="sSay">🔊 힌트 듣기</button>
         <div class="slots" id="slots">${ans.split('').map((_,i)=>`<span>${typed[i]?esc(typed[i].c):''}</span>`).join('')}</div>
         <div class="tiles">${tiles.map((t,k)=>`<button data-k="${k}" ${typed.includes(t)?'disabled':''}>${esc(t.c)}</button>`).join('')}</div>
         <div class="row" style="justify-content:center;margin-top:12px"><button class="btn ghost sm" id="sBack">⌫ 지우기</button><button class="btn ghost sm" id="sSkip">모르겠어요</button></div></div>`;

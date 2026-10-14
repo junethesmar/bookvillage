@@ -606,6 +606,9 @@ input:focus,textarea:focus,select:focus{box-shadow:0 0 0 4px rgba(69,128,80,.14)
 .iso-wall.r::after{background:linear-gradient(rgba(70,45,20,.06),rgba(70,45,20,.12))}
 .room.iso .pin .art>img{filter:drop-shadow(0 .4cqw .35cqw rgba(60,40,20,.3))}
 .village.iso{aspect-ratio:3/2;background:#F7F2E6 center/cover no-repeat}
+/* 한 화면에 쏙: 창 높이에서 위쪽 메뉴·버튼 줄을 뺀 만큼만 커져요 (스크롤 없이 보이게) */
+.room.iso{width:min(100%,760px,calc((100vh - 250px) * 4 / 3));width:min(100%,760px,calc((100dvh - 250px) * 4 / 3));min-width:min(100%,300px)}
+.village.iso{width:min(100%,calc((100vh - 200px) * 1.5));width:min(100%,calc((100dvh - 200px) * 1.5));margin:0 auto}
 .village.iso::after{box-shadow:none}
 </style>
 </head>

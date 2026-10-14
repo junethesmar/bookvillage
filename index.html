@@ -488,6 +488,125 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
 .guestpill{background:var(--sky-2)!important;color:#2f5da3!important;border-color:#BFD3F2!important}
 @media (max-width:1180px){.brand small,.mode-pill,.me .lv{display:none}.tabs button{padding:8px 12px}}
 @media (max-width:760px){.topbar{gap:8px;padding:8px 12px}.brand{font-size:19px}.me b{max-width:72px;overflow:hidden;text-overflow:ellipsis}}
+
+/* ───────── 수채화 테마 (위 규칙을 덮어써요) ───────── */
+:root{
+  --paper:#F7F2E6;--paper-2:#EDE6D3;--card:#FFFDF8;
+  --ink:#33302B;--ink-2:#6B655A;--ink-3:#8F8878;--line:#E2D9C4;
+  --leaf:#458050;--leaf-2:#DDEBD3;--leaf-d:#346440;
+  --honey:#F0B548;--honey-2:#FBEFCF;--honey-d:#C98F22;
+  --berry:#D4566A;--berry-2:#FAE2E3;--berry-d:#AE3D50;
+  --sky:#5D93CC;--sky-2:#DCEAF6;
+  --shadow:0 2px 0 rgba(86,66,40,.05),0 10px 24px -10px rgba(86,66,40,.22);
+  --r:20px;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .36 0 0 0 0 .22 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:
+  var(--grain),
+  radial-gradient(ellipse 55% 40% at 8% 0,rgba(196,222,176,.55),transparent 70%),
+  radial-gradient(ellipse 45% 35% at 100% 12%,rgba(190,218,238,.5),transparent 70%),
+  radial-gradient(ellipse 60% 40% at 80% 100%,rgba(247,220,160,.4),transparent 70%)}
+.topbar{background:rgba(247,242,230,.86);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.tabs{box-shadow:inset 0 1px 2px rgba(86,66,40,.06)}
+.tabs button{transition:background .15s,color .15s}
+.tabs button:not(.on):hover{background:var(--paper)}
+.tabs button.on{background:linear-gradient(#559661,var(--leaf));box-shadow:0 2px 0 var(--leaf-d)}
+.btn{box-shadow:0 3px 0 var(--leaf-d);transition:transform .08s,box-shadow .08s,filter .15s}
+.btn:hover{filter:brightness(1.05)}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--leaf-d)}
+.btn.honey{box-shadow:0 3px 0 var(--honey-d)}.btn.honey:active{box-shadow:0 1px 0 var(--honey-d)}
+.btn.berry{box-shadow:0 3px 0 var(--berry-d)}.btn.berry:active{box-shadow:0 1px 0 var(--berry-d)}
+.btn.ghost{box-shadow:0 3px 0 var(--line)}.btn.ghost:active{box-shadow:0 1px 0 var(--line)}
+.btn:disabled{box-shadow:none;transform:none;filter:none}
+input[type=text],input[type=password],input[type=number],input[type=date],textarea,select{background:#FFFEFB;transition:border-color .15s,box-shadow .15s}
+input:focus,textarea:focus,select:focus{box-shadow:0 0 0 4px rgba(69,128,80,.14)}
+.quote-box textarea:focus{box-shadow:none}
+.filters button{transition:background .15s}
+.filters button:not(.on):hover{background:var(--paper-2)}
+.toast{background:#3B352C;box-shadow:0 10px 24px -8px rgba(40,30,15,.5);max-width:calc(100vw - 32px);text-align:center}
+.modal{background:rgba(51,44,32,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.sheet{box-shadow:0 24px 60px -16px rgba(40,30,15,.5)}
+@media (max-width:760px){.sheet::before{content:"";display:block;width:44px;height:5px;border-radius:999px;background:var(--line);margin:-8px auto 10px}
+  .tabbar{background:rgba(255,253,248,.94);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 -6px 18px -10px rgba(86,66,40,.3)}}
+.empty .big img{width:96px;height:96px;object-fit:contain}
+.avi{width:100%;height:100%;object-fit:contain;display:block}
+.av{overflow:hidden}
+.names button .av,.hall .lb .av,.cmt .av{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--leaf-2)}
+.hall .lb .av,.cmt .av{width:34px;height:34px}
+.names button{transition:transform .12s,border-color .12s,background .12s}
+.names button:hover{transform:translateY(-2px);border-color:var(--leaf);background:var(--leaf-2)}
+.pinpad button{box-shadow:0 3px 0 var(--line);transition:transform .08s}
+.pinpad button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
+
+/* 입장 화면 · 인사 배너: img/hero.jpg가 없으면 뒤의 그라데이션만 보여요 */
+.gate{background:linear-gradient(rgba(247,242,230,.05),rgba(247,242,230,.45)),url(img/hero.jpg) center/cover no-repeat,linear-gradient(#CFE6F2,#E4EFCF 60%,#CFE3B4)}
+.gate .card{background:rgba(255,253,248,.94);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border:2px solid #fff;border-radius:28px;box-shadow:0 24px 60px -16px rgba(50,40,20,.45)}
+.hello{position:relative;display:flex;align-items:center;gap:16px;padding:18px 22px;margin-bottom:16px;border-radius:24px;overflow:hidden;border:2px solid #fff;box-shadow:var(--shadow);
+  background:linear-gradient(90deg,rgba(255,253,248,.96) 0,rgba(255,253,248,.86) 42%,rgba(255,253,248,.15) 78%,transparent),url(img/hero.jpg) right 45%/cover no-repeat,linear-gradient(120deg,#E6F0D6,#D5E8F3)}
+.hello .ch{width:88px;height:88px;flex:none;display:grid;place-items:center;font-size:56px;line-height:1;animation:bob 2.6s ease-in-out infinite}
+.hello .ch img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 4px 4px rgba(60,40,20,.25))}
+.hello .tx{min-width:0;flex:1}
+.hello h2{font-size:26px}
+.hello p{margin:2px 0 8px;color:var(--ink-2);font-size:14px}
+.hello .xpbar{max-width:280px;background:rgba(237,230,211,.9)}
+.hello .cta{display:flex;gap:8px;flex-wrap:wrap;flex:none}
+@media (max-width:760px){.hello{flex-wrap:wrap;padding:14px 16px;background:linear-gradient(rgba(255,253,248,.9),rgba(255,253,248,.8)),url(img/hero.jpg) center/cover no-repeat,linear-gradient(120deg,#E6F0D6,#D5E8F3)}
+  .hello .ch{width:64px;height:64px;font-size:44px}.hello h2{font-size:22px}.hello .cta{width:100%}.hello .cta .btn{flex:1}}
+
+/* 책 카드: 작은 책 표지 */
+.book{transition:transform .15s,box-shadow .15s}
+.book:hover{box-shadow:0 2px 0 rgba(86,66,40,.05),0 18px 30px -12px rgba(86,66,40,.32)}
+.book .head{display:flex;gap:12px;align-items:flex-start;padding-left:6px}
+.book .head>div{min-width:0;display:flex;flex-direction:column;gap:6px}
+.book .head .ttl,.book .head .auth{padding-left:0}
+.book .cover{flex:none;width:52px;height:70px;border-radius:3px 8px 8px 3px;color:#fff;font-family:var(--font-disp);font-size:26px;line-height:1;display:grid;place-items:center;transform:rotate(-3deg);
+  background:linear-gradient(90deg,rgba(0,0,0,.2) 0 5px,rgba(255,255,255,.22) 5px 6.5px,transparent 6.5px),linear-gradient(160deg,rgba(255,255,255,.22),transparent 55%),var(--c);
+  box-shadow:2px 2px 0 rgba(255,255,255,.9),3px 3px 0 rgba(0,0,0,.12),0 8px 12px -6px rgba(0,0,0,.35);text-shadow:0 1px 0 rgba(0,0,0,.2)}
+.rank li i{box-shadow:0 1px 0 rgba(86,66,40,.15)}
+.badge.got{background:linear-gradient(150deg,#FFF6DB,var(--honey-2));box-shadow:0 2px 0 #EAD39A}
+.badge.got .ic{filter:drop-shadow(0 2px 2px rgba(120,80,0,.25))}
+.xpbar{box-shadow:inset 0 1px 2px rgba(86,66,40,.12)}
+
+/* 방 · 마을: 그림에 깊이감 */
+.room,.village{border:5px solid #fff;box-shadow:0 2px 0 rgba(86,66,40,.06),0 20px 36px -16px rgba(86,66,40,.4)}
+.room .wall::before{content:"";position:absolute;left:0;right:0;bottom:0;height:5%;background:linear-gradient(#FBF1DC,#EEDDBE);border-top:2px solid rgba(120,85,50,.22)}
+.room .wall::after{content:"";position:absolute;inset:0;pointer-events:none;background:var(--grain),radial-gradient(ellipse 60% 75% at 28% 0,rgba(255,250,225,.45),transparent 70%),linear-gradient(transparent 75%,rgba(90,60,30,.1))}
+.room .floor::after{content:"";position:absolute;inset:0;pointer-events:none;background:var(--grain),linear-gradient(rgba(60,35,10,.18),transparent 28%),radial-gradient(ellipse 50% 70% at 30% 45%,rgba(255,245,210,.3),transparent 70%)}
+.pin .art>img{filter:drop-shadow(0 .5cqw .45cqw rgba(60,40,20,.3))}
+.village .pin .art{transform-origin:50% 100%}
+.village .pin:not(.lock):hover .art{transform:scale(1.1)}
+.village .pin .lbl{border:1.5px solid #fff;box-shadow:0 2px 4px -1px rgba(60,40,20,.3)}
+.village .pin.lock .art{filter:grayscale(.9) brightness(1.1);opacity:.5}
+.village::after{content:"";position:absolute;inset:0;z-index:300;pointer-events:none;box-shadow:inset 0 0 70px rgba(70,90,40,.28)}
+.vwrap{box-shadow:none;padding:4px 4px 24px;margin:-4px -4px -18px}
+.sitem{transition:transform .12s,box-shadow .12s}
+.sitem:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.sitem .pv{width:96px;height:96px;background:radial-gradient(circle at 50% 40%,#fff,#F3ECDB)}
+.sitem .pv img{width:88px;height:88px;filter:drop-shadow(0 3px 3px rgba(60,40,20,.25))}
+.bag .strip button img{filter:drop-shadow(0 2px 2px rgba(60,40,20,.25))}
+.gpick button{transition:transform .12s,box-shadow .12s,border-color .12s}
+.gpick button:hover{border-color:var(--leaf)}
+
+/* ───────── 아이소메트릭 방 (미니어처 디오라마) ─────────
+   방 상자(가로 100cqw × 세로 75cqw) 안에 바닥 마름모: 중심 (50cqw, 49.5cqw), 반폭 38cqw, 반높이 21.9cqw.
+   뒷벽 두 면은 높이 25cqw. 물건 좌표(%)는 JS의 ISO 값과 같은 기준이에요. */
+.room.iso{border:0;border-radius:0;box-shadow:none;overflow:visible;background:none}
+.room.iso>div:not(#rItems){position:absolute;pointer-events:none}
+.iso-shadow{left:8cqw;right:8cqw;top:46cqw;height:30cqw;background:radial-gradient(closest-side,rgba(80,60,30,.3),transparent);filter:blur(4px)}
+.iso-slab{inset:0}
+.iso-slab.l{background:linear-gradient(#DDB98F,#B98F64);clip-path:polygon(12% 66%,50% 95.2%,50% 100%,12% 70.8%)}
+.iso-slab.r{background:linear-gradient(#CDA478,#A97E55);clip-path:polygon(50% 95.2%,88% 66%,88% 70.8%,50% 100%)}
+.iso-floor{width:53.74cqw;height:53.74cqw;left:23.13cqw;top:22.63cqw;transform:scaleY(.57735) rotate(45deg);background:var(--floorpaper,#D9A877);box-shadow:inset 0 0 0 .5cqw rgba(255,255,255,.35)}
+.iso-floor::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(60,35,10,.16),transparent 35%,rgba(255,250,230,.18) 70%,transparent)}
+.iso-wall{width:38cqw;height:25cqw;transform-origin:0 100%;background:var(--wallpaper,#FFF6E5);border-top:1.3cqw solid #FFF6E6}
+.iso-wall.l{left:12cqw;top:24.5cqw;transform:skewY(-30deg);border-left:1.3cqw solid #F1E0C3}
+.iso-wall.r{left:50cqw;top:2.6cqw;transform:skewY(30deg);border-right:1.3cqw solid #E6D1AE}
+.iso-wall::before{content:"";position:absolute;left:0;right:0;bottom:0;height:1.5cqw;background:#F7EAD3;border-top:.3cqw solid rgba(120,85,50,.25)}
+.iso-wall::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.12),transparent 40%,rgba(80,50,20,.08))}
+.iso-wall.r::after{background:linear-gradient(rgba(70,45,20,.06),rgba(70,45,20,.12))}
+.room.iso .pin .art>img{filter:drop-shadow(0 .4cqw .35cqw rgba(60,40,20,.3))}
+.village.iso{aspect-ratio:3/2;background:#F7F2E6 center/cover no-repeat}
+.village.iso::after{box-shadow:none}
 </style>
 </head>
 <body>
@@ -536,6 +655,7 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
   <main>
     <!-- 책방 -->
     <section class="view" id="v-feed">
+      <div class="hello" id="helloBox" hidden></div>
       <nav class="tabs seg" id="kindTabs"></nav>
       <div class="rank card" id="rankBox"></div>
       <div class="feedhead">
@@ -674,7 +794,7 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
             <button class="btn honey sm" id="faceBtn">✏️ 내 얼굴 그리기</button>
             <button class="btn sm" id="shopBtn">🛍️ 상점</button>
           </div>
-          <div class="room" id="room"><div class="wall" id="rWall"></div><div class="floor" id="rFloor"></div><div id="rItems"></div></div>
+          <div class="room iso" id="room"><div class="iso-shadow"></div><div class="iso-slab l"></div><div class="iso-slab r"></div><div class="iso-floor"></div><div class="iso-wall l"></div><div class="iso-wall r"></div><div id="rItems"></div></div>
           <div class="seltools" id="selTools" hidden></div>
           <p class="seltools" id="roomHint"></p>
           <div class="stickers" id="stickerBar" hidden></div>
@@ -923,6 +1043,9 @@ function statsOf(sid){
 }
 function levelOf(xp){let l=LEVELS[0],next=null;for(let i=0;i<LEVELS.length;i++){if(xp>=LEVELS[i].xp){l=LEVELS[i];next=LEVELS[i+1]||null;}}return {...l,next};}
 const avatarOf=sid=>levelOf(statsOf(sid).xp).av;
+/* 동그란 프로필 칸에 넣는 그림: 직접 그린 얼굴 → 레벨 캐릭터 그림 → (그림이 없으면) 이모지 */
+const lvNo=sid=>{const xp=statsOf(sid).xp;let k=0;LEVELS.forEach((l,i)=>{if(xp>=l.xp)k=i;});return k;};
+const avImg=sid=>{const k=lvNo(sid),f=faceOf(sid);return `<img class="avi" src="${f||`img/lv${k}.png`}" alt="" draggable="false" onerror="this.replaceWith('${LEVELS[k].av}')">`;};
 const nameOf=sid=>(students.find(s=>s.id===sid)||guests.find(s=>s.id===sid)||{}).name||'(누구?)';
 
 /* ═══════════════ 입장 화면 ═══════════════ */
@@ -936,7 +1059,7 @@ function renderGate(){
   const g=$('nameGrid'); g.innerHTML='';
   const list=[...students].sort((a,b)=>(a.num||99)-(b.num||99)||a.name.localeCompare(b.name,'ko'));
   if(!list.length){g.innerHTML='<p style="grid-column:1/-1;text-align:center;color:var(--ink-3)">아직 학생 명단이 없어요. 선생님이 등록하면 이름이 나타나요.</p>';}
-  list.forEach(s=>{const b=document.createElement('button');b.innerHTML=`<span class="av">${avatarOf(s.id)}</span>${esc(s.name)}<small>글 ${statsOf(s.id).posts}편</small>`;b.onclick=()=>{pickId=s.id;pin='';$('pickName').textContent=s.name;$('gateStep1').hidden=true;$('gateStep2').hidden=false;drawDots();};g.appendChild(b);});
+  list.forEach(s=>{const b=document.createElement('button');b.innerHTML=`<span class="av">${avImg(s.id)}</span>${esc(s.name)}<small>글 ${statsOf(s.id).posts}편</small>`;b.onclick=()=>{pickId=s.id;pin='';$('pickName').textContent=s.name;$('gateStep1').hidden=true;$('gateStep2').hidden=false;drawDots();};g.appendChild(b);});
 }
 function drawDots(){[...$('dots').children].forEach((d,i)=>d.classList.toggle('on',i<pin.length));}
 (function buildPad(){const p=$('pinpad');['1','2','3','4','5','6','7','8','9','←','0','✓'].forEach(k=>{const b=document.createElement('button');b.textContent=k;b.onclick=()=>{
@@ -952,7 +1075,7 @@ function enter(sid,teacher,guest){
   isTeacher=!!teacher;isGuest=!!guest;me=teacher?null:guest?(guests.find(s=>s.id===sid)||{id:sid,name:$('gName').value.trim(),guest:true}):students.find(s=>s.id===sid);
   try{sessionStorage.setItem('bv_session',JSON.stringify({sid,teacher,guest:!!guest}));}catch(e){}
   $('gate').style.display='none';$('app').classList.add('on');
-  buildTabs();showTab(teacher?'teach':guest?'play':'feed');renderAll();
+  buildTabs();showTab(teacher?'teach':guest?'play':'feed');renderAll();probeImages();
   if(!teacher&&!guest)setTimeout(hwNotice,900);
 }
 function logout(){isGuest=false;gm&&gm.stop&&gm.stop();gm=null;$('guestGate').hidden=true;visitId=null;twView='room';selIdx=-1;prevGuest=null;me=null;isTeacher=false;try{sessionStorage.removeItem('bv_session');}catch(e){}$('app').classList.remove('on');$('gate').style.display='grid';$('gateStep1').hidden=false;$('gateStep2').hidden=true;$('teacherGate').hidden=true;$('tPin').value='';renderGate();}
@@ -982,8 +1105,18 @@ function renderAll(){
   $('modePill').classList.remove('guestpill');
   if(isTeacher){$('meAv').textContent='🍎';$('meName').textContent='선생님';$('meLv').textContent='교사 모드';}
   else{me=students.find(s=>s.id===me.id)||me;const st=statsOf(me.id),lv=levelOf(st.xp);$('meAv').textContent=lv.av;$('meName').textContent=me.name;$('meLv').textContent=lv.n;paintMyAv();}
-  renderFeed();renderRank();renderTree(false);if(!isTeacher)renderMe();if(isTeacher)renderTeach();renderTown();renderPlay();paintBell();
+  renderHello();renderFeed();renderRank();renderTree(false);if(!isTeacher)renderMe();if(isTeacher)renderTeach();renderTown();renderPlay();paintBell();
   if(openId)openReview(openId,true);
+}
+function renderHello(){
+  const box=$('helloBox');if(isGuest||(!isTeacher&&!me)){box.hidden=true;return;}box.hidden=false;
+  const total=reviews.filter(r=>!r.hidden).length,today=reviews.filter(r=>!r.hidden&&new Date(r.createdAt).toDateString()===new Date().toDateString()).length;
+  if(isTeacher){box.innerHTML=`<div class="ch">🍎</div><div class="tx"><h2>선생님, 안녕하세요!</h2><p>우리 반 글 ${total}편 · 오늘 새 글 ${today}편</p></div><div class="cta"><button class="btn sm" data-go="town">🏡 마을 보기</button><button class="btn honey sm" data-go="teach">⚙️ 교사 화면</button></div>`;}
+  else{const st=statsOf(me.id),lv=levelOf(st.xp),k=lvNo(me.id),nx=lv.next?lv.next.xp:null,pct=nx?(st.xp-lv.xp)/(nx-lv.xp)*100:100;
+    box.innerHTML=`<div class="ch">${faceOf(me.id)?avImg(me.id):`<img src="img/lv${k}.png" alt="" onerror="this.replaceWith('${lv.av}')">`}</div>
+    <div class="tx"><h2>${esc(me.name)}, 어서 와요!</h2><p>${esc(lv.n)} · ${st.posts?`지금까지 글 ${st.posts}편`:'첫 글을 쓰면 알이 꿈틀거려요'}${nx?` · ${esc(lv.next.n)}까지 ${nx-st.xp}xp`:' · 최고 레벨!'}</p><div class="xpbar"><i style="width:${pct}%"></i></div></div>
+    <div class="cta"><button class="btn sm" data-go="write">✏️ 글쓰기</button><button class="btn honey sm" data-go="town">🏠 내 방</button></div>`;}
+  box.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showTab(b.dataset.go));
 }
 function visibleReviews(){return reviews.filter(r=>isTeacher||!r.hidden);}
 function renderKindTabs(){const el=$('kindTabs');el.innerHTML='';KINDS.forEach(([k,t])=>{const b=document.createElement('button');b.textContent=t;b.classList.toggle('on',k===curKind);b.onclick=()=>{curKind=k;renderKindTabs();renderGenreFilters();renderFeed();renderRank();};el.appendChild(b);});
@@ -1002,17 +1135,19 @@ function cardHtml(r,opts={}){
     <div class="auth"><span class="chip exp">📝 ${esc(catOf(r))}</span>${(r.photos||[]).length?` <span class="chip">📷 ${r.photos.length}</span>`:''}</div>
     <div style="font-size:15px;padding-left:6px;color:var(--ink-2)">${esc(b.slice(0,70))}${b.length>70?'…':''}</div>
     <div class="rx">${rx.map(x=>`<span>${x.e} ${x.n}</span>`).join('')}${(r.comments||[]).length?`<span>💬 ${r.comments.length}</span>`:''}</div>
-    <div class="who"><span class="av">${avatarOf(r.authorId)}</span>${esc(nameOf(r.authorId))} · ${fmtDate(r.createdAt)}</div>
+    <div class="who"><span class="av">${avImg(r.authorId)}</span>${esc(nameOf(r.authorId))} · ${fmtDate(r.createdAt)}</div>
   </article>`;}
   return `<article class="card book" data-id="${r.id}">
     <span class="spine" style="background:${genreColor(r.genre)}"></span>
     ${r.hidden?'<span class="hid">숨김</span>':isNew?'<span class="new">NEW</span>':''}
-    <div class="ttl">${esc(r.title)}</div>
-    <div class="auth">${esc(r.author||'지은이 미상')} · <span class="chip genre">${esc(r.genre)}</span></div>
-    <div>${starSvg(r.rating)}</div>
+    <div class="head"><span class="cover" style="--c:${genreColor(r.genre)}" aria-hidden="true">${esc([...r.title.trim()][0]||'책')}</span><div>
+      <div class="ttl">${esc(r.title)}</div>
+      <div class="auth">${esc(r.author||'지은이 미상')} · <span class="chip genre">${esc(r.genre)}</span></div>
+      <div>${starSvg(r.rating)}</div>
+    </div></div>
     <div class="one">${esc(r.oneLine)}</div>
     <div class="rx">${rx.map(x=>`<span>${x.e} ${x.n}</span>`).join('')}${(r.comments||[]).length?`<span>💬 ${r.comments.length}</span>`:''}</div>
-    <div class="who"><span class="av">${avatarOf(r.authorId)}</span>${esc(nameOf(r.authorId))} · ${fmtDate(r.createdAt)}</div>
+    <div class="who"><span class="av">${avImg(r.authorId)}</span>${esc(nameOf(r.authorId))} · ${fmtDate(r.createdAt)}</div>
   </article>`;
 }
 function genreColor(g){const m={'동화·소설':'#4F8F5C','그림책':'#F2B84B','과학·자연':'#5B8FD6','역사·인물':'#B07A4A','만화·학습만화':'#D8566B','시·에세이':'#9A6BD1','지식·정보':'#3FA3A0','기타':'#95A3AA'};return m[g]||'#95A3AA';}
@@ -1069,7 +1204,7 @@ function renderTree(animate){
   </svg>`;
   const lb=students.map(s=>({s,st:statsOf(s.id)})).filter(x=>x.st.posts>0).sort((a,b)=>b.st.xp-a.st.xp).slice(0,10);
   const max=Math.max(1,...lb.map(x=>x.st.xp));
-  $('leader').innerHTML=lb.map((x,i)=>{const lv=levelOf(x.st.xp);return `<div><span class="av">${lv.av}</span><span class="nm">${i+1}. ${esc(x.s.name)}</span><span class="bar"><i style="width:${x.st.xp/max*100}%"></i></span><span class="xp">${x.st.xp} xp</span></div>`;}).join('')||'<p style="color:var(--ink-3)">첫 글을 쓰면 여기에 이름이 올라가요</p>';
+  $('leader').innerHTML=lb.map((x,i)=>{const lv=levelOf(x.st.xp);return `<div><span class="av">${avImg(x.s.id)}</span><span class="nm">${i+1}. ${esc(x.s.name)}</span><span class="bar"><i style="width:${x.st.xp/max*100}%"></i></span><span class="xp">${x.st.xp} xp</span></div>`;}).join('')||'<p style="color:var(--ink-3)">첫 글을 쓰면 여기에 이름이 올라가요</p>';
 }
 
 /* ═══════════════ 내 서재 ═══════════════ */
@@ -1113,7 +1248,7 @@ function openReview(id,silent){
     <section><h4>나의 평가 ${starSvg(r.rating)}</h4><p>${esc(r.evaluation||'')}</p></section>`}
     <div class="rxbar">${rxOf(r).map(x=>`<button data-rx="${x.k}" class="${myRx(x.k)?'on':''}" ${isTeacher?'disabled':''}>${x.e} ${x.t} <b>${((r.reactions||{})[x.k]||[]).length||''}</b></button>`).join('')}</div>
     <section><h4>댓글 ${(r.comments||[]).length}</h4>
-      <div class="cmts">${(r.comments||[]).map((c,i)=>`<div class="cmt"><span class="av">${avatarOf(c.by)}</span><div><b>${esc(c.name)}</b><small>${fmtDate(c.at)}</small><p>${esc(c.text)}</p></div>${(isTeacher||(me&&c.by===me.id))?`<button class="del" data-ci="${i}">지우기</button>`:''}</div>`).join('')||'<p style="font-size:14px;color:var(--ink-3);margin:0">첫 댓글을 남겨 보세요. 친구가 좋아할 거예요!</p>'}</div>
+      <div class="cmts">${(r.comments||[]).map((c,i)=>`<div class="cmt"><span class="av">${students.some(s=>s.id===c.by)?avImg(c.by):'🍎'}</span><div><b>${esc(c.name)}</b><small>${fmtDate(c.at)}</small><p>${esc(c.text)}</p></div>${(isTeacher||(me&&c.by===me.id))?`<button class="del" data-ci="${i}">지우기</button>`:''}</div>`).join('')||'<p style="font-size:14px;color:var(--ink-3);margin:0">첫 댓글을 남겨 보세요. 친구가 좋아할 거예요!</p>'}</div>
       ${isTeacher?'':`<div class="cmtform"><input type="text" id="cmtIn" placeholder="따뜻한 댓글 한 줄 (예: ${ex?'나도 그런 적 있어!':'나도 이 책 읽어봐야겠다!'})" maxlength="120"><button class="btn sm" id="cmtBtn">남기기</button></div>`}
     </section>
     <div class="own">
@@ -1308,7 +1443,7 @@ const IMG_IDS=['village_bg',...LEVELS.map((_,i)=>'lv'+i),...SHOP.filter(x=>x.e).
 const IMG_OK={};let imgProbed=false;
 function probeImages(){
   if(imgProbed)return;imgProbed=true;
-  IMG_IDS.forEach(id=>{const im=new Image();im.onload=()=>{IMG_OK[id]=true;clearTimeout(probeImages._t);probeImages._t=setTimeout(()=>{renderTown();if(isTeacher)renderImgCheck();},200);};im.src=`img/${id}.png`;});
+  IMG_IDS.forEach(id=>{const im=new Image();im.onload=()=>{IMG_OK[id]=true;clearTimeout(probeImages._t);probeImages._t=setTimeout(()=>{renderTown();if(shopOpen)renderShop();if(isTeacher)renderImgCheck();},200);};im.src=`img/${id}.png`;});
 }
 const art=(id,emo)=>IMG_OK[id]?`<img src="img/${id}.png" alt="" draggable="false">`:`<span class="emo">${emo}</span>`;
 const lvIdx=xp=>{let k=0;LEVELS.forEach((l,i)=>{if(xp>=l.xp)k=i;});return k;};
@@ -1364,16 +1499,16 @@ function renderRoom(){
   const mine=!isTeacher&&me&&sid===me.id,rm=roomOf(sid),st=statsOf(sid);
   $('roomTitle').textContent=mine?'내 방':nameOf(sid)+'의 방';
   $('roomBack').hidden=mine;$('shopBtn').hidden=$('faceBtn').hidden=!mine;$('bagBox').hidden=!mine;
-  $('rWall').style.background=(ITEM[rm.wall]||ITEM.w_cream).css;$('rFloor').style.background=(ITEM[rm.floor]||ITEM.fl_wood).css;
+  $('room').style.setProperty('--wallpaper',(ITEM[rm.wall]||ITEM.w_cream).css);$('room').style.setProperty('--floorpaper',(ITEM[rm.floor]||ITEM.fl_wood).css);
   workPlaced=validPlaced(sid);if(selIdx>=workPlaced.length)selIdx=-1;
   $('room').classList.toggle('edit',!!mine);
-  $('rItems').innerHTML=workPlaced.map((p,k)=>{const me_=p.i==='_me',it=ITEM[p.i],w=me_?11:it.w;
-    return `<div class="pin ${me_?"mepin":""} ${mine&&k===selIdx?'sel':''}" data-k="${k}" style="left:${p.x}%;top:${p.y}%;width:${w}%;--w:${w};z-index:${Math.round(p.y)}"><div class="art" style="${p.f?'transform:scaleX(-1)':''}">${me_?charArt(sid):art(it.id,it.e)}</div></div>`;}).join('');
+  $('rItems').innerHTML=workPlaced.map((p,k)=>{const me_=p.i==='_me',it=ITEM[p.i],w=+((me_?13:it.w)*.95).toFixed(1),[x,y]=isoClamp(p.x,p.y,isWall(p));
+    return `<div class="pin ${me_?"mepin":""} ${mine&&k===selIdx?'sel':''}" data-k="${k}" style="left:${x}%;top:${y}%;width:${w}%;--w:${w};z-index:${Math.round(y)}"><div class="art" style="${isoFlip(p,x)?'transform:scaleX(-1)':''}">${me_?charArt(sid):art(it.id,it.e)}</div></div>`;}).join('');
   $('roomHint').textContent=mine?'물건을 끌어서 옮겨 보세요. 누르면 뒤집거나 가방에 넣을 수 있어요.':'';
   if(mine){bindRoomDrag();renderSel();
     const bag=SHOP.filter(it=>it.cat==='furn'&&owns(rm,st,it.id)&&!workPlaced.some(p=>p.i===it.id));
     $('bag').innerHTML=bag.map(it=>`<button data-id="${it.id}">${art(it.id,it.e)}${esc(it.n)}</button>`).join('')||'<span style="font-size:13px;color:var(--ink-3)">가방이 비었어요. 🛍️ 상점에서 물건을 사 보세요!</span>';
-    $('bag').querySelectorAll('button').forEach(b=>b.onclick=()=>{const it=ITEM[b.dataset.id];selIdx=workPlaced.length;saveRoom(me.id,{placed:[...workPlaced,{i:it.id,x:30+Math.random()*40,y:it.wall?40:85}]});});
+    $('bag').querySelectorAll('button').forEach(b=>b.onclick=()=>{const it=ITEM[b.dataset.id];selIdx=workPlaced.length;const x=it.wall?28+Math.random()*10:38+Math.random()*24;saveRoom(me.id,{placed:[...workPlaced,{i:it.id,x,y:it.wall?isoEdge(x)-12:62+Math.random()*12}]});});
     if(!trimmed&&(rm.guest||[]).length>60){trimmed=true;saveRoom(me.id,{guest:rm.guest.slice(-40)});}
   }else $('selTools').hidden=true;
   const sb=$('stickerBar');sb.hidden=mine||isTeacher;
@@ -1391,6 +1526,18 @@ function renderSel(){
   if(!me_)$('sBag').onclick=()=>{workPlaced.splice(selIdx,1);selIdx=-1;saveRoom(me.id,{placed:workPlaced});};
   $('sOk').onclick=()=>{selIdx=-1;renderRoom();};
 }
+/* 아이소메트릭 방 좌표(방 상자 기준 %): 바닥 마름모 중심 (50, 66), 반폭 38, 반높이 29.2, 뒷벽 높이 33.3 — CSS .iso-* 와 같은 값 */
+const ISO={cx:50,cy:66,hw:38,hh:29.2,wh:33.3};
+const isWall=p=>!!(ITEM[p.i]&&ITEM[p.i].wall);
+const isoEdge=x=>ISO.cy-ISO.hh+ISO.hh*Math.min(1,Math.abs(x-ISO.cx)/ISO.hw);   // 그 x에서 벽과 바닥이 만나는 높이
+function isoClamp(x,y,wall){
+  if(wall){x=Math.max(16,Math.min(84,x));const e=isoEdge(x);return [+x.toFixed(1),+Math.max(e-ISO.wh+14,Math.min(e-3,y)).toFixed(1)];}
+  let dx=(x-ISO.cx)/ISO.hw,dy=(y-ISO.cy)/ISO.hh;const s=Math.abs(dx)+Math.abs(dy),k=.92;
+  if(s>k){dx*=k/s;dy*=k/s;}
+  return [+(ISO.cx+dx*ISO.hw).toFixed(1),+(ISO.cy+dy*ISO.hh).toFixed(1)];
+}
+/* 벽에 거는 그림은 왼쪽 벽 방향으로 그려져 있어서, 오른쪽 벽에 걸면 저절로 뒤집어요 */
+const isoFlip=(p,x)=>!!p.f!==(isWall(p)&&x>ISO.cx);
 function bindRoomDrag(){
   const box=$('room');
   box.querySelectorAll('.pin').forEach(el=>{
@@ -1399,8 +1546,8 @@ function bindRoomDrag(){
       const dx=(e.clientX-r.left)/r.width*100-p.x,dy=(e.clientY-r.top)/r.height*100-p.y;let moved=false;
       dragging=true;selIdx=k;box.querySelectorAll('.pin').forEach(x=>x.classList.toggle('sel',x===el));renderSel();
       try{el.setPointerCapture(e.pointerId);}catch(_){}
-      el.onpointermove=m=>{const x=Math.max(4,Math.min(96,(m.clientX-r.left)/r.width*100-dx)),y=Math.max(12,Math.min(100,(m.clientY-r.top)/r.height*100-dy));
-        if(Math.abs(x-p.x)+Math.abs(y-p.y)>.5)moved=true;p.x=+x.toFixed(1);p.y=+y.toFixed(1);el.style.left=p.x+'%';el.style.top=p.y+'%';el.style.zIndex=Math.round(p.y);};
+      el.onpointermove=m=>{const [x,y]=isoClamp((m.clientX-r.left)/r.width*100-dx,(m.clientY-r.top)/r.height*100-dy,isWall(p));
+        if(Math.abs(x-p.x)+Math.abs(y-p.y)>.5)moved=true;p.x=x;p.y=y;el.style.left=x+'%';el.style.top=y+'%';el.style.zIndex=Math.round(y);el.firstElementChild.style.transform=isoFlip(p,x)?'scaleX(-1)':'';};
       el.onpointerup=el.onpointercancel=()=>{el.onpointermove=el.onpointerup=el.onpointercancel=null;dragging=false;if(moved)saveRoom(me.id,{placed:workPlaced});};
     };
   });
@@ -1410,11 +1557,15 @@ function renderVillage(){
   const v=$('village');
   v.style.backgroundImage=IMG_OK.village_bg?'url(img/village_bg.png)':'';
   const n=reviews.filter(r=>!r.hidden).length,goal=(settings&&settings.treeGoal)||50;
-  const facX=[10,26,42,58,74,90];
+  /* 아이소메트릭 마을판(3:2, img/village_bg.png): 마름모 위 끝 2%·가운데 45%·아래 끝 88% 높이. 가운데 가로 길에 시설, 길 위·아래 7×7 칸에 집(길 가까운 칸부터) */
+  v.classList.add('iso');
+  const facX=[11,26.5,42,58,73.5,89];
   let h=FAC.map((f,i)=>{const need=Math.ceil(goal*f.r),ok=n>=need;
-    return `<div class="pin ${ok?'':'lock'}" data-fac="${i}" style="left:${facX[i]}%;top:61%;width:11%;--w:11;z-index:61"><div class="art">${art(f.id,f.e)}</div><span class="lbl">${ok?esc(f.n):'🔒 '+(need-n)+'개 더'}</span></div>`;}).join('');
-  const rowsY=[17,33,80,95],list=[...students].sort((a,b)=>(a.num||99)-(b.num||99)||a.name.localeCompare(b.name,'ko'));
-  list.forEach((s,i)=>{const row=Math.floor(i/9)%4,col=i%9,x=7+col*10.8+(row%2?2.5:0)+(seeded(i+3)-.5)*2,y=rowsY[row]+(seeded(i+11)-.5)*2;
+    return `<div class="pin ${ok?'':'lock'}" data-fac="${i}" style="left:${facX[i]}%;top:52%;width:10%;--w:10;z-index:52"><div class="art">${art(f.id,f.e)}</div><span class="lbl">${ok?esc(f.n):'🔒 '+(need-n)+'개 더'}</span></div>`;}).join('');
+  const cells=[];for(let a=0;a<7;a++)for(let b=0;b<7;b++){if(a+b>=5&&a+b<=7)continue;const u=(a+.5)/7,w=(b+.5)/7;cells.push({x:50+(u-w)*50,y:4+(u+w)*43.3+(a+b>6?4:0),d:Math.abs(a+b-6),up:a+b<6});   /* 길 아래 줄은 시설 이름표와 안 겹치게 조금 더 아래로 */}
+  cells.sort((p,q)=>p.d-q.d||q.up-p.up||p.x-q.x);
+  const list=[...students].sort((a,b)=>(a.num||99)-(b.num||99)||a.name.localeCompare(b.name,'ko'));
+  list.forEach((s,i)=>{const c=cells[i%cells.length],x=c.x+(seeded(i+3)-.5)*1.5,y=c.y+(seeded(i+11)-.5)*1.5;
     const hs=ITEM[roomOf(s.id).house]||ITEM.h_basic,mine=me&&s.id===me.id;
     h+=`<div class="pin ${mine?'mine':''}" data-sid="${s.id}" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;width:8%;--w:8;z-index:${Math.round(y)}"><div class="art">${art(hs.id,hs.e)}</div><span class="lbl">${mine?'⭐ ':''}${esc(s.name)}</span></div>`;
     const ww=faceOf(s.id)?5:3.6;
@@ -1472,8 +1623,8 @@ store.watch('rooms',d=>{rooms=d;roomsErr=null;onRooms();},e=>{roomsErr=e.code||'
 const faceOf=sid=>{const f=(rooms.find(r=>r.id===sid)||{}).face;return typeof f==='string'&&f.length<150000&&/^data:image\/(png|webp);base64,[A-Za-z0-9+\/=]+$/.test(f)?f:null;};
 function paintMyAv(){
   if(!me||isTeacher)return;const f=faceOf(me.id),lv=levelOf(statsOf(me.id).xp);
-  $('meAv').innerHTML=f?`<img src="${f}" alt="" style="width:100%;height:100%;object-fit:contain">`:esc(lv.av);
-  $('pAv').innerHTML=f?`<span class="facewrap" style="width:120px;margin:0 auto;--w:30"><img src="${f}" alt="내 얼굴" style="width:120px;display:block"><i class="lvb" style="font-size:30px">${lv.av}</i></span>`:esc(lv.av);
+  $('meAv').innerHTML=avImg(me.id);
+  $('pAv').innerHTML=f?`<span class="facewrap" style="width:120px;margin:0 auto;--w:30"><img src="${f}" alt="내 얼굴" style="width:120px;display:block"><i class="lvb" style="font-size:30px">${lv.av}</i></span>`:`<img src="img/lv${lvNo(me.id)}.png" alt="" style="width:132px;height:132px;object-fit:contain;display:block;margin:0 auto" onerror="this.replaceWith('${lv.av}')">`;
 }
 const PAD_COLORS=['#3B2A22','#7A4E2D','#F6C04E','#FDE3CF','#F5C9A6','#D9A07A','#A8714F','#F28B82','#F7A1B5','#FFB067','#FFE07A','#A8DD8C','#A9D3F5','#CDB8F0','#FFFFFF'];
 const PAD_SIZES=[['가늘게',4],['보통',9],['굵게',18]];

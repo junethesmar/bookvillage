@@ -1075,7 +1075,9 @@ function enter(sid,teacher,guest){
   isTeacher=!!teacher;isGuest=!!guest;me=teacher?null:guest?(guests.find(s=>s.id===sid)||{id:sid,name:$('gName').value.trim(),guest:true}):students.find(s=>s.id===sid);
   try{sessionStorage.setItem('bv_session',JSON.stringify({sid,teacher,guest:!!guest}));}catch(e){}
   $('gate').style.display='none';$('app').classList.add('on');
-  buildTabs();showTab(teacher?'teach':guest?'play':'feed');renderAll();probeImages();
+  /* 학생은 우리 마을에서 시작해요. 선생님이 마을을 닫아 둔 시간에는 책방에서 시작 */
+  if(!teacher&&!guest)twView='map';
+  buildTabs();showTab(teacher?'teach':guest?'play':(settings&&settings.playOff)?'feed':'town');renderAll();probeImages();
   if(!teacher&&!guest)setTimeout(hwNotice,900);
 }
 function logout(){isGuest=false;gm&&gm.stop&&gm.stop();gm=null;$('guestGate').hidden=true;visitId=null;twView='room';selIdx=-1;prevGuest=null;me=null;isTeacher=false;try{sessionStorage.removeItem('bv_session');}catch(e){}$('app').classList.remove('on');$('gate').style.display='grid';$('gateStep1').hidden=false;$('gateStep2').hidden=true;$('teacherGate').hidden=true;$('tPin').value='';renderGate();}
@@ -1090,7 +1092,7 @@ const ICON={feed:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h6a3
   town:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3 2 11.5h3V21h5v-6h4v6h5v-9.5h3z"/></svg>',
   teach:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3 1 9l11 6 9-4.9V17h2V9zM5 13.2V17c0 2 3.1 4 7 4s7-2 7-4v-3.8l-7 3.8z"/></svg>'};
 function buildTabs(){
-  const tabs=isTeacher?[['feed','책방'],['town','마을'],['play','놀이터'],['teach','교사']]:isGuest?[['play','놀이터']]:[['feed','책방'],['write','쓰기'],['town','마을'],['play','놀이터'],['me','내 서재']];
+  const tabs=isTeacher?[['feed','책방'],['town','마을'],['play','놀이터'],['teach','교사']]:isGuest?[['play','놀이터']]:[['town','마을'],['feed','책방'],['write','쓰기'],['play','놀이터'],['me','내 서재']];
   for(const el of [$('tabsTop'),$('tabsBottom')]){el.innerHTML='';tabs.forEach(([k,t])=>{const b=document.createElement('button');b.dataset.tab=k;b.innerHTML=ICON[k]+'<span>'+t+'</span>';b.onclick=()=>showTab(k);el.appendChild(b);});}
 }
 function showTab(k){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+k));document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===k));window.scrollTo({top:0});if(k==='write'&&!editingId){loadDraft();loadExpDraft();setWriteKind(writeKind);}if(k==='tree')renderTree(true);if(k==='town'){probeImages();renderTown();}if(k==='play')renderPlay();}

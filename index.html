@@ -720,7 +720,7 @@ input:focus,textarea:focus,select:focus{box-shadow:0 0 0 4px rgba(69,128,80,.14)
 <!-- ═══════════════ 앱 ═══════════════ -->
 <div class="app" id="app">
   <header class="topbar">
-    <div class="brand" id="brandLogo"><span id="brandName">책갈피 마을</span><small id="brandClass"></small></div>
+    <div class="brand" id="brandLogo" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer"><span id="brandName">책갈피 마을</span><small id="brandClass"></small></div>
     <nav class="tabs" id="tabsTop"></nav>
     <div class="spacer"></div>
     <span class="mode-pill" id="modePill">미리보기(내 기기 저장)</span>
@@ -924,7 +924,7 @@ input:focus,textarea:focus,select:focus{box-shadow:0 0 0 4px rgba(69,128,80,.14)
             <p style="text-align:center;font-size:12px;color:var(--ink-3);margin:4px 0 0" id="pNext"></p>
             <div class="stats"><div><b id="sRev">0</b><span>서평</span></div><div><b id="sExp">0</b><span>게시판 글</span></div><div><b id="sRx">0</b><span>받은 반응</span></div><div><b id="sCm">0</b><span>쓴 댓글</span></div></div>
             <button class="btn honey sm" id="avaBtn2" style="width:100%;margin-bottom:8px">🐾 캐릭터 고르기</button><button class="btn honey sm" id="faceBtn2" style="width:100%;margin-bottom:8px">✏️ 내 얼굴 그리기</button>
-            <button class="btn ghost sm" id="logout" style="width:100%">나가기</button>
+            <button class="btn ghost sm" id="pinBtn" style="width:100%;margin-bottom:8px">🔒 비밀번호 바꾸기</button><button class="btn ghost sm" id="logout" style="width:100%">나가기</button>
           </div>
           <div class="card" style="margin-top:14px"><h3 style="font-size:18px;margin-bottom:8px">배지</h3><div class="badges" id="badges"></div></div>
         </div>
@@ -2421,6 +2421,30 @@ store.watch('students',d=>{students=d.filter(x=>!x.guest);guests=d.filter(x=>x.g
 store.watch('reviews',d=>{reviews=d;loaded.reviews=true;afterLoad();});
 store.watch('settings',d=>{settings=d.find(x=>x.id==='main')||null;loaded.settings=true;afterLoad();});
 $('brandLogo').insertAdjacentHTML('afterbegin',LOGO);
+/* 로고를 누르면 처음 화면(학생: 우리 마을, 선생님: 교사 화면, 손님: 놀이터)으로 */
+function goHome(){if(!$('app').classList.contains('on'))return;closeModal();
+  if(isTeacher)return showTab('teach');if(isGuest)return showTab('play');
+  if(settings&&settings.playOff)return showTab('feed');visitId=null;selIdx=-1;twView='map';showTab('town');}
+$('brandLogo').onclick=goHome;$('brandLogo').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();goHome();}};
+/* 학생이 직접 비밀번호 바꾸기: 지금 비밀번호 확인 → 새 숫자 4자리 두 번 */
+function openPin(){
+  if(!me||isTeacher||isGuest)return;shopOpen=false;openId=null;
+  $('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><h2 style="font-size:26px">🔒 비밀번호 바꾸기</h2>
+    <p style="color:var(--ink-2);font-size:14px;margin:4px 0 12px">숫자 4자리로 바꿀 수 있어요. 잊어버리면 선생님께 말씀드리면 다시 정해 주세요.</p>
+    <label class="f">지금 비밀번호</label><input type="password" id="pinOld" inputmode="numeric" maxlength="4" autocomplete="off">
+    <label class="f" style="margin-top:10px">새 비밀번호</label><input type="password" id="pinNew" inputmode="numeric" maxlength="4" autocomplete="off">
+    <label class="f" style="margin-top:10px">새 비밀번호 한 번 더</label><input type="password" id="pinNew2" inputmode="numeric" maxlength="4" autocomplete="off">
+    <div class="row" style="justify-content:flex-end;margin-top:14px"><button class="btn" id="pinSave">바꾸기</button></div>`;
+  $('modal').classList.add('on');$('mClose').onclick=closeModal;$('pinOld').focus();
+  $('pinSave').onclick=async()=>{const o=$('pinOld').value,n=$('pinNew').value,n2=$('pinNew2').value,cur=(students.find(x=>x.id===me.id)||me).pin;
+    if(o!==cur){toast('지금 비밀번호가 달라요');$('pinOld').value='';return $('pinOld').focus();}
+    if(!/^\d{4}$/.test(n))return toast('새 비밀번호는 숫자 4자리로 써 주세요');
+    if(n!==n2){toast('새 비밀번호가 서로 달라요');$('pinNew2').value='';return $('pinNew2').focus();}
+    if(n===cur)return toast('지금 비밀번호와 같아요');
+    try{await store.update('students',me.id,{pin:n});closeModal();toast('비밀번호를 바꿨어요! 다음부터 새 비밀번호로 들어와요 🔒');}catch(e){console.error(e);toast('바꾸지 못했어요 ('+(e.code||'오류')+')');}};
+  $('pinNew2').onkeydown=e=>{if(e.key==='Enter')$('pinSave').click();};
+}
+$('pinBtn').onclick=openPin;
 </script>
 </body>
 </html>

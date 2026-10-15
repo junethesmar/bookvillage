@@ -724,6 +724,7 @@ input:focus,textarea:focus,select:focus{box-shadow:0 0 0 4px rgba(69,128,80,.14)
     <nav class="tabs" id="tabsTop"></nav>
     <div class="spacer"></div>
     <span class="mode-pill" id="modePill">미리보기(내 기기 저장)</span>
+    <button class="btn honey sm" id="viewBtn" hidden>👀 학생 화면으로</button>
     <button class="bell" id="bellBtn" hidden aria-label="알림장과 숙제">🔔<b id="bellN" hidden></b></button>
     <button class="me" id="meBtn"><span class="av" id="meAv">🥚</span><b id="meName"></b><span class="lv" id="meLv"></span></button>
   </header>
@@ -1074,6 +1075,9 @@ function makeFirestore(cfg){
 const CFG_SET = !!(window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.projectId);
 const HAS_FB = CFG_SET && !!window.firebase;
 const store = HAS_FB ? makeFirestore(window.FIREBASE_CONFIG) : makeLocalStore();
+/* 선생님의 「학생 화면으로 보기」: 보는 동안에는 아무것도 저장되지 않게 막아요 (실제 학생 데이터 보호) */
+let viewAs=false;
+['set','update','merge','del'].forEach(k=>{const f=store[k];store[k]=(...a)=>viewAs?(toast('👀 보기 모드라서 저장되지 않아요'),Promise.resolve()):f(...a);});
 if(CFG_SET && !window.firebase){
   document.body.insertAdjacentHTML('afterbegin','<div style="position:fixed;left:0;right:0;top:0;z-index:999;background:#D8566B;color:#fff;padding:10px 16px;font-size:14px;text-align:center">⚠️ Firebase 연결 파일(gstatic.com)을 불러오지 못했어요. 이 네트워크에서 차단된 것 같아요. 지금은 이 기기에만 저장되는 미리보기 상태입니다. 휴대폰 핫스팟이나 다른 네트워크에서 다시 열어 보세요.</div>');
   document.body.style.paddingTop='44px';
@@ -1168,15 +1172,26 @@ $('setupBtn').onclick=async()=>{const p=$('setupPin').value.trim();if(!/^\d{4}$/
 
 function enter(sid,teacher,guest){
   isTeacher=!!teacher;isGuest=!!guest;me=teacher?null:guest?(guests.find(s=>s.id===sid)||{id:sid,name:$('gName').value.trim(),guest:true}):students.find(s=>s.id===sid);
-  try{sessionStorage.setItem('bv_session',JSON.stringify({sid,teacher,guest:!!guest}));}catch(e){}
+  if(!viewAs)try{sessionStorage.setItem('bv_session',JSON.stringify({sid,teacher,guest:!!guest}));}catch(e){}
   $('gate').style.display='none';$('app').classList.add('on');
   /* 학생은 우리 마을에서 시작해요. 선생님이 마을을 닫아 둔 시간에는 책방에서 시작 */
   if(!teacher&&!guest)twView='map';
   buildTabs();showTab(teacher?'teach':guest?'play':(settings&&settings.playOff)?'feed':'town');renderAll();probeImages();
   if(!teacher&&!guest)setTimeout(hwNotice,900);
 }
-function logout(){isGuest=false;gm&&gm.stop&&gm.stop();gm=null;$('guestGate').hidden=true;visitId=null;twView='room';selIdx=-1;prevGuest=null;me=null;isTeacher=false;try{sessionStorage.removeItem('bv_session');}catch(e){}$('app').classList.remove('on');$('gate').style.display='grid';$('gateStep1').hidden=false;$('gateStep2').hidden=true;$('teacherGate').hidden=true;$('tPin').value='';renderGate();}
-$('logout').onclick=logout;
+function logout(){isGuest=false;viewAs=false;gm&&gm.stop&&gm.stop();gm=null;$('guestGate').hidden=true;visitId=null;twView='room';selIdx=-1;prevGuest=null;me=null;isTeacher=false;try{sessionStorage.removeItem('bv_session');}catch(e){}$('app').classList.remove('on');$('gate').style.display='grid';$('gateStep1').hidden=false;$('gateStep2').hidden=true;$('teacherGate').hidden=true;$('tPin').value='';renderGate();}
+$('logout').onclick=()=>viewAs?backToTeacher():logout();
+function openViewAs(){
+  if(!isTeacher)return;shopOpen=false;openId=null;
+  const list=[...students].sort((a,b)=>(a.num||99)-(b.num||99)||a.name.localeCompare(b.name,'ko'));
+  $('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><h2 style="font-size:26px">👀 학생 화면으로 보기</h2>
+    <p style="color:var(--ink-2);font-size:14px;margin:4px 0 0">고른 학생에게 보이는 화면 그대로 볼 수 있어요. <b>보는 동안에는 아무것도 저장되지 않아요.</b> 위의 「교사로 돌아가기」를 누르면 바로 돌아와요.</p>
+    <div class="names">${list.map(s=>`<button data-va="${s.id}"><span class="av">${avImg(s.id)}</span>${esc(s.name)}</button>`).join('')||'<p>학생 명단이 없어요</p>'}</div>`;
+  $('modal').classList.add('on');$('mClose').onclick=closeModal;
+  $('sheet').querySelectorAll('[data-va]').forEach(b=>b.onclick=()=>{closeModal();viewAs=true;enter(b.dataset.va,false);toast('👀 '+nameOf(b.dataset.va)+' 화면이에요. 저장은 되지 않아요');});
+}
+function backToTeacher(){viewAs=false;closeModal();enter(null,true);toast('👩‍🏫 교사 모드로 돌아왔어요');}
+$('viewBtn').onclick=()=>viewAs?backToTeacher():openViewAs();
 
 /* ═══════════════ 탭 ═══════════════ */
 const ICON={feed:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4zm16 0h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z"/></svg>',
@@ -1200,6 +1215,8 @@ function renderAll(){
   $('modePill').textContent=store.mode==='firebase'?'실시간 공유 중':'미리보기(내 기기 저장)';$('modePill').classList.toggle('live',store.mode==='firebase');
   if(isGuest){$('meAv').textContent='🙂';$('meName').textContent=me.name;$('meLv').textContent='옆반 손님';$('modePill').textContent='손님';$('modePill').classList.add('guestpill');paintBell();renderPlay();return;}
   $('modePill').classList.remove('guestpill');
+  $('viewBtn').hidden=!(isTeacher||viewAs);$('viewBtn').textContent=viewAs?'👩‍🏫 교사로 돌아가기':'👀 학생 화면으로';
+  if(viewAs){$('modePill').textContent='👀 보기 모드 (저장 안 됨)';$('modePill').classList.add('guestpill');}
   if(isTeacher){$('meAv').textContent='🍎';$('meName').textContent='선생님';$('meLv').textContent='교사 모드';}
   else{me=students.find(s=>s.id===me.id)||me;const st=statsOf(me.id),lv=levelOf(st.xp);$('meAv').textContent=lv.av;$('meName').textContent=me.name;$('meLv').textContent=lv.n;paintMyAv();}
   renderHello();renderFeed();renderRank();renderTree(false);if(!isTeacher)renderMe();if(isTeacher)renderTeach();renderTown();renderPlay();paintBell();

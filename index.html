@@ -328,10 +328,10 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
   background:radial-gradient(circle at 12% 30%,#BFE3A6 0 6%,transparent 6.5%),radial-gradient(circle at 88% 78%,#BFE3A6 0 7%,transparent 7.5%),radial-gradient(circle at 70% 12%,#C9E8B2 0 5%,transparent 5.5%),
   linear-gradient(transparent 49%,#EAD9B5 49% 63%,transparent 63%),#A8D88E;background-size:cover;background-position:center}
 .village .pin{cursor:pointer;text-align:center}
-.village .pin .lbl{position:absolute;left:50%;top:100%;transform:translateX(-50%);white-space:nowrap;font-family:var(--font-disp);font-size:max(10px,1.6cqw);background:rgba(255,255,255,.88);border-radius:999px;padding:0 .6em;color:var(--ink);margin-top:2px}
-.village .pin.mine .lbl{background:var(--honey);}
+.village .lbl{position:absolute;left:50%;top:100%;transform:translateX(-50%);white-space:nowrap;font-family:var(--font-disp);font-size:max(10px,1.6cqw);background:rgba(255,255,255,.88);border-radius:999px;padding:0 .6em;color:var(--ink);margin-top:2px}
+.village .pin.mine .lbl,.village .lbl.mine{background:var(--honey);}
 .village .pin.lock .art{filter:grayscale(1);opacity:.35}
-.village .pin.lock .lbl{background:rgba(34,48,58,.6);color:#fff}
+.village .pin.lock .lbl,.village .lbl.lock{background:rgba(34,48,58,.6);color:#fff}
 .village .walker{position:absolute;transform:translate(-50%,-100%);pointer-events:none;animation:stroll var(--d) ease-in-out infinite alternate}
 .village .walker .emo{font-size:calc(var(--w) * .82cqw);line-height:1}
 .village .walker img{width:100%}
@@ -401,6 +401,35 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
 .dw .e{font-size:14px;color:var(--ink-2);background:var(--paper);border-radius:10px;padding:6px 10px}
 .dw .e mark{background:linear-gradient(transparent 55%,#FBE3A0 55%);color:inherit}
 .dwfoot{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:14px}
+/* ───────── 마을 건물 · 한마디 · 캐릭터 고르기 · 초대 QR ───────── */
+.bldl{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.bldl>div{display:flex;align-items:center;gap:10px;background:var(--paper);border-radius:14px;padding:8px 10px}
+.bldl img{width:48px;height:48px;object-fit:contain;flex:none}
+.bldl .tx{flex:1;min-width:0;font-size:13px;color:var(--ink-2)}
+.bldl .tx b{display:block;font-family:var(--font-disp);font-weight:400;font-size:16px;color:var(--ink)}
+.bldl>div.off{opacity:.55}
+.talkf{display:flex;gap:8px;margin:8px 0}
+.talkf input{flex:1}
+.talks{display:flex;flex-direction:column;gap:6px}
+.talk{display:flex;gap:10px;align-items:center;background:var(--paper);border-radius:14px;padding:8px 12px}
+.talk.pin{background:var(--honey-2);border:1.5px solid #EAD39A}
+.talk .av{width:34px;height:34px;border-radius:50%;background:var(--leaf-2);display:grid;place-items:center;flex:none;font-size:20px;overflow:hidden}
+.talk .tx{flex:1;min-width:0}
+.talk .tx b{font-family:var(--font-disp);font-weight:400;font-size:14px}
+.talk .tx small{color:var(--ink-3);font-size:11px;margin-left:6px}
+.talk .tx p{margin:0;font-size:16px;overflow-wrap:anywhere}
+.talk .hrt{flex:none;font-size:14px;padding:4px 10px;border-radius:999px;background:var(--card);border:1px solid var(--line)}
+.talk .hrt.on{background:var(--berry-2);border-color:var(--berry);color:var(--berry)}
+.talk .del{flex:none;font-size:12px;color:var(--ink-3)}
+.avagrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px;margin-top:10px}
+.avagrid button{background:var(--paper);border:2px solid var(--line);border-radius:16px;padding:6px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:var(--font-disp);font-size:15px;transition:transform .1s}
+.avagrid button:hover{transform:translateY(-2px)}
+.avagrid button.on{border-color:var(--leaf);background:var(--leaf-2)}
+.avagrid img{width:76px;height:76px;object-fit:contain}
+.avagrid .emo{font-size:52px;line-height:76px}
+.qrbox{display:grid;place-items:center;gap:8px;text-align:center}
+.qrbox #qr{background:#fff;padding:14px;border-radius:18px;border:1px solid var(--line)}
+.qrbox #qr img,.qrbox #qr canvas{display:block;width:min(260px,70vw)!important;height:auto!important}
 /* ───────── 숙제 알림 ───────── */
 .bell{position:relative;font-size:20px;width:40px;height:40px;border-radius:50%;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;flex:none}
 .bell b{position:absolute;right:-4px;top:-4px;min-width:20px;height:20px;border-radius:999px;background:var(--berry);color:#fff;font:400 12px/20px var(--font-disp);padding:0 5px}
@@ -516,6 +545,18 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
 .rolelist{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;font-size:13px}
 .rolelist span{background:rgba(255,255,255,.2);border-radius:999px;padding:2px 10px}
 .wolf.day .rolelist span{background:rgba(255,255,255,.6)}
+.wsteps{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin:0 0 12px}
+.wsteps span{font-size:13px;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.16);opacity:.7}
+.wolf.day .wsteps span{background:rgba(255,255,255,.5)}
+.wsteps span.on{background:#FFE7A3;color:#4a3606;opacity:1;font-family:var(--font-disp);font-size:14px}
+.wsteps span.done{opacity:.5;text-decoration:line-through}
+.wguide{background:#FFFDF8;color:var(--ink);border-radius:16px;padding:12px 14px;margin:12px auto 0;max-width:560px;text-align:left;box-shadow:0 6px 16px -8px rgba(0,0,0,.35)}
+.wguide h4{font-family:var(--font-disp);font-weight:400;font-size:18px;margin:0 0 6px;color:var(--leaf)}
+.wguide ol,.wguide ul{margin:0;padding-left:20px;font-size:15px;line-height:1.7}
+.wguide .say{margin-top:8px;font-size:14px;background:var(--honey-2);border-radius:10px;padding:6px 10px}
+.wguide .goal{margin-top:8px;font-size:14px;border-left:4px solid var(--leaf);padding:2px 0 2px 10px}
+.wguide .goal.w{border-color:#7B68C8}
+.rolecard .goal{display:block;margin-top:8px;font-size:12px;color:var(--ink-2);border-top:1px dashed var(--line);padding-top:6px}
 .guestpill{background:var(--sky-2)!important;color:#2f5da3!important;border-color:#BFD3F2!important}
 @media (max-width:1180px){.brand small,.mode-pill,.me .lv{display:none}.tabs button{padding:8px 12px}}
 @media (max-width:760px){.topbar{gap:8px;padding:8px 12px}.brand{font-size:19px}.me b{max-width:72px;overflow:hidden;text-overflow:ellipsis}}
@@ -606,7 +647,7 @@ input:focus,textarea:focus,select:focus{box-shadow:0 0 0 4px rgba(69,128,80,.14)
 .pin .art>img{filter:drop-shadow(0 .5cqw .45cqw rgba(60,40,20,.3))}
 .village .pin .art{transform-origin:50% 100%}
 .village .pin:not(.lock):hover .art{transform:scale(1.1)}
-.village .pin .lbl{border:1.5px solid #fff;box-shadow:0 2px 4px -1px rgba(60,40,20,.3)}
+.village .lbl{border:1.5px solid #fff;box-shadow:0 2px 4px -1px rgba(60,40,20,.3)}
 .village .pin.lock .art{filter:grayscale(.9) brightness(1.1);opacity:.5}
 .village::after{content:"";position:absolute;inset:0;z-index:300;pointer-events:none;box-shadow:inset 0 0 70px rgba(70,90,40,.28)}
 .vwrap{box-shadow:none;padding:4px 4px 24px;margin:-4px -4px -18px}
@@ -825,6 +866,7 @@ input:focus,textarea:focus,select:focus{box-shadow:0 0 0 4px rgba(69,128,80,.14)
           <div class="roomhead">
             <h2 id="roomTitle">내 방</h2>
             <button class="btn ghost sm" id="roomBack" hidden>← 돌아가기</button>
+            <button class="btn honey sm" id="avaBtn">🐾 캐릭터 고르기</button>
             <button class="btn honey sm" id="faceBtn">✏️ 내 얼굴 그리기</button>
             <button class="btn sm" id="shopBtn">🛍️ 상점</button>
           </div>
@@ -837,15 +879,15 @@ input:focus,textarea:focus,select:focus{box-shadow:0 0 0 4px rgba(69,128,80,.14)
         </div>
         <div id="tw-map" hidden>
           <div class="vwrap"><div class="village" id="village"></div></div>
-          <p style="font-size:13px;color:var(--ink-2);text-align:center;margin:8px 0 0">친구 집을 누르면 방에 놀러 갈 수 있어요. 우리 반 글이 늘어나면 마을에 새 장소가 생겨요!</p>
-          <div class="card facs"><h3>🏗️ 마을 공사 현황</h3><div class="xpbar" style="margin-bottom:10px"><i id="facBar"></i></div><div class="fl" id="facList"></div></div>
+          <p style="font-size:13px;color:var(--ink-2);text-align:center;margin:8px 0 0">친구 집을 누르면 방에 놀러 가요. 건물을 누르면 주민센터·도서관·공부방·늑대 우리로 가요!</p>
+          <div class="card facs"><h3>🏘️ 마을 건물</h3><div class="bldl" id="bldList"></div></div>
         </div>
       </div>
     </section>
 
     <!-- 놀이터 -->
     <section class="view" id="v-play">
-      <div class="playhead"><nav class="tabs seg" id="playTabs" style="flex-wrap:wrap;border-radius:20px"><button data-pv="today">📖 오늘의 낱말</button><button data-pv="words">📒 영어 단어장</button><button data-pv="game">🎯 단어 게임</button><button data-pv="wolf">🐺 한밤의 늑대</button></nav></div>
+      <div class="playhead"><button class="btn ghost sm" id="invQrBtn" hidden style="order:2;margin-left:auto">📱 옆반 친구 초대</button><nav class="tabs seg" id="playTabs" style="flex-wrap:wrap;border-radius:20px"><button data-pv="today">📖 오늘의 낱말</button><button data-pv="words">📒 영어 단어장</button><button data-pv="game">🎯 단어 게임</button><button data-pv="wolf">🐺 한밤의 늑대</button></nav></div>
       <div id="pv-today" hidden>
         <div class="card" id="dwTeach" hidden style="padding:14px 16px;margin-bottom:14px">
           <h3 style="font-size:18px;margin-bottom:8px">📖 오늘의 낱말 올리기 (선생님)</h3>
@@ -881,7 +923,7 @@ input:focus,textarea:focus,select:focus{box-shadow:0 0 0 4px rgba(69,128,80,.14)
             <div class="xpbar"><i id="pBar"></i></div>
             <p style="text-align:center;font-size:12px;color:var(--ink-3);margin:4px 0 0" id="pNext"></p>
             <div class="stats"><div><b id="sRev">0</b><span>서평</span></div><div><b id="sExp">0</b><span>게시판 글</span></div><div><b id="sRx">0</b><span>받은 반응</span></div><div><b id="sCm">0</b><span>쓴 댓글</span></div></div>
-            <button class="btn honey sm" id="faceBtn2" style="width:100%;margin-bottom:8px">✏️ 내 얼굴 그리기</button>
+            <button class="btn honey sm" id="avaBtn2" style="width:100%;margin-bottom:8px">🐾 캐릭터 고르기</button><button class="btn honey sm" id="faceBtn2" style="width:100%;margin-bottom:8px">✏️ 내 얼굴 그리기</button>
             <button class="btn ghost sm" id="logout" style="width:100%">나가기</button>
           </div>
           <div class="card" style="margin-top:14px"><h3 style="font-size:18px;margin-bottom:8px">배지</h3><div class="badges" id="badges"></div></div>
@@ -928,6 +970,7 @@ input:focus,textarea:focus,select:focus{box-shadow:0 0 0 4px rgba(69,128,80,.14)
           <div class="card" style="margin-top:14px">
             <h3>🤝 옆반 초대 (임시)</h3>
             <div id="invBox"></div>
+            <label class="tog" style="margin-top:10px"><input type="checkbox" id="invKids"> 학생도 놀이터에서 초대 QR을 열 수 있게 하기</label>
           </div>
           <div class="card" style="margin-top:14px">
             <h3>🏡 마을 놀이</h3>
@@ -1097,7 +1140,7 @@ function levelOf(xp){let l=LEVELS[0],next=null;for(let i=0;i<LEVELS.length;i++){
 const avatarOf=sid=>levelOf(statsOf(sid).xp).av;
 /* 동그란 프로필 칸에 넣는 그림: 직접 그린 얼굴 → 레벨 캐릭터 그림 → (그림이 없으면) 이모지 */
 const lvNo=sid=>{const xp=statsOf(sid).xp;let k=0;LEVELS.forEach((l,i)=>{if(xp>=l.xp)k=i;});return k;};
-const avImg=sid=>{const k=lvNo(sid),f=faceOf(sid);return `<img class="avi" src="${f||`img/lv${k}.png`}" alt="" draggable="false" onerror="this.replaceWith('${LEVELS[k].av}')">`;};
+const avImg=sid=>{const k=lvNo(sid);return `<img class="avi" src="${lookOf(sid).src}" alt="" draggable="false" onerror="this.replaceWith('${LEVELS[k].av}')">`;};
 const nameOf=sid=>(students.find(s=>s.id===sid)||guests.find(s=>s.id===sid)||{}).name||'(누구?)';
 
 /* ═══════════════ 입장 화면 ═══════════════ */
@@ -1167,7 +1210,7 @@ function renderHello(){
   const total=reviews.filter(r=>!r.hidden).length,today=reviews.filter(r=>!r.hidden&&new Date(r.createdAt).toDateString()===new Date().toDateString()).length;
   if(isTeacher){box.innerHTML=`<div class="ch">🍎</div><div class="tx"><h2>선생님, 안녕하세요!</h2><p>우리 반 글 ${total}편 · 오늘 새 글 ${today}편</p></div><div class="cta"><button class="btn sm" data-go="town">🏡 마을 보기</button><button class="btn honey sm" data-go="teach">⚙️ 교사 화면</button></div>`;}
   else{const st=statsOf(me.id),lv=levelOf(st.xp),k=lvNo(me.id),nx=lv.next?lv.next.xp:null,pct=nx?(st.xp-lv.xp)/(nx-lv.xp)*100:100;
-    box.innerHTML=`<div class="ch">${faceOf(me.id)?avImg(me.id):`<img src="img/lv${k}.png" alt="" onerror="this.replaceWith('${lv.av}')">`}</div>
+    box.innerHTML=`<div class="ch">${avImg(me.id)}</div>
     <div class="tx"><h2>${esc(me.name)}, 어서 와요!</h2><p>${esc(lv.n)} · ${st.posts?`지금까지 글 ${st.posts}편`:'첫 글을 쓰면 알이 꿈틀거려요'}${nx?` · ${esc(lv.next.n)}까지 ${nx-st.xp}xp`:' · 최고 레벨!'}</p><div class="xpbar"><i style="width:${pct}%"></i></div></div>
     <div class="cta"><button class="btn sm" data-go="write">✏️ 글쓰기</button><button class="btn honey sm" data-go="town">🏠 내 방</button></div>`;}
   box.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showTab(b.dataset.go));
@@ -1322,7 +1365,7 @@ function openReview(id,silent){
   const hb=$('hideBtn');if(hb)hb.onclick=async()=>{await store.update('reviews',r.id,{hidden:!r.hidden});toast(r.hidden?'다시 보여요':'숨겼어요');};
   if(!silent)sheet.scrollTop=0;
 }
-function closeModal(){$('modal').classList.remove('on');openId=null;shopOpen=false;delete $('sheet').dataset.reveal;}
+function closeModal(){$('modal').classList.remove('on');openId=null;shopOpen=false;centerOpen=false;delete $('sheet').dataset.reveal;}
 $('modal').onclick=e=>{if(e.target===$('modal'))closeModal();};
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 async function toggleRx(r,k){
@@ -1490,10 +1533,17 @@ const SHOP=[
   {id:'h_tree',n:'나무 위 집',e:'🌳',p:80,cat:'house'},{id:'h_castle',n:'작은 성',e:'🏰',p:150,cat:'house'},
 ];
 const ITEM=Object.fromEntries(SHOP.map(x=>[x.id,x]));
-const FAC=[{id:'fac_flower',n:'꽃밭',e:'🌷',r:.1},{id:'fac_pond',n:'오리 연못',e:'🦆',r:.25},{id:'fac_fountain',n:'분수',e:'⛲',r:.4},
-  {id:'fac_library',n:'마을 도서관',e:'🏛️',r:.6},{id:'fac_carousel',n:'회전목마',e:'🎠',r:.8},{id:'fac_wheel',n:'관람차',e:'🎡',r:1}];
 const STICKERS=['👋','💖','⭐','🌸','🍀','😆','👍','🎉'];
-const IMG_IDS=['village_bg',...LEVELS.map((_,i)=>'lv'+i),...SHOP.filter(x=>x.e).map(x=>x.id),...FAC.map(f=>f.id)];
+/* 마을 건물: 선생님이 마을 화면 아래 「마을 건물」에서 하나씩 켜요. settings.bld가 없으면(처음) 모두 켜진 상태 */
+const BLD=[{k:'center',id:'b_center',n:'주민센터',e:'🏛️',d:'알림장 · 우리 반 한마디'},{k:'library',id:'fac_library',n:'마을 도서관',e:'📚',d:'책방 (서평 · 게시판)'},
+  {k:'study',id:'b_study',n:'공부방',e:'✏️',d:'오늘의 낱말 · 영어 단어장 · 단어 게임'},{k:'wolf',id:'b_wolf',n:'늑대 우리',e:'🐺',d:'한밤의 늑대'}];
+const bldOn=k=>!(settings&&settings.bld)||!!settings.bld[k];
+/* 동물 친구 캐릭터: rooms/{학생id}.ava = id, .look = 'ava' | 'face' | 'lv' */
+const ANIMALS=[['a_bunny','토끼','🐰'],['a_cat','고양이','🐱'],['a_puppy','강아지','🐶'],['a_bear','곰','🐻'],['a_penguin','펭귄','🐧'],['a_fox','여우','🦊'],['a_panda','판다','🐼'],
+  ['a_hamster','햄스터','🐹'],['a_duck','오리','🐥'],['a_koala','코알라','🐨'],['a_dino','공룡','🦖'],['a_owl','부엉이','🦉'],['a_axolotl','우파루파','🦎'],['a_lion','사자','🦁']];
+/* 집은 레벨에 따라 커져요: 책벌레 알 텐트 → … → 황금 책나비 성. 버섯 집은 레벨 2부터 고를 수 있는 덤 */
+const HOUSE_TIER=['h_tent','h_basic','h_cottage','h_tree','h_castle'];
+const IMG_IDS=['village_bg',...LEVELS.map((_,i)=>'lv'+i),...SHOP.filter(x=>x.e).map(x=>x.id),...BLD.map(b=>b.id),...ANIMALS.map(a=>a[0])];
 const IMG_OK={};let imgProbed=false;
 function probeImages(){
   if(imgProbed)return;imgProbed=true;
@@ -1501,7 +1551,16 @@ function probeImages(){
 }
 const art=(id,emo)=>IMG_OK[id]?`<img src="img/${id}.png" alt="" draggable="false">`:`<span class="emo">${emo}</span>`;
 const lvIdx=xp=>{let k=0;LEVELS.forEach((l,i)=>{if(xp>=l.xp)k=i;});return k;};
-const charArt=sid=>{const i=lvIdx(statsOf(sid).xp),f=faceOf(sid);return f?`<span class="facewrap"><img src="${f}" alt="" draggable="false"><i class="lvb">${LEVELS[i].av}</i></span>`:art('lv'+i,LEVELS[i].av);};
+const charArt=sid=>{const i=lvIdx(statsOf(sid).xp),L=lookOf(sid);return L.src&&L.t!=='lv'?`<span class="facewrap ${L.t}"><img src="${L.src}" alt="" draggable="false"><i class="lvb">${LEVELS[i].av}</i></span>`:art('lv'+i,LEVELS[i].av);};
+/* 지금 보이는 모습: 고른 동물(그림이 있을 때) → 그린 얼굴 → 레벨 캐릭터 */
+function lookOf(sid){const rm=roomOf(sid),f=faceOf(sid),a=ANIMALS.find(x=>x[0]===rm.ava);
+  if(rm.look==='ava'&&a&&IMG_OK[a[0]])return {t:'ava',src:`img/${a[0]}.png`};
+  if(rm.look!=='lv'&&rm.look!=='ava'&&f)return {t:'face',src:f};
+  if(rm.look==='face'&&f)return {t:'face',src:f};
+  return {t:'lv',src:`img/lv${lvIdx(statsOf(sid).xp)}.png`};}
+const houseOf=sid=>{const k=lvIdx(statsOf(sid).xp),rm=roomOf(sid),pick=rm.housePick;return ITEM[pick&&houseOk(sid,pick)?pick:HOUSE_TIER[k]];};
+const houseRank=id=>id==='h_mushroom'?2.5:HOUSE_TIER.indexOf(id);
+const houseOk=(sid,id)=>{const k=lvIdx(statsOf(sid).xp),t=HOUSE_TIER.indexOf(id);return (t>-1&&t<=k)||(id==='h_mushroom'&&k>=2)||(roomOf(sid).owned||[]).includes(id);};
 
 let rooms=[],roomsErr=null,twView='room',visitId=null,selIdx=-1,dragging=false,workPlaced=[],shopOpen=false,shopCat='furn',shopArm=null,prevGuest=null,trimmed=false;
 const ROOM0=()=>({wall:'w_cream',floor:'fl_wood',house:'h_basic',owned:[],placed:[{i:'_me',x:50,y:92}],guest:[],attend:[]});
@@ -1613,33 +1672,44 @@ function renderVillage(){
   const n=reviews.filter(r=>!r.hidden).length,goal=(settings&&settings.treeGoal)||50;
   /* 아이소메트릭 마을판(3:2, img/village_bg.png): 마름모 위 끝 2%·가운데 45%·아래 끝 88% 높이. 가운데 가로 길에 시설, 길 위·아래 7×7 칸에 집(길 가까운 칸부터) */
   v.classList.add('iso');
-  const facX=[11,26.5,42,58,73.5,89];
-  let h=FAC.map((f,i)=>{const need=Math.ceil(goal*f.r),ok=n>=need;
-    return `<div class="pin ${ok?'':'lock'}" data-fac="${i}" style="left:${facX[i]}%;top:52%;width:10%;--w:10;z-index:52"><div class="art">${art(f.id,f.e)}</div><span class="lbl">${ok?esc(f.n):'🔒 '+(need-n)+'개 더'}</span></div>`;}).join('');
+  const on=BLD.filter(b=>bldOn(b.k)),gap=on.length?Math.min(22,76/on.length):0;
+  let h=on.map((b,i)=>{const x=50+(i-(on.length-1)/2)*gap;
+    return `<div class="pin" data-bld="${b.k}" style="left:${x.toFixed(1)}%;top:53%;width:12%;--w:12;z-index:53"><div class="art">${art(b.id,b.e)}</div><span class="lbl">${esc(b.n)}</span></div>`;}).join('');
   const cells=[];for(let a=0;a<7;a++)for(let b=0;b<7;b++){if(a+b>=5&&a+b<=7)continue;const u=(a+.5)/7,w=(b+.5)/7;cells.push({x:50+(u-w)*50,y:4+(u+w)*43.3+(a+b>6?4:0),d:Math.abs(a+b-6),up:a+b<6});   /* 길 아래 줄은 시설 이름표와 안 겹치게 조금 더 아래로 */}
   cells.sort((p,q)=>p.d-q.d||q.up-p.up||p.x-q.x);
   const list=[...students].sort((a,b)=>(a.num||99)-(b.num||99)||a.name.localeCompare(b.name,'ko'));
   list.forEach((s,i)=>{const c=cells[i%cells.length],x=c.x+(seeded(i+3)-.5)*1.5,y=c.y+(seeded(i+11)-.5)*1.5;
-    const hs=ITEM[roomOf(s.id).house]||ITEM.h_basic,mine=me&&s.id===me.id;
+    const hs=houseOf(s.id)||ITEM.h_basic,mine=me&&s.id===me.id;
     h+=`<div class="pin ${mine?'mine':''}" data-sid="${s.id}" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;width:8%;--w:8;z-index:${Math.round(y)}"><div class="art">${art(hs.id,hs.e)}</div><span class="lbl">${mine?'⭐ ':''}${esc(s.name)}</span></div>`;
-    const ww=faceOf(s.id)?5:3.6;
+    const ww=lookOf(s.id).t!=='lv'?5:3.6;
     h+=`<div class="walker" style="left:${(x+4.5).toFixed(1)}%;top:${(y-.5).toFixed(1)}%;width:${ww}%;--w:${ww};--dx:${(seeded(i+5)*30+10).toFixed(0)}px;--d:${(4+seeded(i+9)*5).toFixed(1)}s;z-index:${Math.round(y)+1}">${charArt(s.id)}</div>`;});
   v.innerHTML=h;
   v.querySelectorAll('[data-sid]').forEach(el=>el.onclick=()=>{visitId=el.dataset.sid;if(me&&visitId===me.id)visitId=null;twView='room';selIdx=-1;renderTown();window.scrollTo({top:0});});
-  v.querySelectorAll('[data-fac]').forEach(el=>el.onclick=ev=>{const f=FAC[+el.dataset.fac],need=Math.ceil(goal*f.r);const [x,y]=evPos(ev);
-    if(n>=need){floatEmoji(f.e,x,y);toast(`${f.e} ${f.n}: 우리 반 글 ${need}개로 문을 열었어요!`);}else toast(`${f.n}은 우리 반 글이 ${need-n}개 더 모이면 생겨요`);});
-  $('facBar').style.width=Math.min(100,n/goal*100)+'%';
-  $('facList').innerHTML=FAC.map(f=>{const need=Math.ceil(goal*f.r),ok=n>=need;return `<div class="${ok?'':'no'}">${ok?f.e:'🔒'} ${esc(f.n)} <small style="margin-left:auto">${ok?'완성!':`${n}/${need}`}</small></div>`;}).join('');
+  /* 이름표는 건물·집에 가려지지 않게 마을판 맨 위 층으로 옮겨요 (누르면 그 집·건물을 누른 것과 같아요) */
+  v.querySelectorAll('.pin').forEach(pin=>{const l=pin.querySelector('.lbl');if(!l)return;l.classList.add(...[...pin.classList].filter(c=>c==='mine'||c==='lock'));
+    l.style.cssText=`left:${pin.style.left};top:${pin.style.top};z-index:250;cursor:pointer`;l.onclick=()=>pin.click();v.appendChild(l);});
+  v.querySelectorAll('[data-bld]').forEach(el=>el.onclick=()=>goBld(el.dataset.bld));
+  $('bldList').innerHTML=BLD.map(b=>{const o=bldOn(b.k);return `<div class="${o?'':'off'}">${IMG_OK[b.id]?`<img src="img/${b.id}.png" alt="">`:`<span style="font-size:34px">${b.e}</span>`}<div class="tx"><b>${esc(b.n)}</b>${esc(b.d)}</div>${isTeacher?`<button class="btn sm ${o?'ghost':''}" data-bt="${b.k}">${o?'끄기':'켜기'}</button>`:`<small>${o?'':'공사 중'}</small>`}</div>`;}).join('');
+  $('bldList').querySelectorAll('[data-bt]').forEach(b=>b.onclick=async()=>{const cur=Object.fromEntries(BLD.map(x=>[x.k,bldOn(x.k)]));cur[b.dataset.bt]=!cur[b.dataset.bt];
+    await store.update('settings','main',{bld:cur});toast(`${BLD.find(x=>x.k===b.dataset.bt).n}을(를) ${cur[b.dataset.bt]?'열었어요':'닫았어요'}`);});
 }
 
+function goBld(k){
+  if(k==='center')return openCenter();
+  if(k==='library')return showTab('feed');
+  pv=k==='wolf'?'wolf':(dwCur()?'today':'words');showTab('play');
+}
 function openShop(){shopOpen=true;shopArm=null;renderShop();$('modal').classList.add('on');}
 function renderShop(){
   if(!me)return;const rm=roomOf(me.id),st=statsOf(me.id),c=coinsOf(me.id);
-  const cats=[['furn','🪑 가구'],['wall','🖼️ 벽지'],['floor','🟫 바닥'],['house','🏠 마을 집']];
+  const cats=[['furn','🪑 가구'],['wall','🖼️ 벽지'],['floor','🟫 바닥'],['house','🏠 내 집']];
   const using={wall:rm.wall,floor:rm.floor,house:rm.house},wp=validPlaced(me.id);
   const card=it=>{
     const pv=it.css?`<div class="pv" style="background:${it.css}"></div>`:`<div class="pv">${art(it.id,it.e)}</div>`;
     let b;
+    if(it.cat==='house'){const ok=houseOk(me.id,it.id),t=HOUSE_TIER.indexOf(it.id),useH=houseOf(me.id).id===it.id;
+      b=useH?'<button class="btn ghost" disabled>지금 우리 집 ✓</button>':ok?`<button class="btn" data-house="${it.id}">이 집으로 이사</button>`:`<button class="btn ghost" disabled>🔒 '${LEVELS[t>-1?t:2].n}' 레벨</button>`;
+      return `<div class="sitem">${pv}<b>${esc(it.n)}</b>${b}</div>`;}
     if(it.lock&&!unlocked(it,st))b=`<button class="btn ghost" disabled>🔒 ${lockText(it)}</button>`;
     else if(owns(rm,st,it.id)){
       if(it.cat==="furn")b=`<button class="btn ghost" disabled>${wp.some(p=>p.i===it.id)?'방에 있어요':'가방에 있어요'}</button>`;
@@ -1650,12 +1720,13 @@ function renderShop(){
   $('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><h2 style="font-size:26px">🛍️ 책갈피 상점</h2>
     <p class="shopsub">내 열매 <b>🍎 ${c.left}</b> · 글 1편 🍎10~20 · 댓글 🍎1 · 받은 반응 2개 🍎1 · 출석 🍎3</p>
     <nav class="tabs seg" style="flex-wrap:wrap;border-radius:18px">${cats.map(([k,t])=>`<button data-cat="${k}" class="${k===shopCat?'on':''}">${t}</button>`).join('')}</nav>
-    <div class="shopgrid">${SHOP.filter(x=>x.cat===shopCat).map(card).join('')}</div>
-    <p style="font-size:12px;color:var(--ink-3);margin-top:12px">🔒 표시는 배지나 레벨을 따면 공짜로 받는 특별한 물건이에요.</p>`;
+    <div class="shopgrid">${SHOP.filter(x=>x.cat===shopCat).sort((a,b)=>shopCat==='house'?houseRank(a.id)-houseRank(b.id):0).map(card).join('')}</div>
+    <p style="font-size:12px;color:var(--ink-3);margin-top:12px">${shopCat==='house'?'집은 레벨이 오르면 저절로 커져요. 열린 집 중에서 마음에 드는 집으로 이사할 수도 있어요.':'🔒 표시는 배지나 레벨을 따면 공짜로 받는 특별한 물건이에요.'}</p>`;
   const sh=$('sheet');
   $('mClose').onclick=closeModal;
   sh.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{shopCat=b.dataset.cat;shopArm=null;renderShop();});
   sh.querySelectorAll('[data-arm]').forEach(b=>b.onclick=()=>{shopArm=b.dataset.arm;renderShop();});
+  sh.querySelectorAll('[data-house]').forEach(b=>b.onclick=async ev=>{const it=ITEM[b.dataset.house],[x,y]=evPos(ev);floatEmoji('🏠',x,y);await saveRoom(me.id,{housePick:it.id});toast(it.n+'(으)로 이사했어요!');});
   sh.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>{const it=ITEM[b.dataset.use];saveRoom(me.id,{[it.cat]:it.id});toast(it.n+'(으)로 바꿨어요');});
   sh.querySelectorAll('[data-buy]').forEach(b=>b.onclick=async ev=>{const it=ITEM[b.dataset.buy];if(coinsOf(me.id).left<it.p)return;const [x,y]=evPos(ev);shopArm=null;
     const p={owned:AU(it.id)};if(it.cat==="furn"){const wp=validPlaced(me.id);p.placed=[...wp,{i:it.id,x:30+Math.random()*40,y:it.wall?40:85}];selIdx=wp.length;}else p[it.cat]=it.id;
@@ -1678,7 +1749,8 @@ const faceOf=sid=>{const f=(rooms.find(r=>r.id===sid)||{}).face;return typeof f=
 function paintMyAv(){
   if(!me||isTeacher)return;const f=faceOf(me.id),lv=levelOf(statsOf(me.id).xp);
   $('meAv').innerHTML=avImg(me.id);
-  $('pAv').innerHTML=f?`<span class="facewrap" style="width:120px;margin:0 auto;--w:30"><img src="${f}" alt="내 얼굴" style="width:120px;display:block"><i class="lvb" style="font-size:30px">${lv.av}</i></span>`:`<img src="img/lv${lvNo(me.id)}.png" alt="" style="width:132px;height:132px;object-fit:contain;display:block;margin:0 auto" onerror="this.replaceWith('${lv.av}')">`;
+  const L=lookOf(me.id);
+  $('pAv').innerHTML=L.t!=='lv'?`<span class="facewrap" style="width:120px;margin:0 auto;--w:30"><img src="${L.src}" alt="내 캐릭터" style="width:120px;display:block"><i class="lvb" style="font-size:30px">${lv.av}</i></span>`:`<img src="img/lv${lvNo(me.id)}.png" alt="" style="width:132px;height:132px;object-fit:contain;display:block;margin:0 auto" onerror="this.replaceWith('${lv.av}')">`;
 }
 const PAD_COLORS=['#3B2A22','#7A4E2D','#F6C04E','#FDE3CF','#F5C9A6','#D9A07A','#A8714F','#F28B82','#F7A1B5','#FFB067','#FFE07A','#A8DD8C','#A9D3F5','#CDB8F0','#FFFFFF'];
 const PAD_SIZES=[['가늘게',4],['보통',9],['굵게',18]];
@@ -1715,14 +1787,14 @@ function openFacePad(){
     last=p;line(p,p);try{cv.setPointerCapture(e.pointerId);}catch(_){}};
   cv.onpointermove=e=>{if(!last)return;const p=pos(e);line(last,p);last=p;};
   cv.onpointerup=cv.onpointercancel=()=>{last=null;};
-  $('padReset').onclick=async()=>{if(!confirm('그린 얼굴을 지우고 원래 캐릭터로 돌아갈까요?'))return;await saveRoom(me.id,{face:null});closeModal();toast('원래 캐릭터로 돌아왔어요');};
+  $('padReset').onclick=async()=>{if(!confirm('그린 얼굴을 지우고 원래 캐릭터로 돌아갈까요?'))return;await saveRoom(me.id,{face:null,look:'lv'});closeModal();toast('원래 캐릭터로 돌아왔어요');};
   $('padSave').onclick=async e=>{
     const d=ctx.getImageData(0,0,256,256).data;let ink=0;for(let i=3;i<d.length;i+=4)if(d[i]>20)ink++;
     if(ink<200){toast('얼굴을 조금 더 그려 주세요 ✏️');return;}
     const c2=document.createElement('canvas');c2.width=c2.height=160;c2.getContext('2d').drawImage(cv,0,0,160,160);
     let url=c2.toDataURL('image/png');if(url.length>140000){const w=c2.toDataURL('image/webp',.9);if(w.startsWith('data:image/webp')&&w.length<url.length)url=w;}
     if(url.length>=150000){toast('그림이 너무 복잡해요. 조금 지우고 다시 저장해 보세요');return;}
-    const [x,y]=evPos(e);floatEmoji('😊',x,y);await saveRoom(me.id,{face:url});closeModal();toast('내 얼굴을 저장했어요! 마을에 가 보세요');};
+    const [x,y]=evPos(e);floatEmoji('😊',x,y);await saveRoom(me.id,{face:url,look:'face'});closeModal();toast('내 얼굴을 저장했어요! 마을에 가 보세요');};
 }
 function floodFill(ctx,x,y,hex){
   const W=256,H=256,img=ctx.getImageData(0,0,W,H),d=img.data,i0=(y*W+x)*4,t=[d[i0],d[i0+1],d[i0+2],d[i0+3]];
@@ -1735,6 +1807,49 @@ function floodFill(ctx,x,y,hex){
   ctx.putImageData(img,0,0);
 }
 $('faceBtn').onclick=openFacePad;$('faceBtn2').onclick=openFacePad;
+/* ═══════════════ 캐릭터 고르기 ═══════════════ */
+function openAvatar(){
+  if(!me||isTeacher||isGuest)return;probeImages();shopOpen=false;openId=null;
+  const rm=roomOf(me.id),L=lookOf(me.id),k=lvIdx(statsOf(me.id).xp),f=faceOf(me.id),cur=L.t==='ava'?rm.ava:L.t;
+  const btn=(key,img,emo,name)=>`<button data-ava="${key}" class="${cur===key?'on':''}">${img?`<img src="${img}" alt="">`:`<span class="emo">${emo}</span>`}${esc(name)}</button>`;
+  $('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><h2 style="font-size:26px">🐾 캐릭터 고르기</h2>
+    <p style="color:var(--ink-2);font-size:14px;margin:4px 0 0">마을과 내 방에서 나 대신 돌아다닐 친구를 골라요. 레벨 표시는 옆에 작게 붙어요.</p>
+    <div class="avagrid">${btn('lv',IMG_OK['lv'+k]?`img/lv${k}.png`:'',LEVELS[k].av,'레벨 캐릭터')}${f?btn('face',f,'','내가 그린 얼굴'):''}
+      ${ANIMALS.map(a=>btn(a[0],IMG_OK[a[0]]?`img/${a[0]}.png`:'',a[2],a[1])).join('')}
+      <button data-ava="draw"><span class="emo">✏️</span>${f?'얼굴 다시 그리기':'직접 그리기'}</button></div>`;
+  $('modal').classList.add('on');$('mClose').onclick=closeModal;
+  $('sheet').querySelectorAll('[data-ava]').forEach(b=>b.onclick=async ev=>{const v=b.dataset.ava;if(v==='draw')return openFacePad();
+    const [x,y]=evPos(ev);floatEmoji('✨',x,y);await saveRoom(me.id,v==='lv'||v==='face'?{look:v}:{look:'ava',ava:v});openAvatar();});
+}
+$('avaBtn').onclick=openAvatar;$('avaBtn2').onclick=openAvatar;
+
+/* ═══════════════ 주민센터: 알림장 + 우리 반 한마디 ═══════════════
+   talks/{id} = {by:학생id | 'T'(선생님), name, text(60자), at, likes:[학생id]}. 학생은 하루 3개까지, 선생님 한마디는 맨 위에 고정 */
+let talks=[],centerOpen=false,talkErr=null;
+const TALK_DAY=3;
+function openCenter(){
+  centerOpen=true;shopOpen=false;openId=null;
+  const pinned=[...talks].filter(t=>t.by==='T').sort((a,b)=>b.at-a.at).slice(0,1),rest=[...talks].filter(t=>!pinned.includes(t)).sort((a,b)=>b.at-a.at).slice(0,40);
+  const mineToday=me&&!isTeacher?talks.filter(t=>t.by===me.id&&new Date(t.at).toDateString()===new Date().toDateString()).length:0;
+  const row=(t,pin)=>{const liked=me&&(t.likes||[]).includes(me.id),own=isTeacher||(me&&t.by===me.id);
+    return `<div class="talk ${pin?'pin':''}"><span class="av">${t.by==='T'?'🍎':students.some(s=>s.id===t.by)?avImg(t.by):'🙂'}</span><div class="tx"><b>${pin?'📌 ':''}${esc(t.name)}</b><small>${fmtDate(t.at)}</small><p>${esc(t.text)}</p></div>
+      <button class="hrt ${liked?'on':''}" data-like="${t.id}" ${isTeacher||isGuest?'disabled':''}>♥ ${(t.likes||[]).length||''}</button>${own?`<button class="del" data-tdel="${t.id}">지우기</button>`:''}</div>`;};
+  $('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><h2 style="font-size:26px;margin-bottom:10px">🏛️ 주민센터</h2>
+    <h3 style="font-size:19px;margin:0 0 8px">📒 알림장</h3>${noteHtml()}
+    <h3 style="font-size:19px;margin:20px 0 4px">💬 우리 반 한마디</h3>
+    ${talkErr?`<p class="setup-note">한마디를 불러오지 못했어요 (${esc(talkErr)}). Firebase 규칙에서 <b>talks</b> 컬렉션을 허용해 주세요.</p>`:''}
+    ${isGuest?'':`<div class="talkf"><input type="text" id="talkIn" maxlength="60" placeholder="${isTeacher?'선생님 한마디 (맨 위에 고정돼요)':mineToday>=TALK_DAY?'오늘은 한마디를 다 남겼어요. 내일 또 만나요!':'오늘 하고 싶은 말을 한 줄로 (예: 오늘 급식 최고!)'}" ${!isTeacher&&mineToday>=TALK_DAY?'disabled':''}><button class="btn sm" id="talkGo" ${!isTeacher&&mineToday>=TALK_DAY?'disabled':''}>남기기</button></div>`}
+    <div class="talks">${pinned.map(t=>row(t,true)).join('')}${rest.map(t=>row(t,false)).join('')||(pinned.length?'':'<p style="color:var(--ink-3);font-size:14px">첫 한마디를 남겨 보세요!</p>')}</div>`;
+  $('modal').classList.add('on');$('mClose').onclick=closeModal;bindNote(openCenter);
+  const go=$('talkGo');if(go){const send=async()=>{const t=$('talkIn').value.trim();if(!t)return;
+      try{await store.set('talks',uid(),{by:isTeacher?'T':me.id,name:isTeacher?'선생님':me.name,text:t.slice(0,60),at:Date.now(),likes:[]});}catch(e){console.error(e);toast('저장하지 못했어요 ('+(e.code||'오류')+')');}};
+    go.onclick=send;$('talkIn').onkeydown=e=>{if(e.key==='Enter')send();};}
+  $('sheet').querySelectorAll('[data-like]').forEach(b=>b.onclick=async()=>{const t=talks.find(x=>x.id===b.dataset.like);if(!t||!me)return;if(t.by===me.id)return toast('내 한마디엔 ♥를 못 눌러요 😉');
+    await store.update('talks',t.id,{likes:(t.likes||[]).includes(me.id)?AR(me.id):AU(me.id)});});
+  $('sheet').querySelectorAll('[data-tdel]').forEach(b=>b.onclick=async()=>{if(confirm('이 한마디를 지울까요?'))await store.del('talks',b.dataset.tdel);});
+}
+store.watch('talks',d=>{talkErr=null;talks=d.filter(t=>t&&t.text&&t.at);if(centerOpen&&$('modal').classList.contains('on'))openCenter();
+  if(talks.length>120&&isTeacher){[...talks].sort((a,b)=>a.at-b.at).slice(0,talks.length-100).forEach(t=>store.del('talks',t.id).catch(()=>{}));}},e=>{talkErr=e.code||'오류';});
 
 /* ═══════════════ 숙제 알림 ═══════════════
    homework/{id} = {title, body, due:'YYYY-MM-DD', done:[학생id], createdAt} */
@@ -1794,10 +1909,10 @@ function noteHtml(){
     <ol>${(n.lines||[]).map(noteLine).join('')}</ol>
     <div class="nfoot">${rd?'<span class="stamp">확인<br>했어요</span>':`<button class="btn honey sm" id="ntRead">확인했어요 ✅</button>`}</div></div>`;
 }
-function bindNote(){
-  const list=noticeShown(),i=list.findIndex(n=>n.date===noteDay),go=d=>{noteDay=list[i+d].date;openHw();};
+function bindNote(re=openHw){
+  const list=noticeShown(),i=list.findIndex(n=>n.date===noteDay),go=d=>{noteDay=list[i+d].date;re();};
   const pv=$('ntPrev');if(pv)pv.onclick=()=>go(1);const nx=$('ntNext');if(nx)nx.onclick=()=>go(-1);
-  const rb=$('ntRead');if(rb)rb.onclick=async ev=>{const [x,y]=evPos(ev);floatEmoji('💮',x,y);await store.update('notices',noteDay,{read:AU(me.id)});openHw();};
+  const rb=$('ntRead');if(rb)rb.onclick=async ev=>{const [x,y]=evPos(ev);floatEmoji('💮',x,y);await store.update('notices',noteDay,{read:AU(me.id)});re();};
 }
 function renderNoticeTeach(){
   const cls=students.length,list=[...notices].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,10);
@@ -1835,8 +1950,12 @@ function speak(t){try{const s=speechSynthesis;s.cancel();const u=new SpeechSynth
 function parseWords(txt){return txt.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const m=l.match(/^(.+?)\s*(?:,|\t|\s-\s|:|=)\s*(.+)$/);return m?{en:m[1].trim().slice(0,40),ko:m[2].trim().slice(0,40)}:null;}).filter(Boolean).slice(0,200);}
 const setIds=()=>[...(dwCur()?[TODAY]:[]),...[...vocab].sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)).map(v=>v.id),...(canSave()?[MY]:[])];
 
+const pvOk=k=>isTeacher||(k==='wolf'?bldOn('wolf'):bldOn('study'));
 function renderPlay(){
   if(!$('v-play').classList.contains('on'))return;
+  document.querySelectorAll('[data-pv]').forEach(b=>b.hidden=!pvOk(b.dataset.pv));
+  $('invQrBtn').hidden=!(isTeacher||(me&&!isGuest&&settings&&settings.inviteKids));
+  if(!pvOk(pv)){const ok=['today','words','game','wolf'].find(pvOk);if(!ok){['pv-today','pv-words','pv-game','pv-wolf'].forEach(id=>$(id).hidden=true);$('pv-today').hidden=false;$('dwTeach').hidden=true;$('dwBody').innerHTML='<div class="card empty"><div class="big">🏗️</div>공부방과 늑대 우리가 아직 공사 중이에요.<br>선생님이 문을 열어 주시면 놀 수 있어요!</div>';return;}pv=ok;}
   document.querySelectorAll('[data-pv]').forEach(b=>b.classList.toggle('on',b.dataset.pv===pv));
   $('pv-today').hidden=pv!=='today';$('pv-words').hidden=pv!=='words';$('pv-game').hidden=pv!=='game';$('pv-wolf').hidden=pv!=='wolf';
   if(pv==='today')renderToday();else if(pv==='words')renderWords();else if(pv==='game'){if(!gm)renderGameHome();}else renderWolf();
@@ -2032,6 +2151,37 @@ const ROLES={
   insom:{n:'올빼미',e:'🦉',t:'vil',d:'밤이 끝날 때 내 카드를 다시 확인해요. 누가 바꿨을지도 몰라요!'},
   vil:{n:'토끼 주민',e:'🐰',t:'vil',d:'특별한 능력은 없어요. 낮에 이야기를 잘 듣고 늑대를 찾아요!'},
 };
+/* 역할별 안내: goal(이기려면), night(밤에 할 일), day(낮에 이렇게 말해 봐요) */
+const ROLE_GUIDE={
+  wolf:{goal:'늑대가 한 명도 잡히지 않으면 늑대 편이 이겨요.',night:'다른 늑대가 누구인지 확인해요. 늑대가 나 혼자면 가운데 카드 1장을 볼 수 있어요.',day:['다른 역할인 척해요. 예) "나는 토끼 주민이라 할 일이 없었어."','가운데 카드에서 본 역할인 척하면 들키기 어려워요.','다른 친구를 의심하는 말을 해 봐요.']},
+  minion:{goal:'늑대가 잡히지 않게 도와줘요. 내가 잡혀도 늑대만 무사하면 늑대 편 승리!',night:'누가 늑대인지 확인해요. (늑대는 내가 여우인 걸 몰라요)',day:['늑대를 감싸 주거나, 일부러 내가 늑대처럼 굴어서 표를 받아도 좋아요.','마을 편 친구를 의심하게 만들어요.']},
+  seer:{goal:'늑대를 1명 이상 잡으면 마을 편 승리!',night:'친구 1명의 카드를 보거나, 가운데 카드 2장을 봐요.',day:['본 것을 말해 주면 큰 도움이 돼요. 예) "나는 예언자야. 민수 카드는 늑대였어!"','늑대가 예언자인 척할 수도 있어요. 둘이 예언자라고 하면 누가 진짜인지 따져 봐요.']},
+  robber:{goal:'바꾼 새 카드의 편이 내 편이에요. 늑대를 가져왔다면 이제 나는 늑대 편!',night:'카드를 바꿀 친구 1명을 골라요. 내 새 카드를 확인할 수 있어요.',day:['마을 편이라면 누구와 바꿨는지, 그 친구가 원래 뭐였는지 말해 줘요.','늑대 카드를 가져왔다면… 조용히 늑대 편으로 행동해요!']},
+  trouble:{goal:'늑대를 1명 이상 잡으면 마을 편 승리!',night:'다른 친구 2명을 골라 카드를 서로 바꿔요. (무슨 카드인지는 몰라요)',day:['누구와 누구를 바꿨는지 말해 줘요. 원래 늑대였던 친구가 이제 늑대가 아닐 수 있어요!']},
+  drunk:{goal:'마지막 내 카드의 편이 내 편이에요. (나도 몰라요!)',night:'가운데 카드 1장과 내 카드를 바꿔요. 새 카드는 볼 수 없어요.',day:['"나는 잠꾸러기라서 지금 내가 뭔지 몰라"라고 솔직하게 말해도 좋아요.']},
+  insom:{goal:'늑대를 1명 이상 잡으면 마을 편 승리!',night:'밤이 끝날 때 내 카드가 바뀌었는지 다시 확인해요.',day:['내 카드가 바뀌었다면 누가 바꿨을지 이야기해 봐요. 너구리나 원숭이가 범인이에요!']},
+  vil:{goal:'늑대를 1명 이상 잡으면 마을 편 승리!',night:'할 일이 없어요. 들키지 않게 버튼만 누르고 기다려요.',day:['질문을 많이 해요. 예) "너는 밤에 뭐 했어?", "누구 카드를 봤어?"','말이 자꾸 바뀌는 친구를 잘 살펴봐요.']},
+};
+const WSTEP=[['lobby','① 모이기'],['night','② 밤'],['day','③ 낮 이야기'],['vote','④ 투표'],['result','⑤ 결과']];
+const wSteps=ph=>{const i=WSTEP.findIndex(x=>x[0]===ph);return `<div class="wsteps">${WSTEP.map((x,k)=>`<span class="${k===i?'on':k<i?'done':''}">${x[1]}</span>`).join('')}</div>`;};
+function wGuide(g){
+  const mine=inGame(g),host=isHost(g),ph=g.phase,r=mine?g.init[me.id]:null,G=r?ROLE_GUIDE[r]:null;
+  const box=(t,body)=>`<div class="wguide"><h4>${t}</h4>${body}</div>`;
+  if(ph==='lobby')return box('👀 지금 할 일',`<ol><li>${mine?'참가 완료! 친구들이 모일 때까지 기다려요.':'<b>🙋 참가하기</b>를 눌러요.'}</li><li>3명 이상 모이면 ${host?'<b>🌙 밤이 되었어요</b>를 눌러 시작해요.':'방장이 게임을 시작해요.'}</li><li>시작하면 내 기기에 <b>몰래 역할 카드</b>가 나와요. 아래 「게임 방법」에서 역할을 미리 읽어 두세요!</li></ol>`);
+  if(ph==='night'){
+    if(!mine)return box('🌙 밤 (사회자)',`<ol><li>"모두 자기 화면만 보세요. 친구 화면을 보면 안 돼요."</li><li>모두 행동을 마치면(이름 옆 초록 테두리) <b>☀️ 아침이 밝았어요</b>를 눌러요.</li></ol>`);
+    const done=((g.acts||{})[me.id]||{}).done;
+    return box('🌙 밤에 할 일',`<ol><li>화면을 손으로 가리고 <b>내 카드</b>를 확인해요.</li><li>${esc(G.night)}</li><li>${done?'✅ 끝! 이제 고개를 숙이고 조용히 기다려요.':'다 했으면 버튼을 눌러 마쳐요.'}</li></ol>
+      <div class="goal ${ROLES[r].t==='wolf'?'w':''}">🎯 ${esc(G.goal)}</div>`);}
+  if(ph==='day'){
+    const tips=G?`<div class="say">💬 이렇게 말해 볼까요?<ul>${G.day.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>`:'';
+    return box('☀️ 낮에 할 일',`<ol><li>타이머가 끝날 때까지 <b>밤에 본 것</b>을 이야기해요. 돌아가며 한 명씩 말해도 좋아요.</li><li>늑대 편은 거짓말을 해도 돼요. 말이 서로 맞지 않는 친구를 찾아요!</li><li>시간이 끝나면 ${host?'<b>🗳️ 투표 시작</b>을 눌러요.':'방장이 투표를 시작해요.'}</li></ol>${tips}`);}
+  if(ph==='vote'){
+    const t=r?ROLES[r].t:null;
+    return box('🗳️ 투표할 때',`<ol><li>${t==='wolf'?'늑대 편이라면 <b>마을 편 친구</b>를 골라요. 늑대가 잡히면 안 돼요!':'늑대라고 생각하는 친구 <b>1명</b>을 골라요.'}</li><li>공개 전까지는 바꿀 수 있어요.</li><li>2표 이상 받은 사람 중 가장 많이 받은 사람이 잡혀요.</li></ol>${r&&(r==='robber'||r==='drunk')?'<div class="goal">⚠️ 밤에 카드가 바뀌었다면 바뀐 카드의 편으로 생각해요.</div>':''}`);}
+  if(ph==='result')return box('📢 결과 보는 법',`<ul><li>잡힌 사람 중에 <b>늑대가 있으면</b> 마을 편 승리, 없으면 늑대 편 승리예요.</li><li>밤에 카드가 바뀐 친구는 「처음 → 마지막」으로 보여요. <b>마지막 카드</b>로 편이 정해져요.</li><li>누가 거짓말을 했는지 이야기해 보고, 한 판 더 해 봐요!</li></ul>`);
+  return '';
+}
 const DECK=['wolf','wolf','seer','robber','trouble','vil','insom','drunk','minion','vil','vil','wolf','vil','vil','vil','vil','vil','vil','vil'];
 const WMIN=3,WMAX=16;
 let wolfG=null,wolfSel={mode:null,picks:[]},wolfTick=null;
@@ -2072,34 +2222,34 @@ function renderWolf(){
       <p class="sub" style="font-size:13px;margin-top:12px">선생님이 전자칠판에서 열면 칠판이 사회자가 돼요. 학생이 열면 그 학생이 방장이 되어 같이 참가해요.</p></div>${wolfHelp()}`;
     $('wNew').onclick=()=>wolfSet({phase:'lobby',host:isTeacher?'T':me.id,players:isTeacher?[]:[{id:me.id,name:myName()}],round:0,at:Date.now()});return;}
   const host=isHost(g),mine=inGame(g),ids=g.players.map(p=>p.id),A=g.acts||{};
-  const chip=(p,extra='')=>{const f=faceOf(p.id);return `<span class="${extra}">${f?`<img src="${f}" alt="">`:`<i class="ea">${students.some(s=>s.id===p.id)?avatarOf(p.id):'🙂'}</i>`}${esc(p.name)}${host&&g.phase==='lobby'&&p.id!==g.host?`<button data-kick="${p.id}" aria-label="빼기">✕</button>`:''}</span>`;};
+  const chip=(p,extra='')=>{return `<span class="${extra}"><i class="ea" style="overflow:hidden">${students.some(s=>s.id===p.id)?avImg(p.id):'🙂'}</i>${esc(p.name)}${host&&g.phase==='lobby'&&p.id!==g.host?`<button data-kick="${p.id}" aria-label="빼기">✕</button>`:''}</span>`;};
   const players=(cls)=>`<div class="wplayers">${g.players.map(p=>chip(p,cls?cls(p):'')).join('')}</div>`;
   let h='',cls='wolf';
   if(g.phase==='lobby'){cls+=' lobby';
     const n=g.players.length;
-    h=`<h2>🐺 한밤의 늑대 · 참가자 모으는 중</h2><p class="sub">${n}명 참가 · ${n<WMIN?`${WMIN-n}명 더 필요해요`:n>WMAX?`최대 ${WMAX}명이에요`:'준비 완료!'}</p>${players()}
+    h=`${wSteps('lobby')}<h2>🐺 한밤의 늑대 · 참가자 모으는 중</h2><p class="sub">${n}명 참가 · ${n<WMIN?`${WMIN-n}명 더 필요해요`:n>WMAX?`최대 ${WMAX}명이에요`:'준비 완료!'}</p>${players()}
       ${n>=WMIN&&n<=WMAX?`<p class="sub" style="font-size:13px">이번 판 카드: ${shuffleless(DECK.slice(0,n+3))}</p>`:''}
       <div class="whost">${!isTeacher&&!mine?`<button class="btn honey" id="wJoin">🙋 참가하기</button>`:''}${mine&&!host?`<button class="btn ghost" id="wLeave">나가기</button>`:''}
-      ${host?`<button class="btn" id="wStart" ${n<WMIN||n>WMAX?'disabled':''}>🌙 밤이 되었어요 (시작)</button><button class="btn ghost" id="wClose">게임 닫기</button>`:''}</div>`;
+      ${host?`<button class="btn" id="wStart" ${n<WMIN||n>WMAX?'disabled':''}>🌙 밤이 되었어요 (시작)</button><button class="btn ghost" id="wClose">게임 닫기</button>`:''}</div>${wGuide(g)}`;
   }else if(g.phase==='night'){
     const done=ids.filter(id=>(A[id]||{}).done).length;
-    h=`<h2>🌙 밤이 깊었어요…</h2><p class="sub">모두 자기 기기를 몰래 보고 행동해요. 다른 사람 화면은 보면 안 돼요! (${done}/${ids.length} 완료)</p>${players(p=>(A[p.id]||{}).done?'done':'')}
-      ${mine?wolfNightUI(g):''}
+    h=`${wSteps('night')}<h2>🌙 밤이 깊었어요…</h2><p class="sub">모두 자기 기기를 몰래 보고 행동해요. 다른 사람 화면은 보면 안 돼요! (${done}/${ids.length} 완료)</p>${players(p=>(A[p.id]||{}).done?'done':'')}
+      ${mine?wolfNightUI(g):''}${wGuide(g)}
       ${host?`<div class="whost"><button class="btn honey" id="wDawn" ${done<ids.length?'':''}>☀️ 아침이 밝았어요${done<ids.length?' (아직 '+(ids.length-done)+'명 남음)':''}</button><button class="btn ghost sm" id="wClose">게임 닫기</button></div>`:''}`;
   }else if(g.phase==='day'||g.phase==='vote'){cls+=' day';
     const vote=g.phase==='vote',V=g.votes||{},nv=ids.filter(id=>V[id]).length;
-    h=`<h2>${vote?'🗳️ 누가 늑대일까? 투표해요':'☀️ 아침이 밝았어요!'}</h2><p class="sub">${vote?`투표 ${nv}/${ids.length}명 · 결과 공개 전까지 바꿀 수 있어요`:'밤에 본 것을 이야기하며 늑대를 찾아요. 거짓말을 하는 친구도 있어요!'}</p>
+    h=`${wSteps(g.phase)}<h2>${vote?'🗳️ 누가 늑대일까? 투표해요':'☀️ 아침이 밝았어요!'}</h2><p class="sub">${vote?`투표 ${nv}/${ids.length}명 · 결과 공개 전까지 바꿀 수 있어요`:'밤에 본 것을 이야기하며 늑대를 찾아요. 거짓말을 하는 친구도 있어요!'}</p>
       ${vote?'':`<div class="wtimer" id="wTimer"></div>`}${players(p=>vote&&V[p.id]?'done':'')}
       <div class="rolelist"><span>이번 판 카드: ${shuffleless([...Object.values(g.init),...g.center])}</span></div>
-      ${mine?wolfDayUI(g):''}
+      ${mine?wolfDayUI(g):''}${wGuide(g)}
       ${host?`<div class="whost">${vote?`<button class="btn honey" id="wReveal">📢 결과 공개${nv<ids.length?' (아직 '+(ids.length-nv)+'명)':''}</button>`:`<button class="btn honey" id="wVote">🗳️ 투표 시작</button><button class="btn ghost sm" id="wMore">+1분</button>`}<button class="btn ghost sm" id="wClose">게임 닫기</button></div>`:''}`;
   }else if(g.phase==='result'){cls+=g.res&&g.res.vilWin?' day':'';
     const R=g.res||wolfOutcome(g),myCur=mine?g.cur[me.id]:null,myWin=myCur?(ROLES[myCur].t==='vil')===R.vilWin:null;
-    h=`<div class="wwin">${R.vilWin?'🐰 마을 팀 승리!':'🐺 늑대 팀 승리!'}</div>
+    h=`${wSteps('result')}<div class="wwin">${R.vilWin?'🐰 마을 팀 승리!':'🐺 늑대 팀 승리!'}</div>
       <p class="sub">${R.killed.length?`잡힌 사람: ${R.killed.map(id=>`${pName(g,id)}(${roleTag(g.cur[id])})`).join(', ')}`:'아무도 잡히지 않았어요 (모두 1표 이하)'}</p>
       ${mine?`<p class="sub" style="font-size:20px;font-family:var(--font-disp)">내 마지막 카드 ${roleTag(myCur)} → ${myWin?'이겼어요! 🎉':'아쉽게 졌어요 🥲'}</p>`:''}
       <div class="wres">${g.players.map(p=>{const a=g.init[p.id],b=g.cur[p.id];return `<div class="${R.killed.includes(p.id)?'dead':''}"><span class="e">${ROLES[b].e}</span><b>${esc(p.name)}</b>${a!==b?`${roleTag(a)} → ${roleTag(b)}`:roleTag(b)}<br>🗳️ ${R.cnt[p.id]||0}표 ${g.votes&&g.votes[p.id]?`· ${pName(g,g.votes[p.id])}에게`:''}</div>`;}).join('')}</div>
-      <p class="sub" style="font-size:13px;margin-top:10px">가운데 카드: ${g.curC.map(roleTag).join(' · ')}</p>
+      <p class="sub" style="font-size:13px;margin-top:10px">가운데 카드: ${g.curC.map(roleTag).join(' · ')}</p>${wGuide(g)}
       ${host?`<div class="whost"><button class="btn" id="wAgain">🔁 같은 사람과 한 판 더</button><button class="btn ghost" id="wLobby">참가자 다시 모으기</button><button class="btn ghost sm" id="wClose">게임 닫기</button></div>`:''}`;
   }
   box.innerHTML=`<div class="${cls}">${h}</div>${wolfHelp()}`;
@@ -2120,11 +2270,13 @@ function renderWolf(){
   if(g.phase==='day'){const t=()=>{const el=$('wTimer');if(!el)return clearInterval(wolfTick);const s=Math.max(0,Math.round(((g.dayEnds||0)-Date.now())/1000));el.textContent=s?`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`:'⏰ 시간 끝!';};t();wolfTick=setInterval(t,500);}
 }
 const shuffleless=arr=>{const c={};arr.forEach(r=>c[r]=(c[r]||0)+1);return Object.keys(ROLES).filter(r=>c[r]).map(r=>`${ROLES[r].e}${ROLES[r].n}${c[r]>1?'×'+c[r]:''}`).join(' ');};
-function wolfHelp(){return `<details class="card" style="padding:12px 16px;margin-top:12px"><summary style="cursor:pointer;font-family:var(--font-disp);font-size:17px">📖 게임 방법</summary>
+function wolfHelp(){const g=W();return `<details class="card" style="padding:12px 16px;margin-top:12px" ${!g||g.phase==='lobby'?'open':''}><summary style="cursor:pointer;font-family:var(--font-disp);font-size:17px">📖 게임 방법</summary>
   <ol style="font-size:14px;color:var(--ink-2);padding-left:20px;margin:8px 0 0;line-height:1.8"><li>방장이 게임을 열고 친구들이 <b>참가하기</b>를 눌러요. (3~16명)</li><li>🌙 밤: 내 기기에 역할 카드가 나와요. <b>다른 사람에게 보여 주면 안 돼요!</b> 역할에 맞게 행동하고 「확인했어요」를 눌러요.</li>
   <li>☀️ 낮: 4분 동안 밤에 본 것을 이야기해요. 늑대 편은 거짓말을 해도 돼요.</li><li>🗳️ 투표: 늑대 같은 친구를 한 명 골라요. 2표 이상 받은 사람 중 가장 많이 받은 사람이 잡혀요.</li>
   <li>늑대가 1명이라도 잡히면 🐰 마을 팀 승리, 아니면 🐺 늑대 팀 승리! 카드가 밤사이 바뀌었을 수 있으니 <b>마지막 카드</b>로 편이 정해져요.</li></ol>
-  <div class="rolelist" style="margin-top:8px;justify-content:flex-start">${Object.values(ROLES).map(r=>`<span style="background:var(--paper);color:var(--ink)">${r.e} <b>${r.n}</b> ${r.d}</span>`).join('')}</div></details>`;}
+  <h4 style="font-family:var(--font-disp);font-weight:400;font-size:17px;margin:12px 0 6px">🃏 역할 카드 자세히</h4>
+  <div class="hw" style="margin-top:0">${Object.entries(ROLES).map(([k,r])=>`<div class="it"><span style="font-size:30px;line-height:1">${r.e}</span><div class="tx"><b>${r.n} <span class="tm ${r.t}" style="font-family:var(--font-body);font-size:12px;border-radius:999px;padding:1px 8px">${r.t==='wolf'?'늑대 편':'마을 편'}</span></b>
+    <p>🌙 <b>밤:</b> ${esc(ROLE_GUIDE[k].night)}</p><p>☀️ <b>낮:</b> ${esc(ROLE_GUIDE[k].day[0])}</p><p>🎯 ${esc(ROLE_GUIDE[k].goal)}</p></div></div>`).join('')}</div></details>`;}
 function wolfNightUI(g){
   const id=me.id,r=g.init[id],R=ROLES[r],a=(g.acts||{})[id]||{},others=g.players.filter(p=>p.id!==id),ids=g.players.map(p=>p.id);
   let act='',info='';
@@ -2149,7 +2301,7 @@ function wolfNightUI(g){
   else if(r==='drunk')act=`<p>바꿀 가운데 카드를 골라요.</p>${cpick(1,'바꾸기')}`;
   else if(r==='insom')act=`<p>밤이 끝날 때 내 카드를 다시 볼 수 있어요.</p><button class="btn honey sm" id="wOk">알겠어요</button>`;
   else act=`<p>할 일은 없어요. 다른 친구가 눈치채지 못하게 버튼을 눌러요.</p><button class="btn honey sm" id="wOk">잠자기 😴</button>`;
-  return `<div class="rolecard"><div class="e">${R.e}</div><b>${R.n}</b><small>${R.d}</small><span class="tm ${R.t}">${R.t==='wolf'?'늑대 편':'마을 편'}</span></div><div class="wact">${act}</div>`;
+  return `<div class="rolecard"><div class="e">${R.e}</div><b>${R.n}</b><small>${R.d}</small><span class="tm ${R.t}">${R.t==='wolf'?'늑대 편':'마을 편'}</span><span class="goal">🎯 ${esc(ROLE_GUIDE[r].goal)}</span></div><div class="wact">${act}</div>`;
 }
 function wolfDayUI(g){
   const id=me.id,r=g.init[id],a=(g.acts||{})[id]||{};
@@ -2189,17 +2341,38 @@ store.watch('games',d=>{wolfG=d.find(x=>x.id==='wolf')||null;const g=W();
    settings.invite = {on, code}. 손님은 students 컬렉션에 guest:true로 저장되고 놀이터만 써요. */
 function renderInvite(){
   const inv=settings&&settings.invite,box=$('invBox');
+  $('invKids').checked=!!(settings&&settings.inviteKids);
   if(!inv||!inv.on){box.innerHTML=`<p style="font-size:14px;color:var(--ink-2);margin:0 0 10px">옆반 친구들이 <b>놀이터(단어장·단어 게임·한밤의 늑대)</b>에만 들어올 수 있게 초대해요. 우리 반 글·방·숙제는 손님 화면에 나오지 않아요.</p><button class="btn" id="invMake">초대 코드 만들기</button>`;
     $('invMake').onclick=async()=>{const code='BK-'+String(Math.floor(1000+Math.random()*9000));await store.update('settings','main',{invite:{on:true,code,at:Date.now()}});toast('초대 코드를 만들었어요');};return;}
-  box.innerHTML=`<p style="font-size:14px;color:var(--ink-2);margin:0">옆반 선생님께 알려 주세요. 첫 화면 → 「초대 코드로 들어가기」</p>
+  box.innerHTML=`<p style="font-size:14px;color:var(--ink-2);margin:0">옆반 친구가 QR을 찍거나, 첫 화면 → 「초대 코드로 들어가기」에 코드를 넣으면 들어와요.</p>
     <div style="font-family:var(--font-disp);font-size:40px;text-align:center;letter-spacing:2px;color:var(--sky);margin:6px 0">${esc(inv.code)}</div>
     <p style="font-size:14px;margin:0 0 6px">들어온 손님 ${guests.length}명 ${guests.length?': '+guests.map(g=>esc(g.name)).join(', '):''}</p>
+    <div class="row" style="margin-bottom:8px"><button class="btn sm" id="invQrT">📱 초대 QR 크게 보기</button></div>
     <button class="btn berry sm" id="invEnd">초대 끝내기 (손님 계정 모두 지우기)</button>`;
+  $('invQrT').onclick=openInviteQR;
   $('invEnd').onclick=async()=>{if(!confirm('초대를 끝내고 손님 계정을 모두 지울까요?'))return;
     for(const g of guests){await store.del('students',g.id).catch(()=>{});if(rooms.some(r=>r.id===g.id))await store.del('rooms',g.id).catch(()=>{});}
     await store.update('settings','main',{invite:{on:false,code:''}});toast('초대를 끝냈어요');};
 }
 $('guestGateBtn').onclick=()=>{$('guestGate').hidden=!$('guestGate').hidden;$('gCode').focus();};
+$('invKids').onchange=async e=>{await store.update('settings','main',{inviteKids:e.target.checked});toast(e.target.checked?'이제 학생도 놀이터에서 초대 QR을 열 수 있어요':'초대는 선생님만 열 수 있어요');};
+/* 초대 QR: 주소?invite=코드 → 첫 화면에 코드가 채워져서 이름만 쓰면 들어와요 */
+function loadQR(){return window.QRCode?Promise.resolve():new Promise((ok,no)=>{const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';sc.onload=ok;sc.onerror=no;document.head.appendChild(sc);});}
+async function openInviteQR(){
+  let inv=settings&&settings.invite;
+  if(!inv||!inv.on){if(!isTeacher&&!(settings&&settings.inviteKids))return toast('선생님이 초대를 허락하면 열 수 있어요');
+    inv={on:true,code:'BK-'+String(Math.floor(1000+Math.random()*9000)),at:Date.now(),by:isTeacher?'T':me.id};await store.update('settings','main',{invite:inv});}
+  const url=location.origin+location.pathname+'?invite='+encodeURIComponent(inv.code);
+  shopOpen=false;openId=null;
+  $('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><h2 style="font-size:26px">📱 옆반 친구 초대</h2>
+    <div class="qrbox"><p style="margin:4px 0 0;color:var(--ink-2)">휴대폰·태블릿 카메라로 찍으면 바로 들어와요. 이름만 쓰면 돼요!</p><div id="qr"></div>
+    <div style="font-family:var(--font-disp);font-size:34px;letter-spacing:2px;color:var(--sky)">${esc(inv.code)}</div>
+    <p style="font-size:13px;color:var(--ink-3);margin:0">옆반 친구는 놀이터(단어장·단어 게임·한밤의 늑대)만 쓸 수 있어요.</p></div>`;
+  $('modal').classList.add('on');$('mClose').onclick=closeModal;
+  try{await loadQR();new QRCode($('qr'),{text:url,width:520,height:520,correctLevel:QRCode.CorrectLevel.M});}catch(e){$('qr').innerHTML=`<p style="font-size:14px;max-width:260px;word-break:break-all">QR을 만들지 못했어요. 이 주소를 알려 주세요:<br>${esc(url)}</p>`;}
+}
+$('invQrBtn').onclick=openInviteQR;
+(function inviteFromURL(){try{const c=new URLSearchParams(location.search).get('invite');if(c){$('guestGate').hidden=false;$('gCode').value=c.toUpperCase();setTimeout(()=>$('gName').focus(),300);}}catch(e){}})();
 $('gGo').onclick=async()=>{
   const code=$('gCode').value.trim().toUpperCase(),name=$('gName').value.trim().slice(0,12),inv=settings&&settings.invite;
   if(!inv||!inv.on)return toast('지금은 초대가 열려 있지 않아요');

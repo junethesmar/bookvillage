@@ -604,6 +604,25 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
 .bookfind img{width:90px;height:128px;object-fit:cover;border-radius:3px 8px 8px 3px;box-shadow:0 6px 12px -6px rgba(0,0,0,.45)}
 .bookfind b{font-family:var(--font-disp);font-weight:400;font-size:14px;line-height:1.2}
 .bookfind small{font-size:11px;color:var(--ink-3)}
+/* 독서 통장 */
+.passbook{background:#FFFDF6;border-radius:18px;padding:12px 14px;box-shadow:var(--soft,0 10px 30px -14px rgba(30,60,90,.35));
+  background-image:repeating-linear-gradient(transparent 0 37px,#E7EFF7 37px 38px);border-left:10px solid #3F7D5A}
+.pbhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.pbhead b{font-family:var(--font-title,var(--font-disp));font-weight:400;font-size:20px;color:#24533A}
+.pbhead span{font-size:13px;color:var(--ink-2)}
+.pbhead em{font-style:normal;font-family:var(--font-disp);font-size:20px;color:var(--berry)}
+.pbrow{display:grid;grid-template-columns:52px minmax(90px,1.2fr) 3fr 58px;gap:8px;align-items:center;min-height:38px;font-size:14px;border-bottom:1px dashed #DCE5EE}
+.pbth{font-size:12px;color:var(--ink-3);min-height:26px}
+.pbrow .d{font-family:var(--font-disp);color:#3F7D5A}
+.pbrow .t{display:flex;align-items:center;gap:6px;min-width:0}
+.pbrow .t img{width:22px;height:30px;object-fit:cover;border-radius:2px 4px 4px 2px;flex:none}
+.pbrow .t b{font-weight:400;font-family:var(--font-disp);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pbrow .n{color:#3D4A52;line-height:1.35;overflow-wrap:anywhere;padding:4px 0}
+.pbrow .b{text-align:right;font-family:var(--font-disp);font-size:16px;color:#24533A;white-space:nowrap}
+.pbrow .b i{font-style:normal;font-size:12px;color:var(--berry)}
+.pbrow .b button{font-size:11px;color:var(--ink-3);margin-left:2px}
+.pbempty,.pbmore{font-size:13px;color:var(--ink-3);margin:8px 0 0}
+@media (max-width:560px){.pbrow{grid-template-columns:44px 1fr 46px}.pbrow .n{grid-column:1/-1;padding-top:0}.pbth span:nth-child(3){display:none}}
 /* ───────── 숙제 알림 ───────── */
 .bell{position:relative;font-size:20px;width:40px;height:40px;border-radius:50%;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;flex:none}
 .bell b{position:absolute;right:-4px;top:-4px;min-width:20px;height:20px;border-radius:999px;background:var(--berry);color:#fff;font:400 12px/20px var(--font-disp);padding:0 5px}
@@ -1019,7 +1038,7 @@ main{padding-bottom:120px!important}
     <!-- 쓰기 -->
     <section class="view" id="v-write">
       <div class="write">
-        <nav class="tabs seg" id="writeKind"><button data-wk="exp">📝 게시판 글</button><button data-wk="book">📚 서평</button></nav>
+        <nav class="tabs seg" id="writeKind"><button data-wk="exp">📝 게시판 글</button><button data-wk="log">📒 독서 통장</button><button data-wk="book">📚 서평</button></nav>
         <div id="formBook">
         <h2 id="writeTitle">서평 쓰기</h2>
         <p class="sub">네 칸만 채우면 멋진 서평이 완성돼요. 다 쓰면 나무에 열매가 하나 열려요 🍎</p>
@@ -1085,6 +1104,25 @@ main{padding-bottom:120px!important}
           <span id="draftMsg" style="font-size:13px;color:var(--ink-3)"></span>
           <div class="row"><button class="btn ghost" id="cancelEdit" hidden>취소</button><button class="btn" id="submitBtn" style="font-size:19px;padding:12px 26px">서평 올리기 🌱</button></div>
         </div>
+        </div>
+
+        <div id="formLog" hidden>
+        <h2>독서 통장</h2>
+        <p class="sub">읽은 책을 두 줄로 짧게 남겨요. 통장에 한 줄씩 찍히고, 다 읽은 책은 권수가 쌓여요 📒</p>
+        <div class="card step" style="padding-top:18px">
+          <div class="row" style="align-items:flex-start">
+            <div style="flex:3;min-width:180px"><label class="f">책 제목</label><input type="text" id="l-title" placeholder="예) 마당을 나온 암탉" maxlength="60"></div>
+            <div style="flex:2;min-width:120px"><label class="f">지은이 <span>선택</span></label><input type="text" id="l-author" maxlength="40"></div>
+            <div style="flex:1;min-width:130px"><label class="f">날짜</label><input type="date" id="l-date"></div>
+          </div>
+          <div class="coverpick"><div class="cvprev" id="lCvPrev"><span>표지</span></div>
+            <div class="row"><button type="button" class="btn sm" id="lFind" hidden>🔍 책 찾기</button><span style="font-size:12px;color:var(--ink-3)">선택 · 찾으면 통장에 표지가 붙어요</span></div></div>
+          <label class="f" style="margin-top:12px">두 줄 기록 <span>기억에 남는 장면, 느낀 점, 오늘 읽은 부분</span></label>
+          <textarea id="l-note" maxlength="100" rows="2" style="min-height:64px" placeholder="예) 잎싹이 알을 품는 장면이 뭉클했다. 나도 끝까지 포기하지 않고 싶다."></textarea>
+          <div class="row" style="justify-content:space-between;margin-top:6px"><label class="tog"><input type="checkbox" id="l-done"> 이 책을 다 읽었어요 (권수 +1)</label><span id="l-cnt" style="font-size:12px;color:var(--ink-3)">0 / 100자</span></div>
+        </div>
+        <div class="row" style="justify-content:flex-end;margin-top:6px"><button class="btn" id="logSubmit" style="font-size:19px;padding:12px 26px">통장에 찍기 📒</button></div>
+        <div id="logBook" style="margin-top:16px"></div>
         </div>
 
         <div id="formExp" hidden>
@@ -1209,6 +1247,7 @@ main{padding-bottom:120px!important}
           <div class="card" style="margin-top:14px"><h3 style="font-size:18px;margin-bottom:8px">배지</h3><div class="badges" id="badges"></div></div>
         </div>
         <div>
+          <div id="myPassbook" style="margin-bottom:18px"></div>
           <h3 style="font-size:20px;margin-bottom:10px">내가 쓴 글</h3>
           <div class="grid" id="myFeed"></div>
         </div>
@@ -1264,6 +1303,10 @@ main{padding-bottom:120px!important}
             </details>
           </div>
           <div class="card" style="margin-top:14px">
+            <h3>📒 독서 통장 현황</h3>
+            <div class="hw" id="logTeach"></div>
+          </div>
+          <div class="card" style="margin-top:14px">
             <h3>📚 책 표지 한꺼번에 찾기</h3>
             <p style="font-size:14px;color:var(--ink-2);margin:0 0 10px">표지가 없는 서평을 제목·지은이로 찾아 첫 번째 결과 표지를 붙여요. 잘못 붙은 표지는 서평을 열고 「📚 표지 바꾸기」로 고쳐요. (카카오 책 검색 키 필요)</p>
             <div class="row"><button class="btn honey" id="coverAll">📚 표지 찾기</button><span id="coverAllMsg" style="font-size:14px;color:var(--ink-2)"></span></div>
@@ -1271,7 +1314,7 @@ main{padding-bottom:120px!important}
           <div class="card" style="margin-top:14px">
             <h3>기록 내려받기</h3>
             <p style="font-size:14px;color:var(--ink-2);margin:0 0 10px">서평과 게시판 글을 각각 CSV(엑셀)로 저장해요. 평가 기록·학부모 상담 자료로 쓸 수 있어요.</p>
-            <div class="row"><button class="btn honey" id="csvBtn">서평 CSV</button><button class="btn honey" id="csvExpBtn">게시판 글 CSV</button></div>
+            <div class="row"><button class="btn honey" id="csvBtn">서평 CSV</button><button class="btn honey" id="csvExpBtn">게시판 글 CSV</button><button class="btn honey" id="csvLogBtn">독서 통장 CSV</button></div>
             <p style="font-size:13px;color:var(--ink-3);margin:12px 0 0">글 숨기기·삭제는 책방에서 글을 열면 아래에 버튼이 있어요.</p>
             <div id="localReset" hidden style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)"><p style="font-size:13px;color:var(--ink-2);margin:0 0 8px">지금은 <b>미리보기 모드</b>(이 기기에만 저장)예요. 예시 자료를 지우고 빈 상태로 시작할 수 있어요.</p><button class="btn ghost sm" id="localResetBtn" style="color:var(--berry)">미리보기 데이터 모두 지우기</button></div>
           </div>
@@ -1422,7 +1465,9 @@ function statsOf(sid){
   const all=reviews.filter(r=>r.authorId===sid&&!r.hidden),mine=all.filter(r=>!isExp(r));
   const cm=reviews.reduce((a,r)=>a+(r.comments||[]).filter(c=>c.by===sid).length,0);
   const rx=all.reduce((a,r)=>a+rxCount(r),0);
-  const xp=all.reduce((a,r)=>a+100+Math.min(100,Math.floor(rvLen(r)/10)),0)+rx*5+cm*10;
+  const lg=logsOf(sid),perDay={};lg.forEach(l=>perDay[l.date]=(perDay[l.date]||0)+1);
+  const lxp=Object.values(perDay).reduce((a,n)=>a+Math.min(3,n)*20,0)+lg.filter(l=>l.done).length*30;
+  const xp=all.reduce((a,r)=>a+100+Math.min(100,Math.floor(rvLen(r)/10)),0)+rx*5+cm*10+lxp;
   return {reviews:mine.length,exps:all.length-mine.length,posts:all.length,cm,rx,xp,genres:new Set(mine.map(r=>r.genre)).size,quotes:mine.filter(r=>(r.quote||'').trim()).length,
     longest:Math.max(0,...mine.map(rvLen)),low:mine.filter(r=>r.rating<=2).length,five:mine.filter(r=>r.rating===5).length};
 }
@@ -1609,6 +1654,7 @@ function renderTree(animate){
 
 /* ═══════════════ 내 서재 ═══════════════ */
 function renderMe(){
+  renderPassbook($('myPassbook'),me.id,5);
   const st=statsOf(me.id),lv=levelOf(st.xp);
   $('pAv').textContent=lv.av;paintMyAv();$('pLv').textContent=lv.n;$('pName').textContent=me.name;
   const base=lv.xp,nx=lv.next?lv.next.xp:null;
@@ -1782,10 +1828,45 @@ $('coverAll').onclick=async()=>{const list=reviews.filter(r=>!isExp(r)&&!coverOf
 $('coverFind').onclick=()=>{const q=$('f-title').value.trim();if(!q)return toast('먼저 책 제목을 써 주세요 (정확하지 않아도 괜찮아요)');shopOpen=false;openId=null;
   pickBook(q,x=>{formCover={cover:x.thumbnail,coverImg:''};$('f-title').value=x.title;if(!$('f-author').value.trim())$('f-author').value=(x.authors||[]).join(', ');paintCover();saveDraft();closeModal();toast('표지를 넣었어요 📚');},null,$('f-author').value.trim());};
 
+/* ═══════════════ 독서 통장 ═══════════════
+   rlogs/{id} = {by:학생id, title, author, cover, note(100자), date:'YYYY-MM-DD', done:다 읽음, at}
+   서평보다 가볍게: 책 + 두 줄 기록. 통장처럼 한 줄씩 찍히고 다 읽은 책은 권수(잔액)가 쌓여요 */
+var rlogs=[],logErr=null,logCover='';   /* var: 위쪽 statsOf가 먼저 불려도 괜찮게 */
+function logsOf(sid){return (rlogs||[]).filter(l=>l.by===sid);}
+function renderPassbook(box,sid,limit){
+  if(!box||!sid)return;const list=logsOf(sid).sort((a,b)=>a.date.localeCompare(b.date)||a.at-b.at);let n=0;
+  const rows=list.map(l=>{if(l.done)n++;return {...l,bal:n};}).reverse(),show=limit?rows.slice(0,limit):rows;
+  box.innerHTML=logErr?`<p class="setup-note">독서 통장을 불러오지 못했어요 (${esc(logErr)}). Firebase 규칙에서 <b>rlogs</b> 컬렉션을 허용해 주세요.</p>`:
+   `<div class="passbook"><div class="pbhead"><b>📒 ${esc(nameOf(sid))}의 독서 통장</b><span>다 읽은 책 <em>${n}</em>권 · 기록 ${list.length}줄</span></div>
+    <div class="pbrow pbth"><span>날짜</span><span>책</span><span>두 줄 기록</span><span>권수</span></div>
+    ${show.map(l=>`<div class="pbrow"><span class="d">${esc(l.date.slice(5).replace('-','.'))}</span><span class="t">${safeCover(l.cover)?`<img src="${l.cover}" alt="">`:''}<b>${esc(l.title)}</b></span><span class="n">${esc(l.note)}</span><span class="b">${l.done?'<i>+1</i> ':''}${l.bal}${me&&sid===me.id&&!isTeacher?`<button data-ldel="${l.id}" aria-label="지우기">✕</button>`:''}</span></div>`).join('')||'<p class="pbempty">아직 기록이 없어요. 오늘 읽은 책을 두 줄로 찍어 볼까요?</p>'}
+    ${limit&&rows.length>limit?`<p class="pbmore">최근 ${limit}줄만 보여요 · 쓰기 → 📒 독서 통장에서 전부 볼 수 있어요</p>`:''}</div>`;
+  box.querySelectorAll('[data-ldel]').forEach(b=>b.onclick=async()=>{if(confirm('이 줄을 지울까요?'))await store.del('rlogs',b.dataset.ldel);});
+}
+function renderLogTeach(){const el=$('logTeach');if(!el)return;const mon=isoDay().slice(0,7);
+  el.innerHTML=logErr?`<p class="setup-note">독서 통장을 불러오지 못했어요 (${esc(logErr)}). Firebase 규칙에서 <b>rlogs</b> 컬렉션을 허용해 주세요.</p>`:[...students].sort((a,b)=>(a.num||99)-(b.num||99)).map(s=>{const L=logsOf(s.id),last=L.sort((a,b)=>b.at-a.at)[0];
+    return `<div class="it"><div class="tx"><b>${esc(s.name)}</b><p>이번 달 ${L.filter(l=>l.date.startsWith(mon)).length}줄 · 다 읽은 책 ${L.filter(l=>l.done).length}권${last?` · 최근: ${esc(last.title)} (${esc(last.date.slice(5))})`:''}</p></div></div>`;}).join('')||'<p style="font-size:14px;color:var(--ink-3)">학생이 없어요</p>';}
+$('l-note').oninput=()=>$('l-cnt').textContent=$('l-note').value.length+' / 100자';
+$('lFind').onclick=()=>{const q=$('l-title').value.trim();if(!q)return toast('먼저 책 제목을 써 주세요 (정확하지 않아도 괜찮아요)');shopOpen=false;openId=null;
+  pickBook(q,x=>{logCover=x.thumbnail;$('l-title').value=x.title;if(!$('l-author').value.trim())$('l-author').value=(x.authors||[]).join(', ');$('lCvPrev').innerHTML=`<img src="${esc(x.thumbnail)}" alt="">`;closeModal();},null,$('l-author').value.trim());};
+$('logSubmit').onclick=async ev=>{const title=$('l-title').value.trim(),note=$('l-note').value.trim(),date=$('l-date').value||isoDay();
+  if(!title)return toast('책 제목을 써 주세요');if(note.length<5)return toast('두 줄 기록을 조금만 더 써 주세요');
+  const today=logsOf(me.id).filter(l=>l.date===date).length;
+  try{await store.set('rlogs',uid(),{by:me.id,title:title.slice(0,60),author:$('l-author').value.trim().slice(0,40),cover:safeCover(logCover),note:note.slice(0,100),date,done:$('l-done').checked,at:Date.now()});
+    const [x,y]=evPos(ev);floatEmoji('📒',x,y);toast(today>=3?'통장에 찍었어요! (오늘 경험치는 다 받았어요)':`통장에 찍었어요! +${$('l-done').checked?50:20}xp`);
+    $('l-title').value='';$('l-author').value='';$('l-note').value='';$('l-done').checked=false;$('l-cnt').textContent='0 / 100자';logCover='';$('lCvPrev').innerHTML='<span>표지</span>';
+  }catch(e){console.error(e);toast('저장하지 못했어요 ('+(e.code||'오류')+')');}};
+$('csvLogBtn').onclick=()=>{const H=['이름','날짜','책 제목','지은이','두 줄 기록','다 읽음'],q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const rows=[...rlogs].sort((a,b)=>nameOf(a.by).localeCompare(nameOf(b.by),'ko')||a.date.localeCompare(b.date)).map(l=>[nameOf(l.by),l.date,l.title,l.author,l.note,l.done?'예':''].map(q).join(','));
+  const blob=new Blob(['\ufeff'+[H.join(','),...rows].join('\r\n')],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`독서통장_${isoDay()}.csv`;a.click();};
+store.watch('rlogs',d=>{logErr=null;rlogs=d.filter(l=>l&&l.by&&l.title&&/^\d{4}-\d{2}-\d{2}$/.test(l.date||''));
+  if(me&&!isTeacher&&!isGuest){if(!$('formLog').hidden)renderPassbook($('logBook'),me.id);renderPassbook($('myPassbook'),me.id,5);if($('v-me').classList.contains('on'))renderMe();renderHello();}
+  if(isTeacher)renderLogTeach();},e=>{logErr=e.code||'오류';});
+
 /* ═══════════════ 게시판 글쓰기 ═══════════════ */
 const E=['cat','title','body'];
 let writeKind='exp', expPics=[];   /* 쓰기 탭을 열면 게시판 글부터 */   // {id?,data} — id가 있으면 이미 저장된 사진
-function setWriteKind(k){writeKind=k;$('formBook').hidden=k!=='book';$('formExp').hidden=k!=='exp';$('writeKind').hidden=!!editingId;document.querySelectorAll('[data-wk]').forEach(b=>b.classList.toggle('on',b.dataset.wk===k));}
+function setWriteKind(k){writeKind=k;$('formBook').hidden=k!=='book';$('formExp').hidden=k!=='exp';$('formLog').hidden=k!=='log';if(k==='log'){if(!$('l-date').value)$('l-date').value=isoDay();renderPassbook($('logBook'),me&&me.id);}$('writeKind').hidden=!!editingId;document.querySelectorAll('[data-wk]').forEach(b=>b.classList.toggle('on',b.dataset.wk===k));}
 function drawExpCnt(){$('e-cnt').textContent=$('e-body').value.length+'자';}
 function drawPics(){$('e-pics').innerHTML=expPics.map((p,i)=>`<div class="pic">${p.data?`<img src="${p.data}" alt="사진 ${i+1}">`:''}<button type="button" data-i="${i}" aria-label="사진 빼기">✕</button></div>`).join('');$('e-photoBtn').disabled=expPics.length>=MAX_PICS;$('e-photoMsg').textContent=expPics.length?`${expPics.length} / ${MAX_PICS}장`:'';}
 /* 사진은 긴 변 1280px JPEG로 줄여서 저장(문서 하나 1MB 제한) */
@@ -1836,7 +1917,7 @@ function celebrate(){
 
 /* ═══════════════ 교사 ═══════════════ */
 function renderTeach(){
-  $('localReset').hidden=store.mode!=='local';renderHwTeach();renderNoticeTeach();renderInvite();
+  $('localReset').hidden=store.mode!=='local';renderLogTeach();renderHwTeach();renderNoticeTeach();renderInvite();
   const off=!!(settings&&settings.playOff);$('playToggle').textContent=off?'🌞 마을 열기':'🌙 마을 닫기';$('playToggle').className='btn '+(off?'':'ghost');renderImgCheck();
   $('setClass').value=(settings&&settings.className)||'';$('setGoal').value=(settings&&settings.treeGoal)||50;
   const list=[...students].sort((a,b)=>(a.num||99)-(b.num||99)||a.name.localeCompare(b.name,'ko'));
@@ -1857,7 +1938,7 @@ $('saveSettings').onclick=async()=>{const p=$('setTPin').value.trim();if(p&&!/^\
   const kk=$('setKakao').value.trim();if(kk&&!/^[0-9a-f]{32}$/i.test(kk))return toast('카카오 REST API 키는 영문·숫자 32자리예요');
   await store.update('settings','main',{className:$('setClass').value.trim(),treeGoal:Math.max(5,+$('setGoal').value||50),...(p?{teacherPin:p}:{}),...(kk?{kakaoKey:kk}:{})});$('setTPin').value='';$('setKakao').value='';toast('저장했어요');paintKakaoState();};
 function paintKakaoState(){const el=$('kakaoState');if(el)el.textContent=settings&&settings.kakaoKey?'✅ 키가 저장되어 있어요. 바꾸려면 새 키를 넣고 저장하세요.':'아직 키가 없어요. 키가 없어도 「📷 표지 찍기」는 쓸 수 있어요.';
-  const b=$('coverFind');if(b)b.hidden=!(settings&&settings.kakaoKey);}
+  const b=$('coverFind');if(b)b.hidden=!(settings&&settings.kakaoKey);const lb=$('lFind');if(lb)lb.hidden=!(settings&&settings.kakaoKey);}
 $('localResetBtn').onclick=()=>{if(!confirm('이 기기에 저장된 미리보기 데이터(예시 학생·서평 포함)를 모두 지울까요?'))return;try{localStorage.removeItem('bookvillage_local_v1');sessionStorage.clear();}catch(e){}location.reload();};
 $('csvBtn').onclick=()=>{
   const H=['이름','책 제목','지은이','장르','별점','한줄평','책 소개','줄거리','인상적인 문장','인상적인 부분','나의 평가','추천 대상','글자 수','받은 반응','댓글 수','작성일','숨김'];

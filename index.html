@@ -1732,16 +1732,30 @@ function shrinkCover(file){return new Promise((res,rej)=>{const img=new Image(),
 $('coverShot').onclick=()=>$('coverFile').click();
 $('coverFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{formCover={cover:'',coverImg:await shrinkCover(f)};paintCover();saveDraft();toast('표지를 넣었어요 📚');}catch(err){toast('이 사진은 넣을 수 없어요');}};
 $('coverDel').onclick=()=>{formCover={cover:'',coverImg:''};paintCover();saveDraft();};
-async function bookSearch(q){const key=settings&&settings.kakaoKey;if(!key)throw new Error('선생님이 교사 화면 「설정」에서 카카오 책 검색 키를 넣어야 찾을 수 있어요');
-  const r=await fetch('https://dapi.kakao.com/v3/search/book?size=12&query='+encodeURIComponent(q),{headers:{Authorization:'KakaoAK '+key}});
+async function bookSearch(q,target){const key=settings&&settings.kakaoKey;if(!key)throw new Error('선생님이 교사 화면 「설정」에서 카카오 책 검색 키를 넣어야 찾을 수 있어요');
+  const r=await fetch('https://dapi.kakao.com/v3/search/book?size=20&query='+encodeURIComponent(q)+(target?'&target='+target:''),{headers:{Authorization:'KakaoAK '+key}});
   if(!r.ok)throw new Error(r.status===401?'키가 맞지 않아요. 교사 화면에서 키를 확인해 주세요':'검색하지 못했어요 ('+r.status+')');
   return ((await r.json()).documents||[]).filter(x=>safeCover(x.thumbnail));}
-async function pickBook(q,onPick,back){
+/* 제목이 정확하지 않아도: 제목+지은이 → 제목 → 기호·권 번호 뺀 제목 → 앞 낱말 두 개 순서로 다시 찾아요 */
+const cleanTitle=t=>String(t).replace(/[\[\]()<>〈〉《》「」『』:：·,.!?~'"“”‘’-]/g,' ').replace(/\s*(제?\s*\d+\s*(권|편|부)?|[ⅠⅡⅢⅣⅤ]+)\s*$/,'').replace(/\s+/g,' ').trim();
+async function smartSearch(title,author,loose){
+  const t=String(title||'').trim(),a=String(author||'').trim(),c=cleanTitle(t),w=c.split(' ').filter(Boolean);
+  const tries=[[`${t} ${a}`.trim()],[t,'title'],[c,'title'],[c],...(w.length>2?[[w.slice(0,2).join(' ')]]:[]),...(loose&&a?[[a,'person']]:[])];
+  const seen=new Set();for(const [q,tg] of tries){if(!q||seen.has(q+tg))continue;seen.add(q+tg);const items=await bookSearch(q,tg);if(items.length)return {items,q:tg==='person'?a+' (지은이)':q};}
+  return {items:[],q:t};
+}
+async function pickBook(q,onPick,back,author){
   shopOpen=false;$('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><h2 style="font-size:24px">🔍 「${esc(q)}」 찾는 중…</h2>`;$('modal').classList.add('on');$('mClose').onclick=back||closeModal;
-  try{const items=await bookSearch(q);
-    $('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><h2 style="font-size:24px">🔍 어떤 책인가요?</h2><p style="color:var(--ink-2);font-size:14px;margin:4px 0 10px">읽은 책 표지를 눌러요</p>
-      <div class="bookfind">${items.map((x,i)=>`<button data-bf="${i}"><img src="${esc(x.thumbnail)}" alt=""><b>${esc(x.title)}</b><small>${esc((x.authors||[]).join(', '))} · ${esc(x.publisher||'')}</small></button>`).join('')||'<p style="color:var(--ink-3)">찾는 책이 없어요. 📷 표지를 찍어 보세요.</p>'}</div>`;
+  try{const mode=pickBook.mode||'smart';pickBook.mode=null;
+    const res=mode==='person'?{items:await bookSearch(author||q,'person'),q:(author||q)+' (지은이)'}:mode==='plain'?{items:await bookSearch(q),q}:await smartSearch(q,author,true),items=res.items;
+    $('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><h2 style="font-size:24px">🔍 어떤 책인가요?</h2>
+      <div class="row" style="margin:6px 0 4px"><input type="text" id="bfQ" value="${esc(mode==='person'?(author||q):q)}" placeholder="제목 일부나 지은이 이름" style="flex:1;min-width:160px"><button class="btn sm" id="bfGo">다시 찾기</button><button class="btn ghost sm" id="bfAuthor">👤 지은이로 찾기</button></div>
+      <p style="color:var(--ink-2);font-size:13px;margin:0 0 10px">${items.length?`「${esc(res.q)}」(으)로 찾았어요. 읽은 책 표지를 눌러요.`:'찾는 책이 없어요.'} 제목이 정확하지 않으면 <b>앞 낱말 몇 개</b>만 쓰거나 <b>지은이 이름</b>으로 찾아 보세요.</p>
+      <div class="bookfind">${items.map((x,i)=>`<button data-bf="${i}"><img src="${esc(x.thumbnail)}" alt=""><b>${esc(x.title)}</b><small>${esc((x.authors||[]).join(', '))} · ${esc(x.publisher||'')}</small></button>`).join('')||'<p style="color:var(--ink-3)">📷 표지를 찍어도 돼요.</p>'}</div>`;
     $('mClose').onclick=back||closeModal;$('sheet').querySelectorAll('[data-bf]').forEach(b=>b.onclick=()=>onPick(items[+b.dataset.bf]));
+    const again=m=>{const v=$('bfQ').value.trim();if(!v)return;pickBook.mode=m;pickBook(v,onPick,back,m==='person'?v:author);};
+    $('bfGo').onclick=()=>again('plain');$('bfQ').onkeydown=e=>{if(e.key==='Enter')again('plain');};
+    $('bfAuthor').onclick=()=>{const v=$('bfQ').value.trim();pickBook.mode='person';pickBook(v,onPick,back,author&&mode!=='person'&&v===q?author:v);};
   }catch(err){$('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><p>${esc(err.message||'검색하지 못했어요')}</p>`;$('mClose').onclick=back||closeModal;}
 }
 function openCoverFor(r){   // 이미 올라간 서평의 표지 넣기·바꾸기 (쓴 학생 또는 선생님)
@@ -1752,7 +1766,7 @@ function openCoverFor(r){   // 이미 올라간 서평의 표지 넣기·바꾸�
     <input type="file" id="cfFile" accept="image/*" capture="environment" hidden>`;
   $('modal').classList.add('on');$('mClose').onclick=back;
   const put=async p=>{try{await store.update('reviews',r.id,p);toast('표지를 바꿨어요 📚');}catch(e){toast('바꾸지 못했어요 ('+(e.code||'오류')+')');}back();};
-  if($('cfFind'))$('cfFind').onclick=()=>pickBook((r.title+' '+(r.author||'')).trim(),x=>put({cover:x.thumbnail,coverImg:''}),back);
+  if($('cfFind'))$('cfFind').onclick=()=>pickBook(r.title,x=>put({cover:x.thumbnail,coverImg:''}),back,r.author||'');
   $('cfShot').onclick=()=>$('cfFile').click();
   $('cfFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{put({cover:'',coverImg:await shrinkCover(f)});}catch(err){toast('이 사진은 넣을 수 없어요');}};
   if($('cfDel'))$('cfDel').onclick=()=>put({cover:'',coverImg:''});
@@ -1761,20 +1775,12 @@ $('coverAll').onclick=async()=>{const list=reviews.filter(r=>!isExp(r)&&!coverOf
   if(!list.length)return msg.textContent='표지가 없는 서평이 없어요 👍';if(!(settings&&settings.kakaoKey))return msg.textContent='먼저 「설정」에서 카카오 책 검색 키를 넣어 주세요';
   let ok=0,miss=[];$('coverAll').disabled=true;
   for(const [i,r] of list.entries()){msg.textContent=`찾는 중… ${i+1}/${list.length}`;
-    try{const items=await bookSearch((r.title+' '+(r.author||'')).trim());const x=items[0]||(await bookSearch(r.title))[0];
+    try{const x=(await smartSearch(r.title,r.author||'',false)).items[0];
       if(x){await store.update('reviews',r.id,{cover:x.thumbnail});ok++;}else miss.push(r.title);}catch(e){msg.textContent=e.message;break;}
     await new Promise(z=>setTimeout(z,250));}
   $('coverAll').disabled=false;msg.textContent=`${ok}개 붙였어요${miss.length?` · 못 찾은 책: ${miss.slice(0,5).join(', ')}${miss.length>5?' 외':''}`:''}`;};
-$('coverFind').onclick=async()=>{const q=$('f-title').value.trim();if(!q)return toast('먼저 책 제목을 써 주세요');const key=settings&&settings.kakaoKey;if(!key)return;
-  shopOpen=false;openId=null;$('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><h2 style="font-size:24px">🔍 「${esc(q)}」 찾는 중…</h2>`;$('modal').classList.add('on');$('mClose').onclick=closeModal;
-  try{const r=await fetch('https://dapi.kakao.com/v3/search/book?size=12&query='+encodeURIComponent(q+' '+$('f-author').value.trim()),{headers:{Authorization:'KakaoAK '+key}});
-    if(!r.ok)throw new Error(r.status===401?'키가 맞지 않아요. 교사 화면에서 키를 확인해 주세요':'검색하지 못했어요 ('+r.status+')');
-    const d=await r.json(),items=(d.documents||[]).filter(x=>safeCover(x.thumbnail));
-    $('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><h2 style="font-size:24px">🔍 어떤 책인가요?</h2><p style="color:var(--ink-2);font-size:14px;margin:4px 0 10px">내가 읽은 책 표지를 눌러요</p>
-      <div class="bookfind">${items.map((x,i)=>`<button data-bf="${i}"><img src="${esc(x.thumbnail)}" alt=""><b>${esc(x.title)}</b><small>${esc((x.authors||[]).join(', '))} · ${esc(x.publisher||'')}</small></button>`).join('')||'<p style="color:var(--ink-3)">찾는 책이 없어요. 제목을 바꾸거나 📷 표지를 찍어 보세요.</p>'}</div>`;
-    $('mClose').onclick=closeModal;
-    $('sheet').querySelectorAll('[data-bf]').forEach(b=>b.onclick=()=>{const x=items[+b.dataset.bf];formCover={cover:x.thumbnail,coverImg:''};$('f-title').value=x.title;if(!$('f-author').value.trim())$('f-author').value=(x.authors||[]).join(', ');paintCover();saveDraft();closeModal();toast('표지를 넣었어요 📚');});
-  }catch(err){$('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><p>${esc(err.message||'검색하지 못했어요')}</p>`;$('mClose').onclick=closeModal;}};
+$('coverFind').onclick=()=>{const q=$('f-title').value.trim();if(!q)return toast('먼저 책 제목을 써 주세요 (정확하지 않아도 괜찮아요)');shopOpen=false;openId=null;
+  pickBook(q,x=>{formCover={cover:x.thumbnail,coverImg:''};$('f-title').value=x.title;if(!$('f-author').value.trim())$('f-author').value=(x.authors||[]).join(', ');paintCover();saveDraft();closeModal();toast('표지를 넣었어요 📚');},null,$('f-author').value.trim());};
 
 /* ═══════════════ 게시판 글쓰기 ═══════════════ */
 const E=['cat','title','body'];

@@ -1264,6 +1264,11 @@ main{padding-bottom:120px!important}
             </details>
           </div>
           <div class="card" style="margin-top:14px">
+            <h3>📚 책 표지 한꺼번에 찾기</h3>
+            <p style="font-size:14px;color:var(--ink-2);margin:0 0 10px">표지가 없는 서평을 제목·지은이로 찾아 첫 번째 결과 표지를 붙여요. 잘못 붙은 표지는 서평을 열고 「📚 표지 바꾸기」로 고쳐요. (카카오 책 검색 키 필요)</p>
+            <div class="row"><button class="btn honey" id="coverAll">📚 표지 찾기</button><span id="coverAllMsg" style="font-size:14px;color:var(--ink-2)"></span></div>
+          </div>
+          <div class="card" style="margin-top:14px">
             <h3>기록 내려받기</h3>
             <p style="font-size:14px;color:var(--ink-2);margin:0 0 10px">서평과 게시판 글을 각각 CSV(엑셀)로 저장해요. 평가 기록·학부모 상담 자료로 쓸 수 있어요.</p>
             <div class="row"><button class="btn honey" id="csvBtn">서평 CSV</button><button class="btn honey" id="csvExpBtn">게시판 글 CSV</button></div>
@@ -1647,7 +1652,7 @@ function openReview(id,silent){
       ${isTeacher?'':`<div class="cmtform"><input type="text" id="cmtIn" placeholder="따뜻한 댓글 한 줄 (예: ${ex?'나도 그런 적 있어!':'나도 이 책 읽어봐야겠다!'})" maxlength="120"><button class="btn sm" id="cmtBtn">남기기</button></div>`}
     </section>
     <div class="own">
-      ${canEdit?`<button class="btn ghost sm" id="editBtn">고치기</button><button class="btn ghost sm" id="delBtn" style="color:var(--berry)">지우기</button>`:''}
+      ${(canEdit||isTeacher)&&!ex?`<button class="btn ghost sm" id="coverBtn">📚 표지 바꾸기</button>`:''}${canEdit?`<button class="btn ghost sm" id="editBtn">고치기</button><button class="btn ghost sm" id="delBtn" style="color:var(--berry)">지우기</button>`:''}
       ${isTeacher?`<button class="btn ghost sm" id="hideBtn">${r.hidden?'다시 보이기':'숨기기'}</button><button class="btn berry sm" id="delBtn">삭제</button>`:''}
     </div>
   </div>`;
@@ -1660,6 +1665,7 @@ function openReview(id,silent){
   const cb=$('cmtBtn');if(cb){cb.onclick=()=>addComment(r);$('cmtIn').onkeydown=e=>{if(e.key==='Enter')addComment(r);};}
   const eb=$('editBtn');if(eb)eb.onclick=()=>{startEdit(r);closeModal();};
   const db=$('delBtn');if(db)db.onclick=async()=>{if(!confirm('정말 지울까요? 되돌릴 수 없어요.'))return;(r.photos||[]).forEach(p=>store.del('photos',p).catch(()=>{}));await store.del('reviews',r.id);closeModal();toast('지웠어요');};
+  const cvb=$('coverBtn');if(cvb)cvb.onclick=()=>openCoverFor(r);
   const hb=$('hideBtn');if(hb)hb.onclick=async()=>{await store.update('reviews',r.id,{hidden:!r.hidden});toast(r.hidden?'다시 보여요':'숨겼어요');};
   if(!silent)sheet.scrollTop=0;
 }
@@ -1726,6 +1732,39 @@ function shrinkCover(file){return new Promise((res,rej)=>{const img=new Image(),
 $('coverShot').onclick=()=>$('coverFile').click();
 $('coverFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{formCover={cover:'',coverImg:await shrinkCover(f)};paintCover();saveDraft();toast('표지를 넣었어요 📚');}catch(err){toast('이 사진은 넣을 수 없어요');}};
 $('coverDel').onclick=()=>{formCover={cover:'',coverImg:''};paintCover();saveDraft();};
+async function bookSearch(q){const key=settings&&settings.kakaoKey;if(!key)throw new Error('선생님이 교사 화면 「설정」에서 카카오 책 검색 키를 넣어야 찾을 수 있어요');
+  const r=await fetch('https://dapi.kakao.com/v3/search/book?size=12&query='+encodeURIComponent(q),{headers:{Authorization:'KakaoAK '+key}});
+  if(!r.ok)throw new Error(r.status===401?'키가 맞지 않아요. 교사 화면에서 키를 확인해 주세요':'검색하지 못했어요 ('+r.status+')');
+  return ((await r.json()).documents||[]).filter(x=>safeCover(x.thumbnail));}
+async function pickBook(q,onPick,back){
+  shopOpen=false;$('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><h2 style="font-size:24px">🔍 「${esc(q)}」 찾는 중…</h2>`;$('modal').classList.add('on');$('mClose').onclick=back||closeModal;
+  try{const items=await bookSearch(q);
+    $('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><h2 style="font-size:24px">🔍 어떤 책인가요?</h2><p style="color:var(--ink-2);font-size:14px;margin:4px 0 10px">읽은 책 표지를 눌러요</p>
+      <div class="bookfind">${items.map((x,i)=>`<button data-bf="${i}"><img src="${esc(x.thumbnail)}" alt=""><b>${esc(x.title)}</b><small>${esc((x.authors||[]).join(', '))} · ${esc(x.publisher||'')}</small></button>`).join('')||'<p style="color:var(--ink-3)">찾는 책이 없어요. 📷 표지를 찍어 보세요.</p>'}</div>`;
+    $('mClose').onclick=back||closeModal;$('sheet').querySelectorAll('[data-bf]').forEach(b=>b.onclick=()=>onPick(items[+b.dataset.bf]));
+  }catch(err){$('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><p>${esc(err.message||'검색하지 못했어요')}</p>`;$('mClose').onclick=back||closeModal;}
+}
+function openCoverFor(r){   // 이미 올라간 서평의 표지 넣기·바꾸기 (쓴 학생 또는 선생님)
+  const back=()=>openReview(r.id),src=coverOf(r);
+  $('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><h2 style="font-size:24px">📚 「${esc(r.title)}」 표지</h2>
+    <div class="coverpick"><div class="cvprev">${src?`<img src="${src}" alt="">`:'<span>표지</span>'}</div>
+    <div class="row">${settings&&settings.kakaoKey?'<button class="btn sm" id="cfFind">🔍 책 찾기</button>':''}<button class="btn honey sm" id="cfShot">📷 표지 찍기</button>${src?'<button class="btn ghost sm" id="cfDel">표지 빼기</button>':''}</div></div>
+    <input type="file" id="cfFile" accept="image/*" capture="environment" hidden>`;
+  $('modal').classList.add('on');$('mClose').onclick=back;
+  const put=async p=>{try{await store.update('reviews',r.id,p);toast('표지를 바꿨어요 📚');}catch(e){toast('바꾸지 못했어요 ('+(e.code||'오류')+')');}back();};
+  if($('cfFind'))$('cfFind').onclick=()=>pickBook((r.title+' '+(r.author||'')).trim(),x=>put({cover:x.thumbnail,coverImg:''}),back);
+  $('cfShot').onclick=()=>$('cfFile').click();
+  $('cfFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{put({cover:'',coverImg:await shrinkCover(f)});}catch(err){toast('이 사진은 넣을 수 없어요');}};
+  if($('cfDel'))$('cfDel').onclick=()=>put({cover:'',coverImg:''});
+}
+$('coverAll').onclick=async()=>{const list=reviews.filter(r=>!isExp(r)&&!coverOf(r)&&r.title);const msg=$('coverAllMsg');
+  if(!list.length)return msg.textContent='표지가 없는 서평이 없어요 👍';if(!(settings&&settings.kakaoKey))return msg.textContent='먼저 「설정」에서 카카오 책 검색 키를 넣어 주세요';
+  let ok=0,miss=[];$('coverAll').disabled=true;
+  for(const [i,r] of list.entries()){msg.textContent=`찾는 중… ${i+1}/${list.length}`;
+    try{const items=await bookSearch((r.title+' '+(r.author||'')).trim());const x=items[0]||(await bookSearch(r.title))[0];
+      if(x){await store.update('reviews',r.id,{cover:x.thumbnail});ok++;}else miss.push(r.title);}catch(e){msg.textContent=e.message;break;}
+    await new Promise(z=>setTimeout(z,250));}
+  $('coverAll').disabled=false;msg.textContent=`${ok}개 붙였어요${miss.length?` · 못 찾은 책: ${miss.slice(0,5).join(', ')}${miss.length>5?' 외':''}`:''}`;};
 $('coverFind').onclick=async()=>{const q=$('f-title').value.trim();if(!q)return toast('먼저 책 제목을 써 주세요');const key=settings&&settings.kakaoKey;if(!key)return;
   shopOpen=false;openId=null;$('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><h2 style="font-size:24px">🔍 「${esc(q)}」 찾는 중…</h2>`;$('modal').classList.add('on');$('mClose').onclick=closeModal;
   try{const r=await fetch('https://dapi.kakao.com/v3/search/book?size=12&query='+encodeURIComponent(q+' '+$('f-author').value.trim()),{headers:{Authorization:'KakaoAK '+key}});

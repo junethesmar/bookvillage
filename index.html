@@ -747,7 +747,7 @@ input:focus,textarea:focus,select:focus{box-shadow:0 0 0 4px rgba(69,128,80,.14)
     <!-- 쓰기 -->
     <section class="view" id="v-write">
       <div class="write">
-        <nav class="tabs seg" id="writeKind"><button data-wk="book">📚 서평</button><button data-wk="exp">📝 게시판 글</button></nav>
+        <nav class="tabs seg" id="writeKind"><button data-wk="exp">📝 게시판 글</button><button data-wk="book">📚 서평</button></nav>
         <div id="formBook">
         <h2 id="writeTitle">서평 쓰기</h2>
         <p class="sub">네 칸만 채우면 멋진 서평이 완성돼요. 다 쓰면 나무에 열매가 하나 열려요 🍎</p>
@@ -1433,7 +1433,7 @@ $('submitBtn').onclick=async()=>{
 
 /* ═══════════════ 게시판 글쓰기 ═══════════════ */
 const E=['cat','title','body'];
-let writeKind='book', expPics=[];   // {id?,data} — id가 있으면 이미 저장된 사진
+let writeKind='exp', expPics=[];   /* 쓰기 탭을 열면 게시판 글부터 */   // {id?,data} — id가 있으면 이미 저장된 사진
 function setWriteKind(k){writeKind=k;$('formBook').hidden=k!=='book';$('formExp').hidden=k!=='exp';$('writeKind').hidden=!!editingId;document.querySelectorAll('[data-wk]').forEach(b=>b.classList.toggle('on',b.dataset.wk===k));}
 function drawExpCnt(){$('e-cnt').textContent=$('e-body').value.length+'자';}
 function drawPics(){$('e-pics').innerHTML=expPics.map((p,i)=>`<div class="pic">${p.data?`<img src="${p.data}" alt="사진 ${i+1}">`:''}<button type="button" data-i="${i}" aria-label="사진 빼기">✕</button></div>`).join('');$('e-photoBtn').disabled=expPics.length>=MAX_PICS;$('e-photoMsg').textContent=expPics.length?`${expPics.length} / ${MAX_PICS}장`:'';}

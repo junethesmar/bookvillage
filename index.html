@@ -2669,7 +2669,7 @@ const ROLE_GUIDE={
 const WSTEP=[['lobby','① 모이기'],['night','② 밤'],['day','③ 낮 이야기'],['vote','④ 투표'],['result','⑤ 결과']];
 const wSteps=ph=>{const i=WSTEP.findIndex(x=>x[0]===ph);return `<div class="wsteps">${WSTEP.map((x,k)=>`<span class="${k===i?'on':k<i?'done':''}">${x[1]}</span>`).join('')}</div>`;};
 function wGuide(g){
-  const mine=inGame(g),host=isHost(g),ph=g.phase,r=mine?g.init[me.id]:null,G=r?ROLE_GUIDE[r]:null;
+  const mine=inGame(g),host=isHost(g),ph=g.phase,r=mine&&g.init?g.init[me.id]:null,G=r?ROLE_GUIDE[r]:null;
   const box=(t,body)=>`<div class="wguide"><h4>${t}</h4>${body}</div>`;
   if(ph==='lobby')return box('👀 지금 할 일',`<ol><li>${mine?'참가 완료! 친구들이 모일 때까지 기다려요.':'<b>🙋 참가하기</b>를 눌러요.'}</li><li>3명 이상 모이면 ${host?'<b>🌙 밤이 되었어요</b>를 눌러 시작해요.':'방장이 게임을 시작해요.'}</li><li>시작하면 내 기기에 <b>몰래 역할 카드</b>가 나와요. 아래 「게임 방법」에서 역할을 미리 읽어 두세요!</li></ol>`);
   if(ph==='night'){
@@ -3056,7 +3056,9 @@ function yDest(n,r){if(r<0)return n<0||n===99?null:(n in yBack?yBack[n]:n-1);if(
 function yThrow(){const sticks=[0,1,2,3].map(()=>Math.random()<.5),flat=sticks.filter(Boolean).length;   // 납작한 면(배) 개수
   const r=flat===0?5:flat===4?4:flat===1&&sticks[0]?-1:flat;return {r,sticks};}
 let ySel={p:null,r:0};
-const Y=()=>{const g=gDoc('yut');return g&&g.phase&&g.phase!=='off'?g:null;};
+/* Firestore는 배열 속 배열을 저장하지 못해요 → pcs는 {a:[…],b:[…]}로 저장하고 읽을 때 [[…],[…]]로 바꿔요 */
+const yIn=p=>Array.isArray(p)?p:p&&typeof p==='object'?[p.a||[],p.b||[]]:p,yOut=p=>({a:p[0],b:p[1]});
+const Y=()=>{const g=gDoc('yut');return g&&g.phase&&g.phase!=='off'?{...g,pcs:yIn(g.pcs)}:null;};
 function renderYut(){
   const box=$('arcBody'),g=Y(),me_=me?me.id:null;
   if(!g){box.innerHTML=`<div class="arc"><h2>🎲 윷놀이</h2><p class="sub">청팀과 홍팀으로 나눠서 해요. 같은 팀 친구는 누구나 윷을 던지고 말을 옮길 수 있어요.</p>
@@ -3099,7 +3101,7 @@ function renderYut(){
   on('yFlip',()=>{const pl=g.pl||[];let r,a;for(let k=0;k<50;k++){r={};pl.forEach(id=>r[id]=Math.random()<.5?0:1);a=pl.filter(id=>!r[id]).length;if(a&&a<pl.length&&Math.abs(a*2-pl.length)<=1)break;}   /* 한쪽이 너무 많으면 다시 뒤집어요 */
     arcUpd('yut',{flip:{r,at:Date.now()},teams:[{n:'청팀',ids:pl.filter(id=>!r[id])},{n:'홍팀',ids:pl.filter(id=>r[id])}]});setTimeout(()=>{if(Y()&&arc==='yut'&&pv==='wolf'&&$('v-play').classList.contains('on'))renderYut();},1600);});
   box.querySelectorAll('[data-ynp]').forEach(b=>b.onclick=()=>arcUpd('yut',{np:+b.dataset.ynp}));
-  const start=()=>{ySel={p:null,r:0};arcUpd('yut',{phase:'play',turn:Math.random()<.5?0:1,pcs:[Array(g.np).fill(-1),Array(g.np).fill(-1)],pend:[],canThrow:true,log:'누가 먼저 던질까요?',lastS:null,win:null,at:Date.now()});};
+  const start=()=>{ySel={p:null,r:0};arcUpd('yut',{phase:'play',turn:Math.random()<.5?0:1,pcs:yOut([Array(g.np).fill(-1),Array(g.np).fill(-1)]),pend:[],canThrow:true,log:'누가 먼저 던질까요?',lastS:null,win:null,at:Date.now()});};
   on('yStart',start);on('yAgain',start);
   on('yEnd',()=>{if(confirm('윷판을 닫을까요?'))arcSet('yut',{type:'yut',phase:'off',at:Date.now()});});
   on('yThrow',async()=>{const {r,sticks}=yThrow();let pend=[...(g.pend||[]),r];const extra=r===4||r===5;
@@ -3114,7 +3116,7 @@ function renderYut(){
     let caught=0;const o=1-t;if(to!==99&&to!==-1)pcs[o]=pcs[o].map(p=>p===to?(caught++,-1):p);
     const pend=[...g.pend];pend.splice(pend.indexOf(ySel.r),1);
     let log=`${g.teams[t].n}: ${yName(ySel.r)}${ks.length>1?` (${ks.length}개 업고)`:''} ${to===99?'🏁 도착!':'이동'}${caught?' · 💥 잡았다! 한 번 더!':''}`;
-    let p={pcs,pend,canThrow:!!caught,log};
+    let p={pcs:yOut(pcs),pend,canThrow:!!caught,log};
     if(pcs[t].every(x=>x===99))p={...p,phase:'end',win:t,pend:[]};
     else if(!caught){const onBoard=pcs[t].some(x=>x>=0&&x!==99),usable=pend.filter(r=>r!==-1||onBoard);if(!usable.length)p={...p,pend:[],...yNext(g)};else p.pend=usable;}
     ySel={p:null,r:0};await arcUpd('yut',p);});

@@ -750,6 +750,15 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
 .wguide .goal{margin-top:8px;font-size:14px;border-left:4px solid var(--leaf);padding:2px 0 2px 10px}
 .wguide .goal.w{border-color:#7B68C8}
 .rolecard .goal{display:block;margin-top:8px;font-size:12px;color:var(--ink-2);border-top:1px dashed var(--line);padding-top:6px}
+/* ───────── 영어 표현 도감 (dict/index.html을 앱 안에서 전체 화면으로) ───────── */
+.dictov{position:fixed;inset:0;z-index:90;background:#ECEEE6;display:flex;flex-direction:column}
+.dictov[hidden]{display:none}
+.dictbar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line)}
+.dictbar b{font-family:var(--font-disp);font-weight:400;font-size:18px;margin-right:auto}
+.dictov iframe{flex:1;width:100%;border:0;background:#ECEEE6}
+.dictfigs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:12px 0}
+.dictfigs div{background:var(--paper);border-radius:12px;padding:8px 10px;font-size:14px}
+.dictfigs b{display:block;font-family:var(--font-disp);font-weight:400;font-size:16px}
 .guestpill{background:var(--sky-2)!important;color:#2f5da3!important;border-color:#BFD3F2!important}
 @media (max-width:1180px){.brand small,.mode-pill,.me .lv{display:none}.tabs button{padding:8px 12px}}
 @media (max-width:760px){.topbar{gap:8px;padding:8px 12px}.brand{font-size:19px}.me b{max-width:72px;overflow:hidden;text-overflow:ellipsis}}
@@ -1205,7 +1214,7 @@ main{padding-bottom:120px!important}
 
     <!-- 놀이터 -->
     <section class="view" id="v-play">
-      <div class="playhead"><button class="btn ghost sm" id="invQrBtn" hidden style="order:2;margin-left:auto">📱 옆반 친구 초대</button><nav class="tabs seg" id="playTabs" style="flex-wrap:wrap;border-radius:20px"><button data-pv="today">📖 오늘의 낱말</button><button data-pv="words">📒 영어 단어장</button><button data-pv="game">🎯 단어 게임</button><button data-pv="wolf">🎮 게임 센터</button></nav></div>
+      <div class="playhead"><button class="btn ghost sm" id="invQrBtn" hidden style="order:2;margin-left:auto">📱 옆반 친구 초대</button><nav class="tabs seg" id="playTabs" style="flex-wrap:wrap;border-radius:20px"><button data-pv="today">📖 오늘의 낱말</button><button data-pv="words">📒 영어 단어장</button><button data-pv="dict">📗 표현 도감</button><button data-pv="game">🎯 단어 게임</button><button data-pv="wolf">🎮 게임 센터</button></nav></div>
       <div id="pv-today" hidden>
         <div class="card" id="dwTeach" hidden style="padding:14px 16px;margin-bottom:14px">
           <h3 style="font-size:18px;margin-bottom:8px">📖 오늘의 낱말 올리기 (선생님)</h3>
@@ -1226,6 +1235,7 @@ main{padding-bottom:120px!important}
         </div>
         <div id="vBody"></div>
       </div>
+      <div id="pv-dict" hidden></div>
       <div id="pv-game" hidden></div>
       <div id="pv-wolf" hidden></div>
     </section>
@@ -1327,6 +1337,7 @@ main{padding-bottom:120px!important}
 
 <!-- 서평 상세 -->
 <div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+<div class="dictov" id="dictOv" hidden><div class="dictbar"><b>📗 영어 표현 도감</b><a class="btn ghost sm" href="dict/index.html" target="_blank" rel="noopener">새 창으로 열기 ↗</a><button class="btn sm" id="dictClose">✕ 마을로 돌아가기</button></div><iframe id="dictFr" title="영어 표현 도감" allow="autoplay; microphone"></iframe></div>
 <div class="toast" id="toast"></div>
 <canvas class="confetti" id="confetti" hidden></canvas>
 
@@ -1992,7 +2003,7 @@ const ITEM=Object.fromEntries(SHOP.map(x=>[x.id,x]));
 const STICKERS=['👋','💖','⭐','🌸','🍀','😆','👍','🎉'];
 /* 마을 건물: 선생님이 마을 화면 아래 「마을 건물」에서 하나씩 켜요. settings.bld가 없으면(처음) 모두 켜진 상태 */
 const BLD=[{k:'center',id:'b_center',n:'주민센터',e:'🏛️',d:'알림장 · 우리 반 한마디'},{k:'library',id:'fac_library',n:'마을 도서관',e:'📚',d:'책방 (서평 · 게시판)'},
-  {k:'study',id:'b_study',n:'공부방',e:'✏️',d:'오늘의 낱말 · 영어 단어장 · 단어 게임'},{k:'wolf',id:'b_arcade',n:'게임 센터',e:'🎮',d:'오목 토너먼트 · 한밤의 늑대 · 영어 땅따먹기 · 윷놀이'}];
+  {k:'study',id:'b_study',n:'공부방',e:'✏️',d:'오늘의 낱말 · 영어 단어장 · 표현 도감 · 단어 게임'},{k:'wolf',id:'b_arcade',n:'게임 센터',e:'🎮',d:'오목 토너먼트 · 한밤의 늑대 · 영어 땅따먹기 · 윷놀이'}];
 const bldOn=k=>!(settings&&settings.bld)||!!settings.bld[k];
 /* 동물 친구 캐릭터: rooms/{학생id}.ava = id, .look = 'ava' | 'face' | 'lv' */
 const ANIMALS=[['a_bunny','토끼','🐰'],['a_cat','고양이','🐱'],['a_puppy','강아지','🐶'],['a_bear','곰','🐻'],['a_penguin','펭귄','🐧'],['a_fox','여우','🦊'],['a_panda','판다','🐼'],
@@ -2459,10 +2470,10 @@ function renderPlay(){
   if(!$('v-play').classList.contains('on'))return;
   document.querySelectorAll('[data-pv]').forEach(b=>b.hidden=!pvOk(b.dataset.pv));
   $('invQrBtn').hidden=!(isTeacher||(me&&!isGuest&&settings&&settings.inviteKids));
-  if(!pvOk(pv)){const ok=['today','words','game','wolf'].find(pvOk);if(!ok){['pv-today','pv-words','pv-game','pv-wolf'].forEach(id=>$(id).hidden=true);$('pv-today').hidden=false;$('dwTeach').hidden=true;$('dwBody').innerHTML='<div class="card empty"><div class="big">🏗️</div>공부방과 게임 센터가 아직 공사 중이에요.<br>선생님이 문을 열어 주시면 놀 수 있어요!</div>';return;}pv=ok;}
+  if(!pvOk(pv)){const ok=['today','words','game','wolf'].find(pvOk);if(!ok){['pv-today','pv-words','pv-dict','pv-game','pv-wolf'].forEach(id=>$(id).hidden=true);$('pv-today').hidden=false;$('dwTeach').hidden=true;$('dwBody').innerHTML='<div class="card empty"><div class="big">🏗️</div>공부방과 게임 센터가 아직 공사 중이에요.<br>선생님이 문을 열어 주시면 놀 수 있어요!</div>';return;}pv=ok;}
   document.querySelectorAll('[data-pv]').forEach(b=>b.classList.toggle('on',b.dataset.pv===pv));
-  $('pv-today').hidden=pv!=='today';$('pv-words').hidden=pv!=='words';$('pv-game').hidden=pv!=='game';$('pv-wolf').hidden=pv!=='wolf';
-  if(pv==='today')renderToday();else if(pv==='words')renderWords();else if(pv==='game'){if(!gm)renderGameHome();}else renderArcade();
+  $('pv-today').hidden=pv!=='today';$('pv-words').hidden=pv!=='words';$('pv-dict').hidden=pv!=='dict';$('pv-game').hidden=pv!=='game';$('pv-wolf').hidden=pv!=='wolf';
+  if(pv==='today')renderToday();else if(pv==='words')renderWords();else if(pv==='dict')renderDict();else if(pv==='game'){if(!gm)renderGameHome();}else renderArcade();
 }
 document.querySelectorAll('[data-pv]').forEach(b=>b.onclick=()=>{if(gm&&b.dataset.pv!=='game'){gm.stop&&gm.stop();gm=null;}pv=b.dataset.pv;renderPlay();});
 
@@ -3171,6 +3182,23 @@ $('gGo').onclick=async()=>{
   enter(id,false,true);
 };
 $('gName').onkeydown=e=>{if(e.key==='Enter')$('gGo').click();};
+
+/* ═══════════════ 영어 표현 도감 ═══════════════
+   dict/index.html(따로 만든 단일 파일 앱)을 공부방에서 열어요. 음성은 dict/audio/<문장>.mp3, 없으면 기기 음성으로 읽어요 */
+const DICT_FIGS=[['01','자판기','Can I have some ~?'],['02','탈의실 거울','He has ~ hair. / He\'s wearing ~.'],['03','회전무대','What do you do in your free time?'],['04','구급상자','What\'s wrong? / You should ~.'],
+  ['05','미니 마을','Where is the ~? / Turn left.'],['06','스노볼','What will you do this winter?'],['07','여행 사진기','What did you do yesterday?']];
+function renderDict(){
+  $('pv-dict').innerHTML=`<div class="card" style="padding:18px 20px"><h2 style="font-size:24px">📗 영어 표현 도감</h2>
+    <p style="color:var(--ink-2);margin:4px 0 0">그림 속 물건을 눌러 작동시키면, 그 동작이 곧 영어 표현이 돼요. 버튼을 누르고, 듣고, 따라 말해 봐요!</p>
+    <div class="dictfigs">${DICT_FIGS.map(([n,t,e])=>`<div><b>Fig. ${n} ${t}</b>${esc(e)}</div>`).join('')}</div>
+    <div class="row"><button class="btn honey" id="dictOpen" style="font-size:19px;padding:12px 24px">📗 도감 펼치기</button><a class="btn ghost" href="dict/index.html" target="_blank" rel="noopener">새 창으로 열기 ↗</a></div>
+    ${isTeacher?'<p style="font-size:13px;color:var(--ink-3);margin:10px 0 0">전자칠판에서는 「새 창으로 열기」 후 F11(전체 화면)을 누르면 가장 크게 보여요.</p>':''}</div>`;
+  $('dictOpen').onclick=openDict;
+}
+function openDict(){const f=$('dictFr');if(!f.src||f.src.endsWith('about:blank'))f.src='dict/index.html';$('dictOv').hidden=false;document.body.style.overflow='hidden';try{f.focus();}catch(e){}}
+function closeDict(){$('dictOv').hidden=true;document.body.style.overflow='';$('dictFr').src='about:blank';}
+$('dictClose').onclick=closeDict;
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('dictOv').hidden)closeDict();});
 
 /* ═══════════════ 데이터 구독 & 시작 ═══════════════ */
 function seedDemoIfEmpty(){

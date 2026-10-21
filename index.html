@@ -759,6 +759,15 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
 .dictfigs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:12px 0}
 .dictfigs div{background:var(--paper);border-radius:12px;padding:8px 10px;font-size:14px}
 .dictfigs b{display:block;font-family:var(--font-disp);font-weight:400;font-size:16px}
+/* ───────── 학습 바로가기 링크 ───────── */
+.gonote{text-align:center;background:var(--honey-2);border:1px solid #EAD39A;border-radius:12px;padding:8px 12px;margin:8px 0 0;font-size:15px}
+.golinks{display:flex;flex-direction:column;gap:6px;max-height:420px;overflow:auto}
+.golinks .gl{display:flex;align-items:center;gap:6px;background:var(--paper);border-radius:12px;padding:6px 10px;font-size:14px}
+.golinks .gl b{font-family:var(--font-disp);font-weight:400;font-size:16px;flex:1;min-width:0}
+.golinks .gl small{display:block;color:var(--ink-3);font-size:11px;font-family:var(--font-body);word-break:break-all}
+.golinks .gl button{font-size:12px;padding:4px 9px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-2);white-space:nowrap}
+.golinks h4{font-family:var(--font-disp);font-weight:400;font-size:15px;color:var(--ink-2);margin:8px 0 2px}
+a.inlink{color:var(--sky);text-decoration:underline;word-break:break-all}
 .guestpill{background:var(--sky-2)!important;color:#2f5da3!important;border-color:#BFD3F2!important}
 @media (max-width:1180px){.brand small,.mode-pill,.me .lv{display:none}.tabs button{padding:8px 12px}}
 @media (max-width:760px){.topbar{gap:8px;padding:8px 12px}.brand{font-size:19px}.me b{max-width:72px;overflow:hidden;text-overflow:ellipsis}}
@@ -996,6 +1005,7 @@ main{padding-bottom:120px!important}
       <div class="row"><input type="password" id="setupPin" inputmode="numeric" maxlength="4" placeholder="선생님 비밀번호 4자리" style="flex:1"><button class="btn" id="setupBtn">시작하기</button></div>
     </div>
     <div id="gateStudents">
+      <p class="gonote" id="goNote" hidden></p>
       <div id="gateStep1">
         <p style="text-align:center;color:var(--ink-2);margin:6px 0 0">내 이름을 골라 주세요</p>
         <div class="names" id="nameGrid"></div>
@@ -1284,6 +1294,11 @@ main{padding-bottom:120px!important}
             <button class="btn" id="saveSettings" style="margin-top:12px">저장</button>
           </div>
           <div class="card" style="margin-top:14px">
+            <h3>🔗 학습 바로가기 링크</h3>
+            <p style="font-size:14px;color:var(--ink-2);margin:0 0 8px">학생이 주소를 누르면 로그인한 뒤 <b>그 화면으로 바로</b> 들어가요. 복사해서 알림장·클래스룸·카톡에 붙이거나, QR을 칠판에 띄워 주세요.</p>
+            <div class="golinks" id="goLinks"></div>
+          </div>
+          <div class="card" style="margin-top:14px">
             <h3>📒 알림장</h3>
             <div class="row"><span style="font-size:14px;color:var(--ink-2)">날짜</span><input type="date" id="ntDate" style="width:auto;flex:1"></div>
             <div class="nchips" id="ntChips"><button>준비물: </button><button>숙제: </button><button>가정통신문: </button><button>전달: </button></div>
@@ -1520,6 +1535,7 @@ function enter(sid,teacher,guest){
   if(!teacher&&!guest)twView='map';
   buildTabs();showTab(teacher?'teach':guest?'play':(settings&&settings.playOff)?'feed':'town');renderAll();probeImages();
   if(!teacher&&!guest)setTimeout(hwNotice,900);
+  applyGo();
 }
 function logout(){isGuest=false;viewAs=false;gm&&gm.stop&&gm.stop();gm=null;$('guestGate').hidden=true;visitId=null;twView='room';selIdx=-1;prevGuest=null;me=null;isTeacher=false;try{sessionStorage.removeItem('bv_session');}catch(e){}$('app').classList.remove('on');$('gate').style.display='grid';$('gateStep1').hidden=false;$('gateStep2').hidden=true;$('teacherGate').hidden=true;$('tPin').value='';renderGate();}
 $('logout').onclick=()=>viewAs?backToTeacher():logout();
@@ -1928,7 +1944,7 @@ function celebrate(){
 
 /* ═══════════════ 교사 ═══════════════ */
 function renderTeach(){
-  $('localReset').hidden=store.mode!=='local';renderLogTeach();renderHwTeach();renderNoticeTeach();renderInvite();
+  $('localReset').hidden=store.mode!=='local';if(!$('goLinks').firstChild)renderGoLinks();renderLogTeach();renderHwTeach();renderNoticeTeach();renderInvite();
   const off=!!(settings&&settings.playOff);$('playToggle').textContent=off?'🌞 마을 열기':'🌙 마을 닫기';$('playToggle').className='btn '+(off?'':'ghost');renderImgCheck();
   $('setClass').value=(settings&&settings.className)||'';$('setGoal').value=(settings&&settings.treeGoal)||50;
   const list=[...students].sort((a,b)=>(a.num||99)-(b.num||99)||a.name.localeCompare(b.name,'ko'));
@@ -2383,7 +2399,7 @@ function openHw(){
   const list=[...homework].filter(h=>ddayOf(h.due)>=-7).sort((a,b)=>a.due.localeCompare(b.due));
   $('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><h2 style="font-size:26px;margin-bottom:10px">📒 알림장</h2>${noteHtml()}
     <h2 style="font-size:22px;margin-top:20px">📌 우리 반 숙제</h2>
-    <div class="hw">${list.map(h=>{const d=(h.done||[]).includes(me.id);return `<div class="it ${d?'done':''}">${ddayHtml(h.due)}<div class="tx"><b>${esc(h.title)}</b>${h.body?`<p>${esc(h.body)}</p>`:''}<div class="who">마감 ${esc(h.due.slice(5).replace('-','월 '))}일</div></div><button class="btn sm ${d?'ghost':''}" data-hw="${h.id}">${d?'다시 안 함':'했어요 ✅'}</button></div>`;}).join('')||'<div class="empty"><div class="big">🎈</div>지금은 숙제가 없어요!</div>'}</div>`;
+    <div class="hw">${list.map(h=>{const d=(h.done||[]).includes(me.id);return `<div class="it ${d?'done':''}">${ddayHtml(h.due)}<div class="tx"><b>${linkify(h.title)}</b>${h.body?`<p>${linkify(h.body)}</p>`:''}<div class="who">마감 ${esc(h.due.slice(5).replace('-','월 '))}일</div></div><button class="btn sm ${d?'ghost':''}" data-hw="${h.id}">${d?'다시 안 함':'했어요 ✅'}</button></div>`;}).join('')||'<div class="empty"><div class="big">🎈</div>지금은 숙제가 없어요!</div>'}</div>`;
   $('modal').classList.add('on');$('mClose').onclick=closeModal;bindNote();
   $('sheet').querySelectorAll('[data-hw]').forEach(b=>b.onclick=async ev=>{const h=homework.find(x=>x.id===b.dataset.hw),d=(h.done||[]).includes(me.id);const [x,y]=evPos(ev);
     if(!d)floatEmoji('✅',x,y);await store.update('homework',h.id,{done:d?AR(me.id):AU(me.id)});openHw();});
@@ -2413,8 +2429,8 @@ const NTAGS=[['준비물',''],['숙제','t1'],['가정통신문','t2'],['전달'
 const noticeShown=()=>[...notices].filter(n=>n.date<=isoDay()).sort((a,b)=>b.date.localeCompare(a.date));   // 오늘까지의 알림장, 최신 먼저
 const noticeUnread=()=>{if(!me||isTeacher||isGuest)return false;const n=noticeShown()[0];return !!n&&ddayOf(n.date)>=-1&&!(n.read||[]).includes(me.id);};
 const dayLabel=d=>{const t=new Date(d+'T00:00');return `${t.getMonth()+1}월 ${t.getDate()}일 (${'일월화수목금토'[t.getDay()]})`;};
-function noteLine(t){const m=t.match(/^(준비물|숙제|가정통신문|전달)\s*[:：]\s*(.*)$/);if(!m)return `<li><span>${esc(t)}</span></li>`;
-  const k=NTAGS.find(x=>x[0]===m[1]);return `<li><span class="tag ${k[1]}">${m[1]}</span><span>${esc(m[2])}</span></li>`;}
+function noteLine(t){const m=t.match(/^(준비물|숙제|가정통신문|전달)\s*[:：]\s*(.*)$/);if(!m)return `<li><span>${linkify(t)}</span></li>`;
+  const k=NTAGS.find(x=>x[0]===m[1]);return `<li><span class="tag ${k[1]}">${m[1]}</span><span>${linkify(m[2])}</span></li>`;}
 function noteHtml(){
   if(noticeErr)return `<p class="setup-note">알림장을 불러오지 못했어요 (${esc(noticeErr)}). Firebase 콘솔 → Firestore → 규칙에서 <b>notices</b> 컬렉션 읽기·쓰기를 허용해 주세요.</p>`;
   const list=noticeShown();if(!list.length)return '<div class="note"><div class="none">아직 올라온 알림장이 없어요.</div></div>';
@@ -3195,10 +3211,53 @@ function renderDict(){
     ${isTeacher?'<p style="font-size:13px;color:var(--ink-3);margin:10px 0 0">전자칠판에서는 「새 창으로 열기」 후 F11(전체 화면)을 누르면 가장 크게 보여요.</p>':''}</div>`;
   $('dictOpen').onclick=openDict;
 }
-function openDict(){const f=$('dictFr');if(!f.src||f.src.endsWith('about:blank'))f.src='dict/index.html';$('dictOv').hidden=false;document.body.style.overflow='hidden';try{f.focus();}catch(e){}}
+function openDict(fig){const f=$('dictFr'),want='dict/index.html'+(fig?'#fig'+fig:'');if(fig||!f.src||f.src.endsWith('about:blank'))f.src=want;$('dictOv').hidden=false;document.body.style.overflow='hidden';try{f.focus();}catch(e){}}
 function closeDict(){$('dictOv').hidden=true;document.body.style.overflow='';$('dictFr').src='about:blank';}
 $('dictClose').onclick=closeDict;
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('dictOv').hidden)closeDict();});
+
+/* ═══════════════ 학습 바로가기 링크 ═══════════════
+   주소?go=단어게임 같은 링크를 누르면 로그인 뒤 그 화면으로 바로 가요. 도감 그림은 dict/#fig05처럼 로그인 없이도 열려요 */
+const GO=[ // [키, 이름, 묶음]
+  ['town','🏡 우리 마을','마을'],['room','🏠 내 방','마을'],['note','📒 알림장·숙제','마을'],['feed','📚 책방 (서평·게시판)','글쓰기'],['write','✏️ 글쓰기','글쓰기'],
+  ['today','📖 오늘의 낱말','공부방'],['words','📒 영어 단어장','공부방'],['dict','📗 영어 표현 도감','공부방'],['game','🎯 단어 게임','공부방'],
+  ['arcade','🎮 게임 센터','게임 센터'],['omok','⚫ 오목','게임 센터'],['land','🗺️ 영어 땅따먹기','게임 센터'],['yut','🎲 윷놀이','게임 센터'],['me','👤 내 서재','글쓰기']];
+const goURL=(k,extra='')=>location.origin+location.pathname+'?go='+k+extra;
+let goWant=null;
+(function goFromURL(){try{const q=new URLSearchParams(location.search),k=q.get('go'),f=(q.get('fig')||'').replace(/\D/g,'').padStart(2,'0');
+  const g=GO.find(x=>x[0]===k);if(!g)return;goWant={k,fig:k==='dict'&&f!=='00'?f:null,n:g[1]};
+  $('goNote').hidden=false;$('goNote').textContent=`🔗 로그인하면 「${g[1].replace(/^\S+\s/,'')}」${goWant.fig?' Fig. '+goWant.fig:''}(으)로 바로 가요`;}catch(e){}})();
+function applyGo(){
+  const w=goWant;if(!w)return;goWant=null;$('goNote').hidden=true;
+  try{history.replaceState(null,'',location.pathname);}catch(e){}
+  if(isGuest&&!['today','words','dict','game','arcade','omok','land','yut'].includes(w.k))return;
+  setTimeout(()=>{const k=w.k;
+    if(k==='town'||k==='room'){twView=k==='room'&&!isTeacher?'room':'map';showTab('town');}
+    else if(k==='note'){if(me&&!isTeacher)openHw();}
+    else if(k==='feed'||k==='write'||k==='me'){if(k!=='me'||!isTeacher)showTab(k);}
+    else if(['today','words','dict','game'].includes(k)){pv=k;showTab('play');if(k==='dict')openDict(w.fig);}
+    else{pv='wolf';arc=k==='arcade'?arc:k;showTab('play');}
+  },150);
+}
+function renderGoLinks(){
+  const row=(n,url)=>`<div class="gl"><b>${n}<small>${esc(url)}</small></b><button data-copy="${esc(url)}">복사</button><button data-qr="${esc(url)}" data-n="${esc(n)}">QR</button><button data-note="${esc(url)}" data-n="${esc(n)}">알림장에</button></div>`;
+  let html='',grp='';
+  GO.forEach(([k,n,g])=>{if(g!==grp){html+=`<h4>${g}</h4>`;grp=g;}html+=row(n,goURL(k));});
+  html+='<h4>📗 표현 도감 그림별 (로그인 없이 바로)</h4>'+DICT_FIGS.map(([no,t])=>row(`Fig. ${no} ${t}`,location.origin+location.pathname.replace(/[^/]*$/,'')+'dict/#fig'+no)).join('');
+  $('goLinks').innerHTML=html;
+  $('goLinks').querySelectorAll('[data-copy]').forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);toast('주소를 복사했어요');}catch(e){prompt('이 주소를 복사해 주세요',b.dataset.copy);}});
+  $('goLinks').querySelectorAll('[data-qr]').forEach(b=>b.onclick=()=>openGoQR(b.dataset.n,b.dataset.qr));
+  $('goLinks').querySelectorAll('[data-note]').forEach(b=>b.onclick=()=>{const t=$('ntText'),v=t.value;t.value=(v&&!v.endsWith('\n')?v+'\n':v)+`전달: ${b.dataset.n.replace(/^\S+\s/,'')} 바로가기 ${b.dataset.note}`;t.scrollIntoView({behavior:'smooth',block:'center'});toast('알림장 칸에 넣었어요. 「알림장 올리기」를 눌러 주세요');});
+}
+async function openGoQR(n,url){
+  shopOpen=false;openId=null;
+  $('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><h2 style="font-size:26px">${esc(n)}</h2>
+    <div class="qrbox"><p style="margin:4px 0 0;color:var(--ink-2)">카메라로 찍거나 주소를 눌러 들어와요</p><div id="qr"></div><p style="font-size:14px;word-break:break-all;margin:0">${esc(url)}</p></div>`;
+  $('modal').classList.add('on');$('mClose').onclick=closeModal;
+  try{await loadQR();new QRCode($('qr'),{text:url,width:520,height:520,correctLevel:QRCode.CorrectLevel.M});}catch(e){$('qr').innerHTML='<p style="font-size:14px">QR을 만들지 못했어요. 위 주소를 알려 주세요.</p>';}
+}
+/* 알림장·숙제에 쓴 주소는 누를 수 있게: 우리 앱 주소는 같은 창(로그인 유지), 다른 주소는 새 창 */
+function linkify(t){return esc(t).replace(/https?:\/\/[^\s<]+[^\s<.,)\]!?。]/g,u=>{const raw=u.replace(/&amp;/g,'&'),mine=raw.startsWith(location.origin+location.pathname.replace(/[^/]*$/,''));return `<a class="inlink" href="${u}"${mine?'':' target="_blank" rel="noopener"'}>${u}</a>`;});}
 
 /* ═══════════════ 데이터 구독 & 시작 ═══════════════ */
 function seedDemoIfEmpty(){

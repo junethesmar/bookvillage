@@ -768,6 +768,27 @@ label.f span{font-family:var(--font-body);font-size:13px;color:var(--ink-2);marg
 .golinks .gl button{font-size:12px;padding:4px 9px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-2);white-space:nowrap}
 .golinks h4{font-family:var(--font-disp);font-weight:400;font-size:15px;color:var(--ink-2);margin:8px 0 2px}
 a.inlink{color:var(--sky);text-decoration:underline;word-break:break-all}
+/* ───────── 수업 사이트 ───────── */
+.lkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.lk{position:relative;display:flex;gap:12px;align-items:center;padding:16px;border-radius:20px;background:var(--card);border:2px solid var(--line);box-shadow:var(--shadow);text-decoration:none;color:var(--ink);transition:transform .12s}
+.lk:hover{transform:translateY(-3px)}
+.lk .e{font-size:40px;line-height:1;flex:none}
+.lk b{display:block;font-family:var(--font-disp);font-weight:400;font-size:19px;line-height:1.25}
+.lk small{display:block;color:var(--ink-2);font-size:13px;margin-top:2px}
+.lk .host{color:var(--ink-3);font-size:11px;word-break:break-all}
+.lk.lkpin{border-color:var(--honey);background:linear-gradient(135deg,#FFF8E6,#FFFFFF)}
+.lk .pinb{position:absolute;top:-10px;left:14px;background:var(--honey);color:#4a3606;font-family:var(--font-disp);font-size:12px;border-radius:999px;padding:1px 10px}
+.lkt{display:flex;gap:4px;justify-content:flex-end;margin-top:4px;flex-wrap:wrap}
+.lkt button{font-size:12px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-2)}
+/* ───────── 이름표 메뉴 ───────── */
+.me .caret{font-size:11px;color:var(--ink-3);margin-left:-2px}
+.memenu{display:flex;flex-direction:column;gap:8px;max-width:360px;margin:0 auto;padding-top:6px}
+.memenu .mh{display:flex;flex-direction:column;align-items:center;gap:2px;margin-bottom:6px}
+.memenu .mh .av{width:64px;height:64px;border-radius:50%;background:var(--leaf-2);display:grid;place-items:center;font-size:36px;overflow:hidden}
+.memenu .mh .av img{width:100%;height:100%;object-fit:contain}
+.memenu .mh b{font-family:var(--font-disp);font-weight:400;font-size:22px}
+.memenu .mh small{color:var(--leaf);font-size:13px}
+.memenu .btn{width:100%;font-size:17px}
 .guestpill{background:var(--sky-2)!important;color:#2f5da3!important;border-color:#BFD3F2!important}
 @media (max-width:1180px){.brand small,.mode-pill,.me .lv{display:none}.tabs button{padding:8px 12px}}
 @media (max-width:760px){.topbar{gap:8px;padding:8px 12px}.brand{font-size:19px}.me b{max-width:72px;overflow:hidden;text-overflow:ellipsis}}
@@ -1036,7 +1057,7 @@ main{padding-bottom:120px!important}
     <span class="mode-pill" id="modePill">미리보기(내 기기 저장)</span>
     <button class="btn honey sm" id="viewBtn" hidden>👀 학생 화면으로</button>
     <button class="bell" id="bellBtn" hidden aria-label="알림장과 숙제">🔔<b id="bellN" hidden></b></button>
-    <button class="me" id="meBtn"><span class="av" id="meAv">🥚</span><b id="meName"></b><span class="lv" id="meLv"></span></button>
+    <button class="me" id="meBtn"><span class="av" id="meAv">🥚</span><b id="meName"></b><span class="lv" id="meLv"></span><span class="caret" aria-hidden="true">▾</span></button>
   </header>
   <main>
     <!-- 책방 -->
@@ -1224,7 +1245,7 @@ main{padding-bottom:120px!important}
 
     <!-- 놀이터 -->
     <section class="view" id="v-play">
-      <div class="playhead"><button class="btn ghost sm" id="invQrBtn" hidden style="order:2;margin-left:auto">📱 옆반 친구 초대</button><nav class="tabs seg" id="playTabs" style="flex-wrap:wrap;border-radius:20px"><button data-pv="today">📖 오늘의 낱말</button><button data-pv="words">📒 영어 단어장</button><button data-pv="dict">📗 표현 도감</button><button data-pv="game">🎯 단어 게임</button><button data-pv="wolf">🎮 게임 센터</button></nav></div>
+      <div class="playhead"><button class="btn ghost sm" id="invQrBtn" hidden style="order:2;margin-left:auto">📱 옆반 친구 초대</button><nav class="tabs seg" id="playTabs" style="flex-wrap:wrap;border-radius:20px"><button data-pv="links">🔗 수업 사이트</button><button data-pv="today">📖 오늘의 낱말</button><button data-pv="words">📒 영어 단어장</button><button data-pv="dict">📗 표현 도감</button><button data-pv="game">🎯 단어 게임</button><button data-pv="wolf">🎮 게임 센터</button></nav></div>
       <div id="pv-today" hidden>
         <div class="card" id="dwTeach" hidden style="padding:14px 16px;margin-bottom:14px">
           <h3 style="font-size:18px;margin-bottom:8px">📖 오늘의 낱말 올리기 (선생님)</h3>
@@ -1234,6 +1255,16 @@ main{padding-bottom:120px!important}
           <div class="hw" id="dwList"></div>
         </div>
         <div id="dwBody"></div>
+      </div>
+      <div id="pv-links" hidden>
+        <div class="card" id="lkTeach" hidden style="padding:14px 16px;margin-bottom:14px">
+          <h3 style="font-size:18px;margin-bottom:8px">🔗 수업 사이트 등록 (선생님)</h3>
+          <div class="row"><input type="text" id="lkEmoji" maxlength="2" placeholder="🧩" style="width:60px;text-align:center;font-size:20px"><input type="text" id="lkTitle" maxlength="30" placeholder="이름 (예: 패들렛 - 우리 반 생각판)" style="flex:1;min-width:180px"></div>
+          <input type="url" id="lkUrl" placeholder="주소 (예: https://padlet.com/...)" style="margin-top:6px;width:100%">
+          <input type="text" id="lkNote" maxlength="60" placeholder="한 줄 설명 (선택, 예: 3교시 과학 모둠 활동)" style="margin-top:6px;width:100%">
+          <div class="row" style="margin-top:8px"><label class="tog"><input type="checkbox" id="lkPin"> 📌 오늘 쓸 사이트로 맨 위에</label><span class="spacer" style="flex:1"></span><button class="btn ghost sm" id="lkCancel" hidden>취소</button><button class="btn sm" id="lkSave">등록</button></div>
+        </div>
+        <div id="lkBody"></div>
       </div>
       <div id="pv-words">
         <div class="card" id="vTeach" hidden style="padding:14px 16px;margin-bottom:14px">
@@ -1564,7 +1595,20 @@ function buildTabs(){
   for(const el of [$('tabsTop'),$('tabsBottom')]){el.innerHTML='';tabs.forEach(([k,t])=>{const b=document.createElement('button');b.dataset.tab=k;b.innerHTML=ICON[k]+'<span>'+t+'</span>';b.onclick=()=>showTab(k);el.appendChild(b);});}
 }
 function showTab(k){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+k));document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===k));window.scrollTo({top:0});if(k==='write'&&!editingId){loadDraft();loadExpDraft();setWriteKind(writeKind);}if(k==='tree')renderTree(true);if(k==='town'){probeImages();renderTown();}if(k==='play')renderPlay();}
-$('meBtn').onclick=()=>{if(!isTeacher&&!isGuest)showTab('me');};
+/* 오른쪽 위 이름표를 누르면 메뉴: 내 서재 · 비밀번호 · 나가기 (선생님·손님도 여기서 나가요) */
+$('meBtn').onclick=()=>{
+  shopOpen=false;openId=null;
+  const who=isTeacher?'선생님':esc(me?me.name:'');
+  $('sheet').innerHTML=`<button class="close" id="mClose" aria-label="닫기">✕</button><div class="memenu"><div class="mh"><span class="av">${$('meAv').innerHTML}</span><b>${who}</b><small>${esc($('meLv').textContent)}</small></div>
+    ${!isTeacher&&!isGuest?'<button class="btn ghost" id="mmMe">📚 내 서재</button><button class="btn ghost" id="mmPin">🔒 비밀번호 바꾸기</button>':''}
+    ${viewAs?'<button class="btn honey" id="mmBack">↩️ 교사로 돌아가기</button>':''}
+    <button class="btn berry" id="mmOut">🚪 나가기 (로그아웃)</button>
+    <p style="font-size:13px;color:var(--ink-3);text-align:center;margin:4px 0 0">${isTeacher?'교실 컴퓨터를 다른 사람이 쓰기 전에 꼭 나가기를 눌러 주세요.':'다른 친구가 이 기기를 쓸 때는 나가기를 눌러 주세요.'}</p></div>`;
+  $('modal').classList.add('on');$('mClose').onclick=closeModal;
+  const on=(id,f)=>{const el=$(id);if(el)el.onclick=()=>{closeModal();f();};};
+  on('mmMe',()=>showTab('me'));on('mmPin',()=>{showTab('me');setTimeout(()=>$('pinBtn').click(),200);});
+  on('mmBack',()=>backToTeacher());on('mmOut',()=>{if(viewAs)backToTeacher();else logout();});
+};
 
 /* ═══════════════ 렌더 ═══════════════ */
 function renderAll(){
@@ -2468,7 +2512,7 @@ store.watch('notices',d=>{noticeErr=null;notices=d.filter(n=>n&&/^\d{4}-\d{2}-\d
 /* ═══════════════ 놀이터: 영어 단어장 + 단어 게임 ═══════════════
    vocab/{id} = {title, words:[{en,ko}], createdAt}
    rooms/{학생id}.mywords=[{en,ko}] 나만의 단어장, .known=[en] 외운 단어, .gcLog=[{d,g,s,n,at}] 게임 기록(n=받은 열매, 하루 15개까지) */
-let vocab=[],pv='today',vSet=null,vIdx=0,vFlip=false,vEdit=null,gm=null,gSet=null;
+let vocab=[],pv='links',vSet=null,vIdx=0,vFlip=false,vEdit=null,gm=null,gSet=null;
 const GAME_CAP=15;
 const MY='_my';
 const myWords=sid=>(roomOf(sid).mywords||[]).filter(w=>w&&w.en&&w.ko);
@@ -2481,15 +2525,15 @@ function speak(t){try{const s=speechSynthesis;s.cancel();const u=new SpeechSynth
 function parseWords(txt){return txt.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const m=l.match(/^(.+?)\s*(?:,|\t|\s-\s|:|=)\s*(.+)$/);return m?{en:m[1].trim().slice(0,40),ko:m[2].trim().slice(0,40)}:null;}).filter(Boolean).slice(0,200);}
 const setIds=()=>[...(dwCur()?[TODAY]:[]),...[...vocab].sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)).map(v=>v.id),...(canSave()?[MY]:[])];
 
-const pvOk=k=>isTeacher||(k==='wolf'?bldOn('wolf'):bldOn('study'));
+const pvOk=k=>isTeacher||k==='links'||(k==='wolf'?bldOn('wolf'):bldOn('study'));
 function renderPlay(){
   if(!$('v-play').classList.contains('on'))return;
   document.querySelectorAll('[data-pv]').forEach(b=>b.hidden=!pvOk(b.dataset.pv));
   $('invQrBtn').hidden=!(isTeacher||(me&&!isGuest&&settings&&settings.inviteKids));
-  if(!pvOk(pv)){const ok=['today','words','game','wolf'].find(pvOk);if(!ok){['pv-today','pv-words','pv-dict','pv-game','pv-wolf'].forEach(id=>$(id).hidden=true);$('pv-today').hidden=false;$('dwTeach').hidden=true;$('dwBody').innerHTML='<div class="card empty"><div class="big">🏗️</div>공부방과 게임 센터가 아직 공사 중이에요.<br>선생님이 문을 열어 주시면 놀 수 있어요!</div>';return;}pv=ok;}
+  if(!pvOk(pv)){const ok=['links','today','words','game','wolf'].find(pvOk);if(!ok){['pv-links','pv-today','pv-words','pv-dict','pv-game','pv-wolf'].forEach(id=>$(id).hidden=true);$('pv-today').hidden=false;$('dwTeach').hidden=true;$('dwBody').innerHTML='<div class="card empty"><div class="big">🏗️</div>공부방과 게임 센터가 아직 공사 중이에요.<br>선생님이 문을 열어 주시면 놀 수 있어요!</div>';return;}pv=ok;}
   document.querySelectorAll('[data-pv]').forEach(b=>b.classList.toggle('on',b.dataset.pv===pv));
-  $('pv-today').hidden=pv!=='today';$('pv-words').hidden=pv!=='words';$('pv-dict').hidden=pv!=='dict';$('pv-game').hidden=pv!=='game';$('pv-wolf').hidden=pv!=='wolf';
-  if(pv==='today')renderToday();else if(pv==='words')renderWords();else if(pv==='dict')renderDict();else if(pv==='game'){if(!gm)renderGameHome();}else renderArcade();
+  $('pv-links').hidden=pv!=='links';$('pv-today').hidden=pv!=='today';$('pv-words').hidden=pv!=='words';$('pv-dict').hidden=pv!=='dict';$('pv-game').hidden=pv!=='game';$('pv-wolf').hidden=pv!=='wolf';
+  if(pv==='links')renderLinks();else if(pv==='today')renderToday();else if(pv==='words')renderWords();else if(pv==='dict')renderDict();else if(pv==='game'){if(!gm)renderGameHome();}else renderArcade();
 }
 document.querySelectorAll('[data-pv]').forEach(b=>b.onclick=()=>{if(gm&&b.dataset.pv!=='game'){gm.stop&&gm.stop();gm=null;}pv=b.dataset.pv;renderPlay();});
 
@@ -3220,7 +3264,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('dictOv').hidden
    주소?go=단어게임 같은 링크를 누르면 로그인 뒤 그 화면으로 바로 가요. 도감 그림은 dict/#fig05처럼 로그인 없이도 열려요 */
 const GO=[ // [키, 이름, 묶음]
   ['town','🏡 우리 마을','마을'],['room','🏠 내 방','마을'],['note','📒 알림장·숙제','마을'],['feed','📚 책방 (서평·게시판)','글쓰기'],['write','✏️ 글쓰기','글쓰기'],
-  ['today','📖 오늘의 낱말','공부방'],['words','📒 영어 단어장','공부방'],['dict','📗 영어 표현 도감','공부방'],['game','🎯 단어 게임','공부방'],
+  ['links','🔗 수업 사이트','공부방'],['today','📖 오늘의 낱말','공부방'],['words','📒 영어 단어장','공부방'],['dict','📗 영어 표현 도감','공부방'],['game','🎯 단어 게임','공부방'],
   ['arcade','🎮 게임 센터','게임 센터'],['omok','⚫ 오목','게임 센터'],['land','🗺️ 영어 땅따먹기','게임 센터'],['yut','🎲 윷놀이','게임 센터'],['me','👤 내 서재','글쓰기']];
 const goURL=(k,extra='')=>location.origin+location.pathname+'?go='+k+extra;
 let goWant=null;
@@ -3230,12 +3274,12 @@ let goWant=null;
 function applyGo(){
   const w=goWant;if(!w)return;goWant=null;$('goNote').hidden=true;
   try{history.replaceState(null,'',location.pathname);}catch(e){}
-  if(isGuest&&!['today','words','dict','game','arcade','omok','land','yut'].includes(w.k))return;
+  if(isGuest&&!['links','today','words','dict','game','arcade','omok','land','yut'].includes(w.k))return;
   setTimeout(()=>{const k=w.k;
     if(k==='town'||k==='room'){twView=k==='room'&&!isTeacher?'room':'map';showTab('town');}
     else if(k==='note'){if(me&&!isTeacher)openHw();}
     else if(k==='feed'||k==='write'||k==='me'){if(k!=='me'||!isTeacher)showTab(k);}
-    else if(['today','words','dict','game'].includes(k)){pv=k;showTab('play');if(k==='dict')openDict(w.fig);}
+    else if(['links','today','words','dict','game'].includes(k)){pv=k;showTab('play');if(k==='dict')openDict(w.fig);}
     else{pv='wolf';arc=k==='arcade'?arc:k;showTab('play');}
   },150);
 }
@@ -3258,6 +3302,34 @@ async function openGoQR(n,url){
 }
 /* 알림장·숙제에 쓴 주소는 누를 수 있게: 우리 앱 주소는 같은 창(로그인 유지), 다른 주소는 새 창 */
 function linkify(t){return esc(t).replace(/https?:\/\/[^\s<]+[^\s<.,)\]!?。]/g,u=>{const raw=u.replace(/&amp;/g,'&'),mine=raw.startsWith(location.origin+location.pathname.replace(/[^/]*$/,''));return `<a class="inlink" href="${u}"${mine?'':' target="_blank" rel="noopener"'}>${u}</a>`;});}
+
+/* ═══════════════ 수업 사이트 모음 ═══════════════
+   links/{id} = {title, url, emoji, note, pin, createdAt}. 선생님이 등록하면 학생은 눌러서 새 창으로 바로 들어가요 */
+let links=[],lkEdit=null,lkErr=null;
+const lkOk=u=>/^https?:\/\/[^\s]+$/i.test(u);
+const lkHost=u=>{try{return new URL(u).hostname.replace(/^www\./,'');}catch(e){return '';}};
+function renderLinks(){
+  $('lkTeach').hidden=!isTeacher;
+  const list=[...links].sort((a,b)=>(b.pin?1:0)-(a.pin?1:0)||(b.createdAt||0)-(a.createdAt||0));
+  const card=l=>`<div><a class="lk ${l.pin?'lkpin':''}" href="${esc(l.url)}" target="_blank" rel="noopener" data-lk="${l.id}">${l.pin?'<span class="pinb">📌 오늘 쓸 사이트</span>':''}<span class="e">${esc(l.emoji||'🔗')}</span><span><b>${esc(l.title)}</b>${l.note?`<small>${esc(l.note)}</small>`:''}<span class="host">${esc(lkHost(l.url))}</span></span></a>
+    ${isTeacher?`<div class="lkt"><button data-lkqr="${l.id}">QR 띄우기</button><button data-lkpin="${l.id}">${l.pin?'📌 고정 풀기':'📌 고정'}</button><button data-lked="${l.id}">고치기</button><button data-lkdel="${l.id}">지우기</button></div>`:''}</div>`;
+  $('lkBody').innerHTML=(lkErr?`<p class="setup-note">수업 사이트를 불러오지 못했어요 (${esc(lkErr)}). Firebase 콘솔 → Firestore → 규칙에서 <b>links</b> 컬렉션을 허용해 주세요.</p>`:'')+
+    (list.length?`<p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">눌러서 바로 들어가요. 새 창으로 열리니까 다 하면 그 창만 닫으면 돼요.</p><div class="lkgrid">${list.map(card).join('')}</div>`
+      :`<div class="card empty"><div class="big">🔗</div>${isTeacher?'위에서 수업 때 쓸 사이트를 등록해 보세요.<br>QR 대신 아이들이 여기서 눌러서 들어와요.':'아직 등록된 사이트가 없어요.<br>선생님이 올려 주시면 여기서 눌러서 들어갈 수 있어요!'}</div>`);
+  const L=id=>links.find(x=>x.id===id);
+  $('lkBody').querySelectorAll('[data-lkqr]').forEach(b=>b.onclick=()=>{const l=L(b.dataset.lkqr);openGoQR((l.emoji||'🔗')+' '+l.title,l.url);});
+  $('lkBody').querySelectorAll('[data-lkpin]').forEach(b=>b.onclick=()=>{const l=L(b.dataset.lkpin);store.update('links',l.id,{pin:!l.pin});});
+  $('lkBody').querySelectorAll('[data-lkdel]').forEach(b=>b.onclick=async()=>{const l=L(b.dataset.lkdel);if(confirm(`「${l.title}」을(를) 지울까요?`))await store.del('links',l.id);});
+  $('lkBody').querySelectorAll('[data-lked]').forEach(b=>b.onclick=()=>{const l=L(b.dataset.lked);lkEdit=l.id;$('lkEmoji').value=l.emoji||'';$('lkTitle').value=l.title;$('lkUrl').value=l.url;$('lkNote').value=l.note||'';$('lkPin').checked=!!l.pin;$('lkSave').textContent='고친 내용 저장';$('lkCancel').hidden=false;$('lkTeach').scrollIntoView({behavior:'smooth',block:'center'});});
+}
+function lkReset(){lkEdit=null;['lkEmoji','lkTitle','lkUrl','lkNote'].forEach(i=>$(i).value='');$('lkPin').checked=false;$('lkSave').textContent='등록';$('lkCancel').hidden=true;}
+$('lkCancel').onclick=lkReset;
+$('lkSave').onclick=async()=>{let url=$('lkUrl').value.trim();const title=$('lkTitle').value.trim();
+  if(url&&!/^https?:\/\//i.test(url))url='https://'+url;
+  if(!title)return toast('사이트 이름을 써 주세요');if(!lkOk(url))return toast('주소를 확인해 주세요 (https://로 시작)');
+  const d={title,url,emoji:$('lkEmoji').value.trim()||'🔗',note:$('lkNote').value.trim(),pin:$('lkPin').checked};
+  try{if(lkEdit)await store.update('links',lkEdit,d);else await store.set('links',uid(),{...d,createdAt:Date.now()});toast(lkEdit?'고쳤어요':'등록했어요. 학생 화면 「🔗 수업 사이트」에 떠요');lkReset();}catch(e){console.error(e);toast('저장하지 못했어요 ('+(e.code||'오류')+')');}};
+store.watch('links',d=>{lkErr=null;links=d.filter(l=>l&&l.title&&lkOk(l.url||''));if(pv==='links')renderPlay();},e=>{lkErr=e.code||'오류';if(pv==='links')renderPlay();});
 
 /* ═══════════════ 데이터 구독 & 시작 ═══════════════ */
 function seedDemoIfEmpty(){
